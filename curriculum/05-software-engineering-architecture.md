@@ -8,13 +8,16 @@ Ez a pillér a működő funkciók elkészítésétől a hosszú távon módosí
 
 A pillér nem konkrét architektúrát ír elő minden projektre. A Clean Architecture, DDD, moduláris monolit és mikroszolgáltatás eszközök és döntési modellek; csak akkor indokoltak, ha a rendszer változási irányai, minőségi követelményei és csapathatárai valóban igénylik őket.
 
-## Ajánlott tanulási hullámok
+## Ajánlott tanulási útvonal
 
-1. **Mindennapi mérnöki munka:** `SE-REQUIREMENTS-USE-CASES` → `SE-VERSION-CONTROL-COLLABORATION` → `SE-DEBUGGING-DIAGNOSTICS` → `SE-CODE-QUALITY-READABILITY` → `SE-REFACTORING-TECH-DEBT`.
-2. **Tervezés és ellenőrzés:** `SE-MODULARITY-COUPLING` → `SE-SOLID-DESIGN` → `SE-DESIGN-PATTERNS` → `SE-TESTING-FUNDAMENTALS` → `SE-TEST-STRATEGY`.
-3. **Architekturális gondolkodás:** `SE-ARCHITECTURE-BOUNDARIES` → `SE-LAYERED-CLEAN-ARCHITECTURE` → `SE-DOMAIN-MODELING-DDD` → `SE-MODULAR-MONOLITHS` → `SE-ARCHITECTURE-DECISIONS`.
+Az útvonal a gyors, biztonságos visszajelzési ciklussal kezdődik. A tesztelés nem a design patternök utáni külön blokk, hanem már az első működő funkció és minden későbbi refaktorálás része. Architektúrát csak megfigyelt változási, minőségi vagy csapategyüttműködési probléma indokol.
 
-Ez függőségi iránytű, nem merev sorrend. Egy konkrét projektprobléma bármelyik témát előrehozhatja, de az architektúrát mindig konkrét követelményekhez és megfigyelhető költségekhez kell visszakötni.
+1. **Mindennapi delivery-loop:** `SE-REQUIREMENTS-USE-CASES` → `SE-VERSION-CONTROL-COLLABORATION` → `SE-TESTING-FUNDAMENTALS` → `SE-DEBUGGING-DIAGNOSTICS` → `SE-CODE-QUALITY-READABILITY`. Egy kis változásnak tisztázott célja, áttekinthető diffje, automatizált vagy megismételhető ellenőrzése és diagnosztizálható eredménye van.
+2. **Biztonságos változtatás:** `SE-REFACTORING-TECH-DEBT` → `SE-MODULARITY-COUPLING` → `SE-TEST-STRATEGY`, mellettük a `SE-ARCHITECTURE-DECISIONS` könnyű, alternatívákat és következményeket rögzítő szelete. A határ vagy absztrakció csak konkrét változási okra reagál.
+3. **Problémavezérelt tervezés:** `SE-ARCHITECTURE-BOUNDARIES` → `SE-SOLID-DESIGN` → `SE-DESIGN-PATTERNS`. Az elvek és minták diagnosztikai és kommunikációs eszközök, nem kötelező checklist vagy előre felépítendő rétegrendszer.
+4. **Architektúra lépték szerint:** `SE-DOMAIN-MODELING-DDD`, `SE-LAYERED-CLEAN-ARCHITECTURE` és `SE-MODULAR-MONOLITHS` csak akkor mélyülnek, amikor a domain, a változási tengelyek, a csapat- vagy deployment-határok ezt indokolják; a döntések eredményét később vissza kell mérni.
+
+Ez végrehajtási iránytű, nem merev kurzusterv. A legegyszerűbb működő szerkezet az alapértelmezés; a következő absztrakcióhoz megnevezhető probléma, várható előny és ellenőrizhető következmény szükséges.
 
 ## Altémák áttekintése
 
@@ -31,10 +34,30 @@ Ez függőségi iránytű, nem merev sorrend. Egy konkrét projektprobléma bár
 | `SE-TESTING-FUNDAMENTALS` | Tesztelési alapok és tesztdizájn | P1 | L3 |
 | `SE-TEST-STRATEGY` | Tesztstratégia és automatizált visszajelzés | P1 | L2 |
 | `SE-ARCHITECTURE-BOUNDARIES` | Komponenshatárok és függőségi irányok | P1 | L3 |
-| `SE-LAYERED-CLEAN-ARCHITECTURE` | Réteges és Clean Architecture megközelítések | P1 | L2 |
+| `SE-LAYERED-CLEAN-ARCHITECTURE` | Réteges és Clean Architecture megközelítések | P2 | L2 |
 | `SE-DOMAIN-MODELING-DDD` | Domainmodellezés és DDD-alapok | P2 | L2 |
 | `SE-MODULAR-MONOLITHS` | Moduláris monolit és szolgáltatáshatárok | P2 | L2 |
 | `SE-ARCHITECTURE-DECISIONS` | Minőségi attribútumok és architekturális döntések | P1 | L3 |
+
+## Első munkaképes szelet és későbbi mélyítés
+
+| Azonosító | Első munkaképes szelet | Későbbi mélyítés vagy trigger |
+|---|---|---|
+| `SE-REQUIREMENTS-USE-CASES` | Homályos igényből kis use case, edge case, scope és ellenőrizhető elfogadási feltétel. | Nem funkcionális követelmények, több stakeholder és konfliktusos prioritások összetett feature vagy rendszer esetén. |
+| `SE-VERSION-CONTROL-COLLABORATION` | Kis, koherens commitok, diff/history olvasása, biztonságos revert és érdemi review-visszajelzés. | Branch/rebase stratégia, konfliktuskezelés és többcsapatos workflow tényleges együttműködési problémánál. |
+| `SE-DEBUGGING-DIAGNOSTICS` | Reprodukció, tünet/ok különválasztása, hipotézis, kontrollált kísérlet, stack trace/log és regresszió-ellenőrzés. | Dump, profiler és többkomponensű diagnózis olyan hibánál, amelyet lokális eszközökkel nem lehet leszűkíteni. |
+| `SE-CODE-QUALITY-READABILITY` | Jó elnevezés, fókuszált egység, explicit invariáns, egyszerű vezérlés és indokolt komment. | Nagyobb konzisztencia- vagy dokumentációs szabályok ismétlődő olvashatósági és onboarding-problémánál. |
+| `SE-REFACTORING-TECH-DEBT` | Egy smell viselkedést védő teszt melletti, kis lépésekben végzett javítása és tudatos halasztás rögzítése. | Strangler jellegű átalakítás és adósságportfólió üzleti kockázat, gyakori változás vagy magas hibaköltség esetén. |
+| `SE-MODULARITY-COUPLING` | Felelősség, kohézió, public contract és függőségi irány egy változási ok mentén. | Ciklikus függés, stabilitás és komponensgráf elemzése több modul vagy párhuzamos csapatmunka esetén. |
+| `SE-SOLID-DESIGN` | Egy konkrét elvsértés következményének felismerése, minimális javítása és a túlzott absztrakció elkerülése. | Az öt elv közötti trade-offok összetett objektumgráf vagy gyakori variációs igény esetén. |
+| `SE-DESIGN-PATTERNS` | Már létező strategy/adapter/decorator/factory jellegű megoldás felismerése és probléma alapján történő kiválasztása. | Command, observer vagy repository és alternatíváik összevetése ismétlődő, névvel kommunikálható tervezési problémánál. |
+| `SE-TESTING-FUNDAMENTALS` | Viselkedést ellenőrző sikeres, hibás és határeset; megfelelő unit/integration határ és valódi regresszió. | Test double, tesztelhető dizájn és törékeny teszt javítása összetett függőségek vagy lassú visszajelzés esetén. |
+| `SE-TEST-STRATEGY` | A feature legfontosabb kockázataihoz illeszkedő kis tesztportfólió és gyors helyi feedback. | Contract/acceptance rétegek, flaky suite, tesztadat és CI-idő optimalizálása növekvő rendszer vagy csapat esetén. |
+| `SE-ARCHITECTURE-BOUNDARIES` | Felelősség-, adat- és függőségi határ egy konkrét változási vagy ownership-probléma alapján. | Process/deployment határ és több komponens közötti contract nagyobb rendszer vagy független életciklus esetén. |
+| `SE-LAYERED-CLEAN-ARCHITECTURE` | A presentation/application/domain/infrastructure szerepek felismerése és csak indokolt határ bevezetése. | Port/adapter, dependency rule és architecture test nem triviális integrációs vagy változási nyomás esetén. |
+| `SE-DOMAIN-MODELING-DDD` | Ubiquitous language, entity/value object és valódi üzleti invariáns egy kis modellben. | Aggregate, domain service, bounded context és context mapping összetett domain vagy csapathatár esetén. |
+| `SE-MODULAR-MONOLITHS` | Monolit és moduláris monolit különbsége, modul-ownership és belső contract magas szintű modellje. | Határok kikényszerítése, modulonkénti adat és kiválaszthatóság több üzleti terület vagy szolgáltatási igény esetén. |
+| `SE-ARCHITECTURE-DECISIONS` | Rövid döntésfeljegyzés: kontextus, alternatívák, választás, következmények és felülvizsgálati trigger. | Quality-attribute scenario, fitness function és evolutionary architecture jelentős, nehezen visszafordítható döntésnél. |
 
 ## Altémák részletei
 
@@ -139,7 +162,7 @@ Ez függőségi iránytű, nem merev sorrend. Egy konkrét projektprobléma bár
 ### `SE-ARCHITECTURE-DECISIONS` — Minőségi attribútumok és architekturális döntések
 
 - **Tartalom:** quality attribute, constraint, trade-off, ADR, kockázat, fitness function, evolutionary architecture, build-versus-buy és monolit/mikroszolgáltatás döntési tényezői.
-- **Előfeltételek:** `SE-REQUIREMENTS-USE-CASES`, `SE-ARCHITECTURE-BOUNDARIES`.
+- **Előfeltételek:** `SE-REQUIREMENTS-USE-CASES`; az `SE-ARCHITECTURE-BOUNDARIES` a nagyobb komponens- és deploymentdöntésekhez szükséges, nem egy könnyű döntésfeljegyzéshez.
 - **Kapcsolatok:** production engineering a 7. pillérben, rendszertervezés a 8. pillérben.
 - **Célbizonyíték:** alternatívák és következmények alapján dokumentált architekturális döntés, utólagos eredményértékelés és új bizonyíték esetén biztonságos irányváltás.
 

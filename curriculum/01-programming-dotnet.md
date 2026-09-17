@@ -8,13 +8,15 @@ Ez a pillér a modern C# nyelv, a .NET alapkönyvtárak és a CLR futásidejű m
 
 A webes request pipeline, adatbázis-lekérdezések, operációs rendszer és architektúra részletes tárgyalása más pillérekben történik. Itt azok C#/.NET oldali mechanizmusait és absztrakcióit rögzítjük.
 
-## Ajánlott tanulási hullámok
+## Ajánlott tanulási útvonal
 
-1. **Nyelv és modellezés:** `CSHARP-LANGUAGE-FUNDAMENTALS` → `DOTNET-TYPE-SYSTEM` → `CSHARP-OBJECT-MODEL` → `DOTNET-GENERICS` → `DOTNET-COLLECTIONS` → `DOTNET-DELEGATES-EVENTS` → `DOTNET-EXCEPTIONS-RESOURCES`.
-2. **Adatfeldolgozás és futásidő:** `DOTNET-LINQ-EXECUTION` → `DOTNET-BUILD-RUNTIME` → `DOTNET-MEMORY-GC` → `DOTNET-IO-STREAMS`.
-3. **Aszinkronitás és extensibility:** `DOTNET-ASYNC-TASKS` → `DOTNET-CONCURRENCY-THREADING` → `DOTNET-REFLECTION-METADATA` → `DOTNET-DI-COMPOSITION`.
+Az útvonal a korai backend-munkaképességet optimalizálja, nem a témák lineáris befejezését. Egy altéma hosszú távú célmélysége nem előfeltétele a következő gyakorlati szeletnek; először a munkaképes részt kell bizonyítani, majd valós trigger alapján visszatérni a mélyebb mechanizmusokhoz.
 
-Ez függőségi iránytű, nem merev sorrend. Egy projekt több hullámból is elővehet témát, de a hiányzó előfeltételeket később célzottan pótolni kell.
+1. **Belépő diagnózis és futási orientáció:** `CSHARP-LANGUAGE-FUNDAMENTALS`, `DOTNET-TYPE-SYSTEM` és `DOTNET-BUILD-RUNTIME` korai szelete. Cél az önálló kisebb kódmódosítás, a nullability és alapvető típusviselkedés kezelése, valamint a build–runtime lánc használható mentális modellje; nem a teljes témák lezárása.
+2. **Munkaképes backendmag:** `CSHARP-OBJECT-MODEL`, a generics használati oldala, `DOTNET-COLLECTIONS`, `DOTNET-EXCEPTIONS-RESOURCES`, a delegate/lambda/closure alapok, `DOTNET-LINQ-EXECUTION`, `DOTNET-ASYNC-TASKS` és `DOTNET-DI-COMPOSITION`. Ezeket lehetőleg egy-egy üzleti vertikális szeletben kell összekapcsolni; `DOTNET-IO-STREAMS` akkor lépjen be, amikor valódi fájl- vagy hálózati I/O indokolja.
+3. **Mérésvezérelt mélyítés:** a típusrendszer, generics, delegate/event, I/O és async haladó részei, majd `DOTNET-MEMORY-GC` és `DOTNET-CONCURRENCY-THREADING`. A P2-es `DOTNET-REFLECTION-METADATA` framework-internals, trimming/AOT vagy dinamikus aktiválási igény esetén kerül előre.
+
+A `DOTNET-DI-COMPOSITION` gyakorlati használatához nem kell előbb lezárni a reflectiont vagy a teljes konkurenciatémát. A hiányzó előfeltételeket just-in-time kell pótolni, a korábban megszerzett részeket pedig új kontextusban és késleltetve újra ellenőrizni.
 
 ## Altémák áttekintése
 
@@ -35,6 +37,28 @@ Ez függőségi iránytű, nem merev sorrend. Egy projekt több hullámból is e
 | `DOTNET-CONCURRENCY-THREADING` | Szálak, ThreadPool és konkurencia | P1 | L3 |
 | `DOTNET-REFLECTION-METADATA` | Metadata, reflection és dinamikus aktiválás | P2 | L2 |
 | `DOTNET-DI-COMPOSITION` | Dependency injection és composition root | P1 | L2 |
+
+## Első munkaképes szelet és későbbi mélyítés
+
+Az alábbi bontás nem módosítja a célmélységeket. Azt rögzíti, mi ad korán napi munkában használható kompetenciát, és mihez érdemes csak konkrét triggerrel visszatérni.
+
+| Azonosító | Első munkaképes szelet | Későbbi mélyítés vagy trigger |
+|---|---|---|
+| `CSHARP-LANGUAGE-FUNDAMENTALS` | Önálló kisebb funkció, vezérlési ágak, metódusok/propertyk, compiler errorok és idiomatikus alapkód. | Ritkább nyelvi konstrukciók és trade-offok akkor, amikor valós kódban megjelennek. |
+| `DOTNET-TYPE-SYSTEM` | Nullability, alapvető konverziók, value/reference viselkedés, equality és API-típusválasztás. | Boxing, variance és finomabb runtime-reprezentáció generics-, memória- vagy teljesítményproblémánál. |
+| `CSHARP-OBJECT-MODEL` | Class/interface/record, encapsulation, composition, immutability és DTO/domain határ. | Öröklési és polymorphism trade-offok összetettebb modell vagy hibás absztrakció esetén. |
+| `DOTNET-GENERICS` | Generikus API-k biztonságos használata, saját egyszerű generikus típus vagy metódus és alapvető constraint. | Variance, nyitott/zárt típusok és runtime-reprezentáció framework- vagy absztrakciós igénynél. |
+| `DOTNET-COLLECTIONS` | Array, `List<T>`, `Dictionary<TKey,TValue>`, `HashSet<T>`, enumeráció és alapvető komplexitási döntések. | Immutable/concurrent collection, memória-trade-off és finomabb komplexitáselemzés mért igénynél. |
+| `DOTNET-DELEGATES-EVENTS` | Lambda, method group, `Func`/`Action`, callback és closure-viselkedés. | Multicast delegate, event-életciklus és leiratkozási hibák eseményalapú komponensnél. |
+| `DOTNET-EXCEPTIONS-RESOURCES` | Kivételterjedés, megfelelő catch-határ, `finally`, `using`, `IDisposable` és biztonságos hibajelzés. | Exception filter, `IAsyncDisposable` és összetettebb lifetime-hibák valódi erőforrás-kezelésnél. |
+| `DOTNET-LINQ-EXECUTION` | Filtering/projection, kompozíció, deferred execution, materializálás és `IEnumerable<T>`/`IQueryable<T>` határ. | Grouping, providerfordítási korlát, többszörös enumeráció és teljesítménydiagnózis valós queryn. |
+| `DOTNET-BUILD-RUNTIME` | SDK/runtime, build artifact, target framework és source → CIL → native kód alapmodell. | Assembly metadata, dependency resolution, JIT/AOT és összetettebb runtime-diagnózis konkrét hibánál. |
+| `DOTNET-MEMORY-GC` | Object lifetime, managed heap, allokáció és GC pressure felismerése; optimalizálás előtt mérés. | Generációk, roots, LOH, finalization, pooling és `Span<T>`/`Memory<T>` mért memória- vagy throughputproblémánál. |
+| `DOTNET-IO-STREAMS` | Streamelt olvasás/írás, encoding, buffering, disposal, cancellation és részleges műveletek kezelése. | Compression, memória-összehasonlítás és rendszerközeli I/O-diagnózis nagy adaton vagy hibás átvitelnél. |
+| `DOTNET-ASYNC-TASKS` | Valós async I/O, `Task`, `await`, kivételterjedés, cancellation, `WhenAll` és sync-over-async felismerése. | State machine, backpressure és ütemezési/performance részletek diagnosztikai vagy terhelési igénynél. |
+| `DOTNET-CONCURRENCY-THREADING` | Async, concurrency és parallelism elkülönítése; ThreadPool és shared state alapmodellje. | Race reprodukció, lock/atomic művelet, deadlock és starvation diagnózisa konkurens vagy terhelési problémánál. |
+| `DOTNET-REFLECTION-METADATA` | Attribútumok és annak felismerése, hogyan használ reflectiont a DI, szerializáció és más frameworkök. | Saját scanning/aktiválás, költségmérés, source generation és trimming/AOT kockázat konkrét igénynél. |
+| `DOTNET-DI-COMPOSITION` | Constructor injection, registration, transient/scoped/singleton lifetime, scope és composition root. | Captive dependency, factory, disposal és összetett objektumgráf diagnózisa valódi lifetime-hibánál. |
 
 ## Altémák részletei
 

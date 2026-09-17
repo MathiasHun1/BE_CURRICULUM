@@ -8,13 +8,16 @@ Ez a pillér a HTTP-kérés teljes útját és a modern webes backend fejleszté
 
 A pillér nem másolja át az adatbázisok, az identitáskezelés, az operációs rendszerek vagy a production infrastruktúra teljes tananyagát. Ezeknél csak a webes alkalmazáshoz szükséges integrációs határt rögzíti, és a megfelelő pillérre hivatkozik.
 
-## Ajánlott tanulási hullámok
+## Ajánlott tanulási útvonal
 
-1. **Request mechanics:** `WEB-HTTP-SEMANTICS` → `WEB-REQUEST-LIFECYCLE` → `WEB-ROUTING-ENDPOINTS` → `WEB-BINDING-VALIDATION` → `WEB-MIDDLEWARE-PIPELINE` → `WEB-RESPONSES-SERIALIZATION` → `WEB-ERROR-HANDLING`.
-2. **Alkalmazásépítés:** `WEB-API-DESIGN-CONTRACTS` → `WEB-DI-CONFIGURATION` → `WEB-ASYNC-CANCELLATION` → `WEB-API-TESTING`.
-3. **Production-közeli képességek:** `WEB-SECURITY-INTEGRATION` → `WEB-BACKGROUND-PROCESSING` → `WEB-API-EVOLUTION` → `WEB-OBSERVABILITY-PERFORMANCE`.
+Az útvonal nem választja szét hosszú időre a request mechanikáját a valódi alkalmazásépítéstől. Egy rövid orientáció után minden új képességet lehetőleg egy tesztelhető üzleti API-szeletben kell bevezetni, majd valós production- vagy diagnosztikai trigger alapján mélyíteni.
 
-Ez ajánlott függőségi sorrend, nem merev kurzusterv. Valós munkából vagy projektből érkező témát előre lehet venni, de később vissza kell kötni az előfeltételeihez.
+1. **Vékony request-orientáció:** `WEB-HTTP-SEMANTICS`, `WEB-REQUEST-LIFECYCLE` és a `WEB-MIDDLEWARE-PIPELINE` alapmodellje. Cél a kérés útjának, a pipeline sorrendjének és a válasz határának megértése, nem a teljes protokoll- vagy middleware-mélység lezárása.
+2. **Első munkaképes API-szelet:** `WEB-API-DESIGN-CONTRACTS` → `WEB-ROUTING-ENDPOINTS` → `WEB-BINDING-VALIDATION` → `WEB-RESPONSES-SERIALIZATION` → `WEB-ERROR-HANDLING` → `WEB-API-TESTING`. A contract, az implementáció és a sikeres/hibás ágakat ellenőrző integration teszt ugyanannak a vertikális szeletnek a része.
+3. **Alkalmazás-integráció:** `WEB-DI-CONFIGURATION` → `WEB-ASYNC-CANCELLATION`, beleértve az outbound HTTP-hívásokat is; mellettük a `WEB-SECURITY-INTEGRATION` és `WEB-OBSERVABILITY-PERFORMANCE` kötelező korai alapszelete. Ezeket nem kell külön production-fázisig halasztani.
+4. **Production- és változáskezelési mélyítés:** a security és observability teljes L2 mélysége, `WEB-BACKGROUND-PROCESSING`, `WEB-API-EVOLUTION`, továbbá a streaming, backpressure, protokoll-, middleware- és teljesítményrészletek.
+
+Az útvonal függőségi iránytű, nem merev kurzusterv. DI-t, konfigurációt, cancellationt, securityt vagy observabilityt az első olyan üzleti szeletbe be kell húzni, amely ténylegesen igényli; a hiányzó előfeltételeket just-in-time kell pótolni.
 
 ## Altémák áttekintése
 
@@ -35,6 +38,28 @@ Ez ajánlott függőségi sorrend, nem merev kurzusterv. Valós munkából vagy 
 | `WEB-BACKGROUND-PROCESSING` | Háttérfeldolgozás és host lifecycle | P2 | L2 |
 | `WEB-API-EVOLUTION` | API-verziózás és kompatibilis fejlődés | P2 | L2 |
 | `WEB-OBSERVABILITY-PERFORMANCE` | Observability és request-path teljesítmény | P2 | L2 |
+
+A `WEB-SECURITY-INTEGRATION` és `WEB-OBSERVABILITY-PERFORMANCE` P2 besorolása a teljes altéma célmélységére vonatkozik. A biztonságos alapbeállítások, a `401`/`403` határ, a strukturált logging, a correlation és az alapvető health-jelzések keresztmetszeti P1 minimumok.
+
+## Első munkaképes szelet és későbbi mélyítés
+
+| Azonosító | Első munkaképes szelet | Későbbi mélyítés vagy trigger |
+|---|---|---|
+| `WEB-HTTP-SEMANTICS` | URI, metódus, státusz, header, body, media type, valamint safe és idempotent szemantika egy valódi contractban. | Cache-elhetőség, feltételes kérések és HTTP/1.1–HTTP/3 részletek protokoll- vagy teljesítménydiagnózisnál. |
+| `WEB-REQUEST-LIFECYCLE` | Kestrel → `HttpContext` → pipeline → endpoint → response útvonal és egy alapvető lifecycle-hiba. | Kapcsolati, response-indítási és host-lifecycle részletek összetettebb futási hibánál. |
+| `WEB-ROUTING-ENDPOINTS` | Route template, metódusillesztés, endpoint selection és `404`/`405` diagnózis. | Constraint, metadata, route-konfliktus és Minimal API/controller trade-off valós tervezési igénynél. |
+| `WEB-BINDING-VALIDATION` | Route/query/body DTO, required/optional értékek, valamint szerkezeti és üzleti validáció elkülönítése. | Header/form binding és összetett validáció több bemeneti forrás vagy fájlfeltöltés esetén. |
+| `WEB-MIDDLEWARE-PIPELINE` | Sorrend, `next` előtti/utáni ág, short-circuit, exception határ és response-indítás. | Branching, terminal middleware és saját újrafelhasználható komponens konkrét cross-cutting igénynél. |
+| `WEB-RESPONSES-SERIALIZATION` | DTO, typed result, státusz, header, content type és stabil JSON-szerződés. | Content negotiation, custom serialization és streaming több reprezentáció vagy nagy válasz esetén. |
+| `WEB-ERROR-HANDLING` | Várható `4xx`, váratlan `5xx`, egységes `ProblemDetails`, belső részletek védelme és regressziós teszt. | `Response.HasStarted` és összetett kivételes request-path diagnózisa részleges vagy streamelt válasznál. |
+| `WEB-API-DESIGN-CONTRACTS` | Kis resource/operation contract, megfelelő metódus és státusz, DTO-határ, alapvető pagination és OpenAPI. | Összetettebb filtering/sorting, REST-trade-off és consumer-kompatibilitás több kliens vagy nagyobb API esetén. |
+| `WEB-DI-CONFIGURATION` | Constructor injection, helyes lifetime, options, környezeti felülírás és secrets-határ. | Egyedi providerek, reload, factory és összetett lifetime/configuration diagnózis valós hibánál. |
+| `WEB-ASYNC-CANCELLATION` | Valós async I/O, request cancellation továbbadása, timeout és `IHttpClientFactory`-alapú outbound HTTP-hívás. | Streaming, backpressure, sync-over-async és kliens-/kapcsolatélettartam mélyebb diagnózisa lassú vagy hibás függőségnél. |
+| `WEB-API-TESTING` | `WebApplicationFactory`/teszthost és `HttpClient` alapú integration teszt a sikeres és fontos hibás contractágakra. | Célzott unit test, test double, determinisztikus külső függőség és szerződésteszt ott, ahol valódi kockázat indokolja. |
+| `WEB-SECURITY-INTEGRATION` | HTTPS-határ, middleware-sorrend, authentication/authorization alapmodell, `401`/`403` és biztonságos input/output. | Policyk, CORS/CSRF és összetett identitásintegráció valós védett funkciónál; a mély modell a 6. pillérben. |
+| `WEB-BACKGROUND-PROCESSING` | Cancellationt tiszteletben tartó `BackgroundService`, scope-kezelés és graceful shutdown. | Queue, retry/idempotencia és külső brokerhatár tartós vagy elosztott munkánál. |
+| `WEB-API-EVOLUTION` | Additive és breaking változás felismerése már az első contract módosításakor. | Deprecation, verziózási stratégia, consumer migration és rollout több élő kliens esetén. |
+| `WEB-OBSERVABILITY-PERFORMANCE` | Strukturált logging, correlation, alapvető health-jelzés és egy hibás request visszakeresése. | Metrics, tracing, latency/error-rate elemzés és mérésalapú optimalizálás production-közeli terhelésnél. |
 
 ## Altémák részletei
 
@@ -103,14 +128,14 @@ Ez ajánlott függőségi sorrend, nem merev kurzusterv. Valós munkából vagy 
 
 ### `WEB-ASYNC-CANCELLATION` — Aszinkron request processing, cancellation és streaming
 
-- **Tartalom:** aszinkron I/O a request pathon, `Task`, request cancellation, timeout, backpressure, streaming és sync-over-async hibák.
+- **Tartalom:** aszinkron I/O a request pathon, `Task`, request cancellation, timeout, outbound HTTP `HttpClient`/`IHttpClientFactory` használatával, kliens- és kapcsolatélettartam, válaszfeldolgozás, backpressure, streaming és sync-over-async hibák.
 - **Előfeltételek:** `WEB-REQUEST-LIFECYCLE`; `Task` és `async`/`await` az 1. pillérben.
-- **Kapcsolatok:** konkurencia és I/O a 4. pillérben, `WEB-OBSERVABILITY-PERFORMANCE`.
-- **Célbizonyíték:** cancellationt továbbadó aszinkron endpoint, megszakított vagy lassú kérés diagnózisa és a skálázhatósági hatás magyarázata.
+- **Kapcsolatok:** konkurencia és I/O a 4. pillérben, `WEB-OBSERVABILITY-PERFORMANCE`; részleges hibák és resilience a 8. pillérben.
+- **Célbizonyíték:** cancellationt és timeoutot továbbadó aszinkron endpoint vagy outbound HTTP-integráció, megszakított vagy lassú függőség diagnózisa és a skálázhatósági hatás magyarázata.
 
 ### `WEB-API-TESTING` — HTTP API-k automatizált tesztelése
 
-- **Tartalom:** endpoint unit- és integration tesztek, teszthost, `HttpClient`, test doubles, determinisztikus konfiguráció és szerződés/regresszió ellenőrzése.
+- **Tartalom:** contracthatárt ellenőrző integration tesztek, indokolt endpoint- vagy service-unit tesztek, teszthost, `HttpClient`, test doubles, determinisztikus konfiguráció és szerződés/regresszió ellenőrzése.
 - **Előfeltételek:** legalább egy működő endpoint és alapvető tesztelési ismeretek.
 - **Kapcsolatok:** tesztstratégia az 5. pillérben, `WEB-DI-CONFIGURATION`.
 - **Célbizonyíték:** sikeres és hibás ágakat lefedő automatizált integration tesztek, amelyek valódi regressziót jeleznek.
@@ -138,14 +163,14 @@ Ez ajánlott függőségi sorrend, nem merev kurzusterv. Valós munkából vagy 
 
 ### `WEB-OBSERVABILITY-PERFORMANCE` — Observability és request-path teljesítmény
 
-- **Tartalom:** strukturált logging, correlation, metrics, tracing, latency/error rate, hot path, buffering, allocations és mérésalapú optimalizálás.
+- **Tartalom:** strukturált logging, correlation, health-jelzések, metrics, tracing, latency/error rate, hot path, buffering, allocations és mérésalapú optimalizálás.
 - **Előfeltételek:** `WEB-REQUEST-LIFECYCLE`, `WEB-ASYNC-CANCELLATION`.
 - **Kapcsolatok:** production observability és kapacitástervezés a 7. pillérben.
 - **Célbizonyíték:** egy lassú vagy hibás kérés trace/log/metric alapján történő diagnózisa és mérésen alapuló javítása.
 
 ## Kapcsolat a jelenlegi projektekkel
 
-- **Backend Foundations:** elsődlegesen az első hullám témáihoz ad bizonyítékot, majd az `M6` mérföldkő az önálló transzfert ellenőrzi.
+- **Backend Foundations:** a vékony request-orientáció és az alapvető endpointmechanika témáihoz ad bizonyítékot, majd az `M6` mérföldkő az önálló transzfert ellenőrzi. Nem feladata a teljes munkaképes API-szelet, a security vagy a production-képességek lefedése.
 - **MovieExplorer:** korábbi bizonyítékot ad routing, controlleres endpointok, binding, API-válaszok és részben API-tervezés területén; a bizonyítékok részletes újraértékelése csak akkor történjen, amikor az adott altéma aktívvá válik.
 
 Az aktuális tudásszint és bizonyítékok forrása a gyökérben található `CURRICULUM_PROGRESS.md`; ez a fájl csak a stabil tématérképet tartalmazza.

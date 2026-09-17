@@ -8,13 +8,14 @@ Ez a pillér a forráskódtól a futó, megfigyelhető és biztonságosan válto
 
 A CPU, process, fájlrendszer és hálózat belső mechanizmusai a 4. pillérhez, a mély security- és identitásmodell a 6. pillérhez, az elosztott koordináció és skálázás pedig a 8. pillérhez tartozik. Itt ezek production környezetben történő összekapcsolása és működtetése áll a középpontban.
 
-## Ajánlott tanulási hullámok
+## Ajánlott tanulási útvonal
 
-1. **Operációs környezet:** `OPS-LINUX-SHELL` → `OPS-FILES-PERMISSIONS` → `OPS-PROCESS-SERVICE-MANAGEMENT`.
-2. **Csomagolás és szállítás:** `OPS-CONTAINER-IMAGES` → `OPS-CONTAINER-RUNTIME-COMPOSE` → `OPS-CONTAINER-NETWORK-STORAGE` → `OPS-ARTIFACT-CONFIG-SECRETS` → `OPS-CI-BUILD-QUALITY` → `OPS-RELEASE-DEPLOYMENT`.
-3. **Production működés:** `OPS-REVERSE-PROXY-TLS` → `OPS-STRUCTURED-LOGGING` → `OPS-METRICS-TRACING` → `OPS-HEALTH-MONITORING-ALERTING` → `OPS-CLOUD-ORCHESTRATION` → `OPS-RELIABILITY-INCIDENTS-CAPACITY`.
+1. **Első production-közeli futtatás:** `OPS-ARTIFACT-CONFIG-SECRETS` → `OPS-PROCESS-SERVICE-MANAGEMENT`, közben a szükséges `OPS-LINUX-SHELL` és `OPS-FILES-PERMISSIONS` szelettel. Az eredmény ugyanaz a titkot nem tartalmazó artifact, külső konfigurációval, felügyelt processként és ellenőrizhető leállással.
+2. **Reprodukálható csomagolás:** `OPS-CI-BUILD-QUALITY` → `OPS-CONTAINER-IMAGES` → `OPS-CONTAINER-RUNTIME-COMPOSE` → `OPS-CONTAINER-NETWORK-STORAGE`.
+3. **Az első deploymenttől üzemeltethető szolgáltatás:** `OPS-STRUCTURED-LOGGING` → `OPS-METRICS-TRACING` → `OPS-HEALTH-MONITORING-ALERTING` → `OPS-REVERSE-PROXY-TLS` → `OPS-RELEASE-DEPLOYMENT`. A log, alapmetrika, trace-korreláció és a startup/readiness/liveness szerepe már az egyszerű deployment és a kipróbált visszaállítás előtt jelenjen meg; a rolling, blue-green és canary stratégiák későbbi mélyítések.
+4. **Mért megbízhatóság és platformmélység:** `OPS-RELIABILITY-INCIDENTS-CAPACITY` → `OPS-CLOUD-ORCHESTRATION`. SLO, terhelés, runbook, incidensgyakorlat, orchestration és infrastruktúra mint kód csak működő szolgáltatáson, valós üzemeltetési igényhez kötve mélyüljön.
 
-Ez függőségi iránytű, nem merev sorrend. Egy deployment- vagy productionhiba előrevehet későbbi témát, de a javítást vissza kell kötni a build artifacthoz, a futó processhez, a konfigurációhoz és a megfigyelhető bizonyítékhoz.
+Ez függőségi iránytű, nem merev sorrend. A Linux-, konténer- és cloud-ismeretek első célja nem az eszközök teljes lefedése, hanem egy buildelhető, telepíthető, visszaállítható és megfigyelhető szolgáltatás. Egy deployment- vagy productionhiba előrevehet későbbi témát, de a javítást vissza kell kötni az artifacthoz, a futó processhez, a konfigurációhoz és mérhető működési bizonyítékhoz.
 
 ## Altémák áttekintése
 
@@ -35,6 +36,26 @@ Ez függőségi iránytű, nem merev sorrend. Egy deployment- vagy productionhib
 | `OPS-HEALTH-MONITORING-ALERTING` | Health checkek, monitorozás és riasztások | P1 | L3 |
 | `OPS-CLOUD-ORCHESTRATION` | Felhő- és orchestration-alapok | P2 | L2 |
 | `OPS-RELIABILITY-INCIDENTS-CAPACITY` | Megbízhatóság, incidensek és kapacitás | P1 | L3 |
+
+## Első munkaképes szelet és későbbi mélyítés
+
+| Altéma | Első munkaképes szelet | Későbbi mélyítés trigger alapján |
+|---|---|---|
+| `OPS-LINUX-SHELL` | Process-, port-, fájl-, hálózati és exit code alapú diagnózis | Robusztus scriptelés, automatizálás és ritkább shell-hibamódok |
+| `OPS-FILES-PERMISSIONS` | Futtató user, ownership és minimális fájljogok | ACL, mount- és több service accountos jogosultsági modell |
+| `OPS-PROCESS-SERVICE-MANAGEMENT` | Indítás, leállítás, log, environment és graceful shutdown | Restart policy, resource limit és hostszintű felügyeleti hibák |
+| `OPS-CONTAINER-IMAGES` | Multi-stage, verziózott és non-root alkalmazásimage | Layer/cache-optimalizálás, reproducibility és supply-chain ellenőrzés |
+| `OPS-CONTAINER-RUNTIME-COMPOSE` | Alkalmazás és adatbázis helyi, ismételhető futtatása | Resource limit, restart és összetettebb lifecycle-diagnózis |
+| `OPS-CONTAINER-NETWORK-STORAGE` | Service DNS, port és tartós volume helyes használata | Mount-, hálózati izolációs és adat-élettartam trade-offok |
+| `OPS-ARTIFACT-CONFIG-SECRETS` | Egy immutable artifact több környezetben, külső configgal és secret injectionnel | Rotáció, feature flag és összetett konfigurációs precedence |
+| `OPS-CI-BUILD-QUALITY` | Tiszta checkoutból build, teszt és verziózott artifact | Cache, párhuzamosítás, provenance és összetett quality gate-ek |
+| `OPS-RELEASE-DEPLOYMENT` | Egyszerű deployment, smoke check és kipróbált rollback/roll-forward | Rolling, blue-green, canary és kompatibilis sémamigráció |
+| `OPS-REVERSE-PROXY-TLS` | HTTPS, helyes forwarding és egy request útjának diagnózisa | Több route, timeout/buffering és összetettebb ingress-policy |
+| `OPS-STRUCTURED-LOGGING` | Kereshető strukturált események, correlation ID és titokszivárgás kerülése | Központi gyűjtés, retention, sampling és zajcsökkentés |
+| `OPS-METRICS-TRACING` | Latency, throughput, error alapmetrikák és egy korrelált trace | Cardinality, sampling, egyedi instrumentáció és költségkontroll |
+| `OPS-HEALTH-MONITORING-ALERTING` | Elkülönített startup/readiness/liveness és egy tünetalapú riasztás | SLI/SLO, alert tuning, synthetic monitoring és alert fatigue |
+| `OPS-CLOUD-ORCHESTRATION` | Egy kis szolgáltatás deklaratív desired state-je és minimális IAM-határa | Verziókezelt IaC, plan/apply/state/drift, autoscaling és több zóna |
+| `OPS-RELIABILITY-INCIDENTS-CAPACITY` | Egyszerű load/hiba próba, runbook és helyreállítás | Error budget, kapacitásmodell, incidensvezetés és postmortem-program |
 
 ## Altémák részletei
 
@@ -97,14 +118,14 @@ Ez függőségi iránytű, nem merev sorrend. Egy deployment- vagy productionhib
 ### `OPS-RELEASE-DEPLOYMENT` — Release- és deployment-stratégiák
 
 - **Tartalom:** release kontra deploy, verziózás, environment promotion, rolling/blue-green/canary stratégia, database migration sorrend, backward compatibility, rollback/roll-forward és feature flag.
-- **Előfeltételek:** `OPS-CI-BUILD-QUALITY`, `OPS-ARTIFACT-CONFIG-SECRETS`.
+- **Előfeltételek:** az első kézi deploymenthez `OPS-ARTIFACT-CONFIG-SECRETS`, alaplog és ellenőrizhető health jelzés; az ismételhető promotion és összetettebb stratégiákhoz `OPS-CI-BUILD-QUALITY`.
 - **Kapcsolatok:** API- és sémaevolúció a 2–3. pillérben, architekturális döntések az 5. pillérben.
 - **Célbizonyíték:** alkalmazás- és sémaváltozás biztonságos release-terve, kontrollált deployment és visszaállítási próba, valamint downtime- és kompatibilitási kockázatok elemzése.
 
 ### `OPS-REVERSE-PROXY-TLS` — Reverse proxy, ingress és TLS termination
 
 - **Tartalom:** reverse proxy/ingress szerep, host/path routing, TLS termination, certificate deployment, forwarding header, client IP, request limit, timeout és buffering.
-- **Előfeltételek:** proxy- és TLS-alapok a 4. pillérben, PKI a 6. pillérben.
+- **Előfeltételek:** proxy-, TLS- és trust-alapmodell a 4. és 6. pillérből; a teljes PKI-mélység nem belépési feltétel.
 - **Kapcsolatok:** ASP.NET Core hosting a 2. pillérben, load balancing a 8. pillérben.
 - **Célbizonyíték:** HTTPS-en elérhető reverse proxy mögötti alkalmazás konfigurálása, forwarding/TLS/timeout hiba diagnózisa és a bizalmi határ magyarázata.
 
@@ -125,16 +146,16 @@ Ez függőségi iránytű, nem merev sorrend. Egy deployment- vagy productionhib
 ### `OPS-HEALTH-MONITORING-ALERTING` — Health checkek, monitorozás és riasztások
 
 - **Tartalom:** liveness, readiness, startup check, dependency health, synthetic check, dashboard, SLI/SLO alapok, alert threshold, symptom-based alert és alert fatigue.
-- **Előfeltételek:** `OPS-STRUCTURED-LOGGING`, `OPS-METRICS-TRACING`.
+- **Előfeltételek:** futtatható szolgáltatás és alaptelemetria; az SLI/SLO és kiforrott riasztások mélyítéséhez `OPS-METRICS-TRACING`.
 - **Kapcsolatok:** service orchestration, reliability és incident response.
 - **Célbizonyíték:** helyes readiness/liveness viselkedés és felhasználói tünetre épülő monitorozás kialakítása, dependency-hiba és hamis pozitív riasztás diagnózisa.
 
 ### `OPS-CLOUD-ORCHESTRATION` — Felhő- és orchestration-alapok
 
-- **Tartalom:** compute, managed service, object/block storage, virtual network, IAM, region/zone, scheduler, desired state, replica, service discovery, autoscaling és managed kontra self-hosted trade-off.
+- **Tartalom:** compute, managed service, object/block storage, virtual network, IAM, region/zone, scheduler, desired state, replica, service discovery, autoscaling, infrastruktúra mint kód, plan/apply/state/drift és managed kontra self-hosted trade-off.
 - **Előfeltételek:** konténerek, hálózat, konfiguráció és health checkek.
 - **Kapcsolatok:** authorization a 6. pillérben, skálázás és service discovery a 8. pillérben.
-- **Célbizonyíték:** kis szolgáltatás és függőségei platformfüggetlen deployment-terve, erőforrás- és identitáshatárok indoklása, valamint orchestrator scheduling/health hiba diagnózisa.
+- **Célbizonyíték:** kis szolgáltatás és függőségei deklaratív, verziókezelt deployment- és infrastruktúraterve, erőforrás- és identitáshatárok indoklása, drift felismerése, valamint orchestrator scheduling/health hiba diagnózisa.
 
 ### `OPS-RELIABILITY-INCIDENTS-CAPACITY` — Megbízhatóság, incidensek és kapacitás
 

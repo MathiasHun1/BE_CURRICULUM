@@ -79,9 +79,11 @@ A cél nem csupán helyes C#-kód írása, hanem annak megértése is, hogyan fo
 Későbbi témakörök iránya:
 
 ```text
-HTTP → API-tervezés → REST → ASP.NET Core → kérésfeldolgozási pipeline
-     → middleware → controllerek / Minimal API-k → validáció → szerializáció
-     → konfiguráció → DI → hibakezelés → háttérfeldolgozás → API-verziózás
+HTTP → request lifecycle → kis API-szerződés → routing / binding
+     → válasz / hibakezelés → integration teszt
+     → DI / konfiguráció → async / cancellation → outbound HTTP
+     → security- és observability-alapok
+     → háttérfeldolgozás / API-evolúció / production-mélyítés
 ```
 
 A böngésző, az Angular kliens, a hálózat és a backend kapcsolata végig látható marad. Egy kérés teljes útját kell érteni, nem csak egy controller vagy végpont implementációját.
@@ -95,31 +97,45 @@ A böngésző, az Angular kliens, a hálózat és a backend kapcsolata végig l�
 Későbbi témakörök iránya:
 
 ```text
-relációs modell → SQL → sématervezés → normalizálás → megszorítások
-    → indexek → B-fa → lekérdezéstervező → tranzakciók → ACID
-    → izoláció → zárolás → MVCC → konkurencia → kapcsolatpool
-    → PostgreSQL → EF Core
+relációs modell → SQL-lekérdezés és adatmódosítás → séma / constraint
+    → PostgreSQL → első EF Core perzisztencia-szelet → migration / tranzakció
+    → generált SQL → index / végrehajtási terv
+    → connection pool / providerhatár → izoláció / MVCC
+    → tárolási motor és production-sémafejlődés
 ```
 
 Az elsajátítás alapelve:
 
 ```text
-adatbázis-alapok → PostgreSQL → EF Core
+vékony adatbázis-alap → PostgreSQL → működő EF Core-szelet
+    → vissza a generált SQL-hez és adatbázis-mechanizmushoz
 ```
 
 és nem:
 
 ```text
-EF Core → adatbázis-alapok
+EF Core mint fekete doboz → adatbázis csak akkor, ha már hiba van
 ```
 
-Így az ORM kényelmi funkciói mellett annak generált lekérdezései, teljesítményhatásai, tranzakciós viselkedése és korlátai is értelmezhetők lesznek.
+Nem kell a teljes tárolás-, index- vagy MVCC-internalst lezárni az első adatfunkció előtt. Így hamar készül munkaképes perzisztencia, miközben az ORM generált lekérdezései, teljesítményhatásai, tranzakciós viselkedése és korlátai fokozatosan visszakapcsolódnak az adatbázis alapmechanizmusaihoz.
 
 ### 4. Számítógépes rendszerek — P1
 
 **Cél:** az alkalmazás-keretrendszerek alatti számítástechnikai infrastruktúra megértése, hogy világos legyen, hogyan hajtja végre a gép a .NET-, webszerver- és elosztott alkalmazásokat.
 
 **Részletes altématérkép:** [4. pillér — Számítógépes rendszerek](curriculum/04-computer-systems.md).
+
+Ajánlott végrehajtási irány:
+
+```text
+adat- és CPU-alapmodell → process / port
+    → IP / socket / DNS / TLS / proxy
+    → thread / ThreadPool → blocking és async I/O → fájlrendszer
+    → race és szinkronizáció
+    → memória-, kernel- és protokollmélyítés mért hiba alapján
+```
+
+A tanulás egy futó backend szolgáltatás megfigyelhető útjából indul. A hardver- és operációsrendszer-internals mélysége később, konkrét CPU-, memória-, I/O-, konkurencia- vagy hálózati diagnózis során épül hozzá.
 
 #### Számítógép-architektúra
 
@@ -146,17 +162,18 @@ TCP/IP, portok, socketek, DNS, TLS, HTTP és proxyk; kapcsolatuk a böngészőkk
 Későbbi témakörök iránya:
 
 ```text
-tiszta kód → kohézió és csatolás → SOLID → kompozíció
-    → tervezési minták → refaktorálás → tesztelés → modularitás
-    → réteges architektúra → Clean Architecture → DDD-alapok
-    → moduláris monolit → mikroszolgáltatások kompromisszumai
+követelmény / elfogadási feltétel → kis Git-változás → automatizált teszt
+    → diagnosztika → olvasható kód → biztonságos refaktorálás
+    → kohézió / csatolás → tesztstratégia → könnyű döntésfeljegyzés
+    → komponenshatár → SOLID / pattern probléma alapján
+    → DDD / réteges vagy Clean megközelítés / moduláris monolit indokolt léptékben
 ```
 
 Kapcsolódó mérnöki gyakorlatok: Git, kódellenőrzés, követelmények értelmezése, hibakeresés, karbantarthatóság és technikai adósság kezelése.
 
 Az architektúrát elsősorban döntések és kompromisszumok elemzésével kell tanulni, nem minták és elnevezések memorizálásával. A megfelelő megoldás a rendszer méretétől, változási irányaitól, csapatszerkezettől és üzemeltetési igényektől függ.
 
-### 6. Biztonság és identitáskezelés — P2
+### 6. Biztonság és identitáskezelés — P1
 
 **Cél:** elegendő biztonsági tudás kialakítása modern webalkalmazások biztonságos tervezéséhez és megvalósításához.
 
@@ -165,30 +182,32 @@ Az architektúrát elsősorban döntések és kompromisszumok elemzésével kell
 Későbbi témakörök iránya:
 
 ```text
-biztonsági alapelvek → fenyegetésmodellezés → hash-elés → titkosítás → TLS
-    → cookie-k → munkamenetek → JWT → hitelesítés → jogosultságkezelés
-    → OAuth 2.0 → OpenID Connect → Keycloak → CORS → CSRF → XSS
-    → SQL-injection → titokkezelés
+feature-szintű threat model → input/output és secret minimum
+    → identity / session → authentication → deny-by-default authorization
+    → browser security → OAuth 2.0 Authorization Code + PKCE → OpenID Connect
+    → token/JWT validáció → negatív hozzáférési tesztek
+    → crypto / PKI / jelszókezelés a tényleges felelősség szerint
+    → supply chain / security logging / incidensmélyítés
 ```
 
-A fogalmakat később gyakorlati Angular + ASP.NET Core rendszerekhez kell kapcsolni. A cél annak megértése, hogy hol húzódnak a bizalmi határok, milyen támadási felületek keletkeznek, és melyik védelmi mechanizmus milyen fenyegetést kezel.
+A security minimum minden gyakorlati Angular + ASP.NET Core szelet része, nem külön késői hardening-fázis. A cél annak megértése, hogy hol húzódnak a bizalmi határok, milyen támadási felületek keletkeznek, és melyik védelmi mechanizmus milyen fenyegetést kezel; a teljes protokoll- és kriptográfiai mélység valós felelősség alapján épül hozzá.
 
-### 7. Infrastruktúra és production engineering — P2
+### 7. Infrastruktúra és production engineering — P1
 
 **Cél:** annak megértése, mi történik az alkalmazáskóddal azután, hogy elhagyja a fejlesztői gépet, és hogyan lehet egy futó rendszert megbízhatóan megfigyelni és hibakeresni.
 
 **Részletes altématérkép:** [7. pillér — Infrastruktúra és production engineering](curriculum/07-infrastructure-production.md).
 
-Későbbi témakörök iránya:
+Ajánlott végrehajtási irány:
 
 ```text
-Linux → shell → folyamatok → fájlrendszer → jogosultságok → Docker
-    → image-ek → konténerek → volume-ok → hálózatok → Docker Compose
-    → reverse proxy → HTTPS → konfiguráció → CI/CD → telepítés
-    → felhőalapok
-
-naplózás → metrikák → tracing → monitorozás → health checkek
-    → riasztások → production hibakeresés
+artifact + külső konfiguráció + secret → felügyelt process
+    → tiszta CI build és teszt → verziózott image → helyi többkomponensű futtatás
+    → strukturált log + alapmetrika + korrelált trace
+    → startup / readiness / liveness → egyszerű deployment → smoke check
+    → rollback / roll-forward → tünetalapú monitorozás és riasztás
+    → reverse proxy + HTTPS → SLO / kapacitás / incidensgyakorlat
+    → cloud, orchestration és IaC csak valós platformigénynél
 ```
 
 Az átfogó mentális modell:
@@ -198,19 +217,23 @@ kód → build → artifact / konténer → telepítés → hálózat
     → folyamat → megfigyelhetőség → felhasználók
 ```
 
+A pillér P1-es minimuma egy ismételhetően buildelhető, konfigurálható, telepíthető, megfigyelhető és visszaállítható szolgáltatás. A cloud-, orchestration- és összetett release-mélység továbbra is szükségvezérelt P2-mélyítés.
+
 ### 8. Elosztott rendszerek és rendszertervezés — kezdetben P2, később P1
 
-**Cél:** architekturális és rendszertervezési képességek kialakítása, miután az alacsonyabb szintű alapok már elég stabilak.
+**Cél:** a külső függőségekkel járó részleges hibák korai, biztonságos kezelése, majd architekturális és nagy léptékű rendszertervezési képességek fokozatos kialakítása.
 
 **Részletes altématérkép:** [8. pillér — Elosztott rendszerek és rendszertervezés](curriculum/08-distributed-systems-design.md).
 
-Későbbi témakörök iránya:
+Ajánlott végrehajtási irány:
 
 ```text
-skálázás → terheléselosztás → gyorsítótárazás → sorok → message brokerek
-    → újrapróbálkozás → idempotencia → eventual consistency → replikáció
-    → particionálás → CAP → elosztott tranzakciók → szolgáltatások kommunikációja
-    → hibamódok
+külső dependency → részleges hibák → contract → deadline / cancellation / timeout
+    → biztonságos, korlátozott retry → korrelált telemetry
+    → idempotencia → queue csak workflow-igénynél → duplikáció / replay / DLQ
+    → cache vagy horizontális skálázás csak mérésből
+    → replikáció / particionálás / konszenzus csak valós adat- vagy koordinációs igénynél
+    → követelmény- és hibamód-alapú rendszertervezés
 ```
 
 A későbbi rendszertervezési feladatok egymással összefüggésben vizsgálják majd az összetevőket:
@@ -220,7 +243,7 @@ CDN → load balancer → API → cache → adatbázis → queue
     → workerek → tárolás → megfigyelhetőség
 ```
 
-Ez a pillér csak fokozatosan válik P1 prioritásúvá. Nem előzheti meg a programozási, adatbázis-, hálózati, operációs rendszerbeli és backend alapok megszilárdítását.
+Az első külső dependency megjelenésétől a hibamodell, timeout, cancellation, korlátozott retry, idempotencia és korreláció P1-es minimum. A cache, broker, replika, shard, konszenzus és saga csak mért probléma vagy konkrét workflow-igény esetén kerül elő; ezek nem előzhetik meg az egyszerűbb egyprocesszes vagy lokális tranzakciós megoldás kipróbálását.
 
 ## Keresztmetszeti sáv: számítástudományi alapok
 
@@ -261,6 +284,14 @@ Ezek nem „haszontalan” témák, és nincsenek végleg kizárva. P3 prioritá
 ### Strukturált, de rugalmas
 
 A tanterv később ajánlott tanulási sorrendet kap, de nem akadályozhatja a munkában aktuálissá váló témák ideiglenes előrevételét. Az így megszerzett tudást később vissza kell kapcsolni a megfelelő fogalmi helyére, előfeltételeire és kapcsolódó témáira.
+
+### Munkaképesség előbb, célmélység spirálisan
+
+Az altémák célmélysége hosszú távú kimenet, nem belépési vagy továbbhaladási kapu. Először azt a legkisebb, önmagában koherens szeletet kell megszerezni, amellyel a tanuló egy valós feladatban biztonságosan tud dolgozni, felismeri a gyakori hibákat, és saját szavaival el tudja magyarázni az alapműködést.
+
+A mélyebb belső részleteket, ritkább nyelvi vagy framework-mechanizmusokat és optimalizálásokat spirálisan kell visszahozni. Mélyítési trigger lehet egy projektigény, visszatérő hiba, teljesítményprobléma, fontos keresztkapcsolat vagy új kontextusban szükséges önálló alkalmazás. Egy előfeltételt nem kell a végső célmélységéig lezárni a következő téma előtt; a ténylegesen hiányzó részt just-in-time kell pótolni.
+
+A gyors munkaképesség nem jelent felületes checklistet: minden első szelethez tartozzon megvalósítás, megfigyelhető futási eredmény, legalább egy releváns hibamód és rövid saját magyarázat. Az L3 mélység csak méréshez, diagnózishoz vagy mérnöki döntéshez kapcsolva indokolt, nem pusztán azért, mert szerepel a hosszú távú tématérképen.
 
 ### Elmélet és megvalósítás együtt
 

@@ -8,13 +8,17 @@ Ez a pillér a modern webalkalmazások biztonságos tervezéséhez szükséges a
 
 A TLS hálózati működése a 4. pillérhez, az ASP.NET Core security middleware bekötése a 2. pillérhez, a secret deployment és production hardening a 7. pillérhez tartozik. Itt a fenyegetés, a bizalom, az identitás és a kontrollok helyes biztonsági modellje áll a középpontban.
 
-## Ajánlott tanulási hullámok
+## Ajánlott tanulási útvonal
 
-1. **Biztonsági alapmodell:** `SEC-PRINCIPLES-THREAT-MODELING` → `SEC-CRYPTOGRAPHY` → `SEC-PASSWORDS-CREDENTIALS` → `SEC-PKI-TLS` → `SEC-SECRETS-KEY-MANAGEMENT`.
-2. **Identitás és hozzáférés:** `SEC-IDENTITY-SESSIONS` → `SEC-AUTHENTICATION` → `SEC-AUTHORIZATION` → `SEC-TOKENS-JWT` → `SEC-OAUTH2` → `SEC-OPENID-CONNECT`.
-3. **Alkalmazásbiztonság és működés:** `SEC-WEB-BROWSER-SECURITY` → `SEC-INPUT-DATA-SECURITY` → `SEC-SUPPLY-CHAIN` → `SEC-AUDIT-INCIDENT-RESPONSE`.
+A security nem a funkciók elkészülte utáni hardening-fázis. Minden üzleti szelet kap egy arányos biztonsági minimumot; a teljes kriptográfiai, identity-protokoll- és incidenskezelési mélység később, a tényleges felelősség és threat model alapján épül hozzá.
 
-Ez függőségi iránytű, nem merev sorrend. Egy integráció előreveheti például az OpenID Connectet, de a kész konfiguráció csak akkor válik átvihető tudássá, ha visszakötjük a threat modelhez, a protokollszereplőkhöz és a bizalmi határokhoz.
+1. **Biztonságos alap minden feature-ben:** a `SEC-PRINCIPLES-THREAT-MODELING` vékony threat-model szelete → `SEC-INPUT-DATA-SECURITY` → `SEC-SECRETS-KEY-MANAGEMENT`, mellettük deny-by-default hozzáférési határ, biztonságos konfiguráció/hibakezelés, dependency-ellenőrzés és titkot nem szivárogtató security logging. Ezek nem várnak külön security projektre.
+2. **Első védett vertikális szelet:** `SEC-IDENTITY-SESSIONS` → `SEC-AUTHENTICATION` → `SEC-AUTHORIZATION`, a `SEC-WEB-BROWSER-SECURITY` releváns cookie/token, CORS és CSRF határaival. Egy valós erőforrás engedélyezett, anonim és tiltott ágát automatizáltan ellenőrizni kell.
+3. **Szabványos identity-integráció:** `SEC-OAUTH2`, `SEC-OPENID-CONNECT` és `SEC-TOKENS-JWT` egymáshoz kapcsolva. Böngészős kliensnél az Authorization Code + PKCE az alap; az implicit flow kerülendő. A szereplőket, tokeneket, redirect/nonce/state/PKCE kontrollokat és az API tokenvalidációját együtt kell érteni.
+4. **Felelősségalapú kriptográfiai mélyítés:** `SEC-CRYPTOGRAPHY`, `SEC-PKI-TLS` és `SEC-PASSWORDS-CREDENTIALS`. Saját password store, kulcskezelés vagy alacsonyabb szintű kriptográfiai döntés csak akkor kap implementációs mélységet, ha a rendszer ténylegesen birtokolja ezt a felelősséget; külső identity provider mellett először a helyes integráció és bizalmi határ a cél.
+5. **Folyamatos védelem:** `SEC-SUPPLY-CHAIN` és `SEC-AUDIT-INCIDENT-RESPONSE` teljes mélysége, rotáció, visszaélésvédelem és incidensgyakorlat production-közeli környezetben.
+
+Ez végrehajtási iránytű, nem merev kurzusterv. Egy kész framework- vagy Keycloak-konfiguráció csak akkor bizonyít tudást, ha a tanuló vissza tudja kötni a threat modelhez, a protokollszereplőkhöz, a bizalmi határokhoz és a negatív tesztekhez.
 
 ## Altémák áttekintése
 
@@ -36,11 +40,33 @@ Ez függőségi iránytű, nem merev sorrend. Egy integráció előreveheti pél
 | `SEC-SUPPLY-CHAIN` | Függőségek és software supply chain | P2 | L2 |
 | `SEC-AUDIT-INCIDENT-RESPONSE` | Biztonsági naplózás, visszaélésvédelem és incidenskezelés | P2 | L2 |
 
+A `SEC-SUPPLY-CHAIN` és `SEC-AUDIT-INCIDENT-RESPONSE` P2 besorolása a teljes működési mélységre vonatkozik. Az ismert sérülékenységek alapellenőrzése, a biztonságos alapkonfiguráció, a releváns események naplózása és az érzékeny adatok naplózási tilalma keresztmetszeti P1 minimumok.
+
+## Első munkaképes szelet és későbbi mélyítés
+
+| Azonosító | Első munkaképes szelet | Későbbi mélyítés vagy trigger |
+|---|---|---|
+| `SEC-PRINCIPLES-THREAT-MODELING` | Asset, actor, trust boundary, támadási felület, legfontosabb fenyegetés és arányos kontroll egy kis feature-höz. | Strukturált threat model, risk scoring és defense-in-depth több komponens, érzékeny adat vagy külső szereplő esetén. |
+| `SEC-CRYPTOGRAPHY` | Hash/MAC/titkosítás/aláírás céljának megkülönböztetése és szabványos könyvtár választása saját crypto helyett. | AEAD, nonce-, random- és kulcséletciklus részletek saját adatvédelmi vagy protokollfelelősségnél. |
+| `SEC-PASSWORDS-CREDENTIALS` | Annak felismerése, hogy jelszóhoz KDF, salt, rate limit, MFA és biztonságos recovery kell; külső IdP esetén a felelősséghatár. | Work factor, credential stuffing és teljes reset/recovery implementáció csak saját credential store esetén. |
+| `SEC-PKI-TLS` | Tanúsítványlánc, hostname validation, trust store és TLS termination bizalmi határa. | Revocation, certificate lifecycle és összetett belső PKI saját tanúsítvány- vagy platformfelelősségnél. |
+| `SEC-SECRETS-KEY-MANAGEMENT` | Secret kontra konfiguráció, repositoryból kizárás, fejlesztői/környezeti injection és kiszivárgás esetén azonnali rotáció. | Vault, hozzáférési policy, kulcshierarchia, automatikus rotáció és audit több környezet vagy magas értékű secret esetén. |
+| `SEC-IDENTITY-SESSIONS` | Subject/account/principal/credential/session elkülönítése, létrehozás–megszüntetés és alapvető timeout/logout modell. | Account linking, provisioning, session fixation és összetett revocation több identity source vagy hosszú session esetén. |
+| `SEC-AUTHENTICATION` | Cookie vagy bearer flow helyes bekötése, challenge, `401`, MFA/IdP felelősséghatár és negatív teszt. | Step-up, phishing-resistant faktor, lockout és saját credential flow magasabb kockázatú műveletnél. |
+| `SEC-AUTHORIZATION` | Deny by default, least privilege, ownership/policy ellenőrzés és `401`/`403`/IDOR teszt egy valódi erőforráson. | ABAC, resource-based és tenant-határ több szereplő, delegáció vagy összetett jogosultsági modell esetén. |
+| `SEC-TOKENS-JWT` | Access kontra ID token, issuer/audience/expiry/signature validáció, claim és token leakage alapmodellje. | Rotation, revocation, sender constraint és opaque/JWT trade-off több resource server vagy magas replay-kockázat esetén. |
+| `SEC-OAUTH2` | Szereplők, scope, Authorization Code + PKCE, client credentials, redirect URI és access/refresh token útja. | State/nonce/PKCE, sender constraint és összetett klienshitelesítés több provider vagy magas fenyegetettség esetén. |
+| `SEC-OPENID-CONNECT` | Discovery, login, ID/access token különbsége, nonce, claim mapping és Angular/API integráció külső IdP-vel. | UserInfo, logout, account linking és több provider közötti claim/identity probléma federált rendszerben. |
+| `SEC-WEB-BROWSER-SECURITY` | Origin/SOP, CORS nem-auth szerepe, cookie flag/SameSite, CSRF, XSS/output encoding és token-tárolási döntés. | CSP, BFF, clickjacking és összetett böngészős session/token trade-off valós Angular-integrációnál. |
+| `SEC-INPUT-DATA-SECURITY` | Untrusted input, allowlist, paraméterezett SQL, biztonságos output/error és mass-assignment/adatminimalizálási alapok. | SSRF, path traversal, file upload és unsafe deserialization kontrollált reprodukciója az adott bemeneti határ megjelenésekor. |
+| `SEC-SUPPLY-CHAIN` | Direct/transitive dependency áttekintése, advisory ellenőrzés, rögzített verzió és biztonságos update-döntés. | SBOM, provenance, aláírás és build integrity szabályozott vagy többcsapatos release-folyamatnál. |
+| `SEC-AUDIT-INCIDENT-RESPONSE` | Security esemény, correlation, érzékeny adat naplózási tilalma, alapvető alert és rövid containment-lépések. | Abuse detection, triage, recovery és post-incident gyakorlat production-közeli esemény vagy megfelelési igény esetén. |
+
 ## Altémák részletei
 
 ### `SEC-PRINCIPLES-THREAT-MODELING` — Biztonsági alapelvek és threat modeling
 
-- **Tartalom:** confidentiality, integrity, availability, least privilege, defense in depth, secure by default, fail securely, trust boundary, asset, actor, attack surface, threat és risk.
+- **Tartalom:** confidentiality, integrity, availability, least privilege, defense in depth, secure by default, fail securely, biztonsági konfiguráció és exceptional condition, trust boundary, asset, actor, attack surface, threat és risk.
 - **Előfeltételek:** alapvető webes és rendszerismeretek.
 - **Kapcsolatok:** minden további security-altéma, architekturális döntések az 5. pillérben.
 - **Célbizonyíték:** konkrét rendszer egyszerű threat modelje, eszközök és bizalmi határok azonosítása, fenyegetések priorizálása és arányos kontrollok indoklása.
@@ -62,14 +88,14 @@ Ez függőségi iránytű, nem merev sorrend. Egy integráció előreveheti pél
 ### `SEC-PKI-TLS` — PKI, tanúsítványok és TLS-bizalom
 
 - **Tartalom:** certificate authority, tanúsítványlánc, public/private key, hostname és identity validation, trust store, revocation, certificate lifecycle és TLS termination bizalmi következményei.
-- **Előfeltételek:** `SEC-CRYPTOGRAPHY`; TLS-mechanika a 4. pillérben.
+- **Előfeltételek:** a hash, aláírás és public/private key vékony alapmodellje; TLS-mechanika a 4. pillérben. A teljes `SEC-CRYPTOGRAPHY` mélység nem előfeltétele az első trust-chain diagnózisnak.
 - **Kapcsolatok:** `SEC-SECRETS-KEY-MANAGEMENT`, HTTPS-integráció a 2. pillérben.
 - **Célbizonyíték:** tanúsítványlánc és bizalmi hiba elemzése, megfelelő validáció fenntartása és a TLS termination utáni belső bizalmi határ indoklása.
 
 ### `SEC-SECRETS-KEY-MANAGEMENT` — Secret- és kulcskezelés
 
 - **Tartalom:** secret kontra konfiguráció, környezeti és fejlesztői secret store, vault, hozzáférés, rotáció, lejárat, audit, kulcshierarchia és titkok kiszivárgásának kezelése.
-- **Előfeltételek:** `SEC-CRYPTOGRAPHY`.
+- **Előfeltételek:** konfigurációs és hozzáférési határok; kriptográfiai mélység a kulcshierarchia és saját titkosítás esetén szükséges.
 - **Kapcsolatok:** konfiguráció a 2. pillérben, deployment és platform secret management a 7. pillérben.
 - **Célbizonyíték:** titkot nem tartalmazó repository és környezetenkénti secret injection megvalósítása, rotációs folyamat és kiszivárgás utáni intézkedések magyarázata.
 
@@ -83,7 +109,7 @@ Ez függőségi iránytű, nem merev sorrend. Egy integráció előreveheti pél
 ### `SEC-AUTHENTICATION` — Authentication mechanizmusok
 
 - **Tartalom:** knowledge/possession/inherence faktorok, cookie- és bearer-alapú authentication, MFA, phishing resistance, challenge, lockout, step-up authentication és külső identity provider.
-- **Előfeltételek:** `SEC-PASSWORDS-CREDENTIALS`, `SEC-IDENTITY-SESSIONS`.
+- **Előfeltételek:** `SEC-IDENTITY-SESSIONS`; a `SEC-PASSWORDS-CREDENTIALS` csak saját jelszóalapú identity store esetén közvetlen előfeltétel.
 - **Kapcsolatok:** `SEC-TOKENS-JWT`, `SEC-OPENID-CONNECT`, webes security middleware a 2. pillérben.
 - **Célbizonyíték:** alkalmazási kockázathoz illeszkedő authentication flow megvalósítása, `401` okának diagnózisa és authentication/authorization világos megkülönböztetése.
 
@@ -103,7 +129,7 @@ Ez függőségi iránytű, nem merev sorrend. Egy integráció előreveheti pél
 
 ### `SEC-OAUTH2` — OAuth 2.0 delegált authorization
 
-- **Tartalom:** resource owner, client, authorization server és resource server szerepek, scope, consent, authorization code + PKCE, client credentials, refresh token, redirect URI és state.
+- **Tartalom:** resource owner, client, authorization server és resource server szerepek, scope, consent, Authorization Code + PKCE, client credentials, refresh token, pontos redirect URI, state és az implicit flow kerülése az OAuth 2.0 Security BCP szerint.
 - **Előfeltételek:** `SEC-AUTHENTICATION`, `SEC-AUTHORIZATION`, `SEC-TOKENS-JWT` alapjai.
 - **Kapcsolatok:** `SEC-OPENID-CONNECT`, külső API-k és service-to-service kommunikáció a 8. pillérben.
 - **Célbizonyíték:** megfelelő flow kiválasztása és konfigurálása kliens- és API-típus alapján, szereplők és tokenek útjának magyarázata, valamint redirect/scope/client hibák diagnózisa.

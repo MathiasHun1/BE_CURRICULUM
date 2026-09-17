@@ -8,13 +8,14 @@ Ez a pillér a több processen, gépen vagy szolgáltatáson át működő rends
 
 A mikroszolgáltatás nem alapértelmezett cél. A pillér a szükséges mechanizmusokat és trade-offokat tanítja; a komponenshatárok az 5., az infrastruktúra a 7., az adatbázis belső működése pedig a 3. pillérben található.
 
-## Ajánlott tanulási hullámok
+## Ajánlott tanulási útvonal
 
-1. **Elosztott alapmodell:** `DIST-FAILURE-MODELS` → `DIST-COMMUNICATION-CONTRACTS` → `DIST-TIME-ORDERING-IDENTITY` → `DIST-CONSISTENCY-CAP` → `DIST-REPLICATION` → `DIST-PARTITIONING` → `DIST-CONSENSUS-COORDINATION`.
-2. **Skálázás és adatút:** `DIST-CACHING-CDN` → `DIST-LOAD-BALANCING-SCALING` → `DIST-MESSAGING-STREAMING`.
-3. **Megbízható workflow és tervezés:** `DIST-DELIVERY-IDEMPOTENCY` → `DIST-RESILIENCE-CONTROL` → `DIST-TRANSACTIONS-SAGAS` → `DIST-OBSERVABILITY` → `DIST-SYSTEM-DESIGN`.
+1. **Első külső dependency biztonságos használata:** `DIST-FAILURE-MODELS` → `DIST-COMMUNICATION-CONTRACTS` → `DIST-RESILIENCE-CONTROL` → `DIST-OBSERVABILITY`. Legyen végigvezetett deadline/cancellation, explicit timeout, csak biztonságos esetben korlátozott retry és korrelált telemetry.
+2. **Megismételhető művelet és megbízható kézbesítés:** `DIST-DELIVERY-IDEMPOTENCY` → `DIST-MESSAGING-STREAMING`; `DIST-TRANSACTIONS-SAGAS` csak több konzisztenciahatárt átlépő workflow-nál. Először a duplikációt, replayt és crashpontokat kell bizonyítani, nem az „exactly once” címkét.
+3. **Mérésből indokolt skálázás és adatút:** `DIST-CACHING-CDN` → `DIST-LOAD-BALANCING-SCALING` → `DIST-REPLICATION` → `DIST-PARTITIONING`. Cache, replika vagy shard csak megnevezett latency-, kapacitás- vagy rendelkezésreállási probléma után kerüljön be.
+4. **Mély elosztott modell és rendszertervezés:** `DIST-TIME-ORDERING-IDENTITY` → `DIST-CONSISTENCY-CAP` → `DIST-CONSENSUS-COORDINATION` → `DIST-SYSTEM-DESIGN`. Ezeket valós ordering-, failover-, koordinációs vagy tervezési döntéshez kötve kell mélyíteni.
 
-Ez függőségi iránytű, nem merev sorrend. Konkrét queue-, cache- vagy skálázási igény előrevehet egy témát, de a megoldást mindig vissza kell kötni a részleges hibákhoz, a konzisztenciához és az üzemeltetési költséghez.
+Ez függőségi iránytű, nem merev sorrend. Már egy adatbázis- vagy HTTP-hívás is létrehoz elosztott hibahatárt, de nem indokol automatikusan mikroszolgáltatást, brokert, cache-t vagy shardolást. Minden új mechanizmust konkrét hibamódhoz vagy mért korláthoz, majd működési költségéhez kell kötni.
 
 ## Altémák áttekintése
 
@@ -25,7 +26,7 @@ Ez függőségi iránytű, nem merev sorrend. Konkrét queue-, cache- vagy skál
 | `DIST-TIME-ORDERING-IDENTITY` | Idő, sorrend és elosztott azonosítók | P1 | L2 |
 | `DIST-CONSISTENCY-CAP` | Konzisztencia, availability és CAP | P1 | L3 |
 | `DIST-REPLICATION` | Replikáció és failover | P1 | L2 |
-| `DIST-PARTITIONING` | Particionálás és sharding | P1 | L2 |
+| `DIST-PARTITIONING` | Particionálás és sharding | P2 | L2 |
 | `DIST-CONSENSUS-COORDINATION` | Konszenzus és koordináció | P2 | L2 |
 | `DIST-CACHING-CDN` | Cache-ek és CDN-ek | P1 | L3 |
 | `DIST-LOAD-BALANCING-SCALING` | Terheléselosztás és horizontális skálázás | P1 | L2 |
@@ -35,6 +36,26 @@ Ez függőségi iránytű, nem merev sorrend. Konkrét queue-, cache- vagy skál
 | `DIST-TRANSACTIONS-SAGAS` | Elosztott tranzakciók, outbox és saga | P1 | L3 |
 | `DIST-OBSERVABILITY` | Elosztott observability és hibakeresés | P1 | L2 |
 | `DIST-SYSTEM-DESIGN` | Rendszertervezés, kapacitás és trade-offok | P1 | L3 |
+
+## Első munkaképes szelet és későbbi mélyítés
+
+| Altéma | Első munkaképes szelet | Későbbi mélyítés trigger alapján |
+|---|---|---|
+| `DIST-FAILURE-MODELS` | Lassú, hibás és bizonytalan kimenetelű dependency megkülönböztetése | Fault domain, failure detector és összetett részleges hibák |
+| `DIST-COMMUNICATION-CONTRACTS` | Egy verziózható sync vagy async contract tudatos választása | Gateway, discovery, schema-evolúció és coupling-elemzés |
+| `DIST-TIME-ORDERING-IDENTITY` | Timestamp, sorrend és egyedi azonosító korlátainak felismerése | Logical clock, happens-before és több writeres ordering |
+| `DIST-CONSISTENCY-CAP` | Use case konzisztenciaigénye és stale adat elfogadhatósága | Linearizability, partition alatti trade-off és session guarantee-ek |
+| `DIST-REPLICATION` | Replica lag, read routing és failover alapkövetkezményei | Quorum, több leader és adatvesztési ablak elemzése |
+| `DIST-PARTITIONING` | Annak felismerése, mikor nem indokolt shardolni | Shard key, hot partition, rebalancing és cross-shard művelet |
+| `DIST-CONSENSUS-COORDINATION` | Kész koordinációs szolgáltatás helyes használati határa | Leader election, lease, fencing és Raft-szerű modell |
+| `DIST-CACHING-CDN` | Mért lassulásra cache-aside, TTL és invalidációs teszt | Stampede, eviction, write policy, CDN és poisoning-határok |
+| `DIST-LOAD-BALANCING-SCALING` | Két stateless replika, health routing és connection draining | Autoscaling signal, sticky state és bottleneck-áthelyeződés |
+| `DIST-MESSAGING-STREAMING` | Egy queue-s workflow, ack, redelivery és DLQ | Partition ordering, consumer group, retention és stream trade-offok |
+| `DIST-DELIVERY-IDEMPOTENCY` | Duplikált HTTP- vagy üzenetművelet biztonságos ismétlése | Inbox, deduplication window, replay és kézbesítési garanciák |
+| `DIST-RESILIENCE-CONTROL` | Deadline, cancellation, explicit timeout és korlátozott retry | Circuit breaker, bulkhead, jitter, load shedding és backpressure |
+| `DIST-TRANSACTIONS-SAGAS` | Dual write probléma felismerése és local transaction előnyben részesítése | Outbox/inbox, compensation, orchestration és choreography |
+| `DIST-OBSERVABILITY` | Trace context és correlation végigvitele egy dependency híváson | Async hop, sampling, baggage és több service-es gyökérokelemzés |
+| `DIST-SYSTEM-DESIGN` | Követelmény, egyszerű adatút, kapacitásbecslés és fő hibamód | Alternatív topológiák, költség, fault domain és evolúciós út |
 
 ## Altémák részletei
 
@@ -90,7 +111,7 @@ Ez függőségi iránytű, nem merev sorrend. Konkrét queue-, cache- vagy skál
 ### `DIST-CACHING-CDN` — Cache-ek és CDN-ek
 
 - **Tartalom:** local/distributed cache, CDN, cache key, TTL, invalidation, cache-aside, read/write-through, write-behind, stale-while-revalidate, eviction, stampede és cache poisoning határa.
-- **Előfeltételek:** HTTP cache-szemantika a 2. pillérben, `DIST-CONSISTENCY-CAP`.
+- **Előfeltételek:** HTTP cache-szemantika a 2. pillérben és a stale adat/invalidation alapmodellje; a teljes CAP-mélység nem belépési feltétel.
 - **Kapcsolatok:** teljesítmény és skálázás, security a 6. pillérben.
 - **Célbizonyíték:** mérés alapján indokolt cache bevezetése, konzisztencia- és invalidációs stratégia tesztelése, valamint stale data vagy stampede diagnózisa.
 
@@ -104,20 +125,20 @@ Ez függőségi iránytű, nem merev sorrend. Konkrét queue-, cache- vagy skál
 ### `DIST-MESSAGING-STREAMING` — Üzenetsorok, pub/sub és streamek
 
 - **Tartalom:** queue, topic, pub/sub, log/stream, producer, consumer, consumer group, partition, offset, ordering, retention, dead-letter queue és broker szerepe.
-- **Előfeltételek:** `DIST-COMMUNICATION-CONTRACTS`, `DIST-PARTITIONING` alapjai.
+- **Előfeltételek:** `DIST-COMMUNICATION-CONTRACTS`; a partition és ordering mélysége csak broker- vagy workloadigény esetén szükséges.
 - **Kapcsolatok:** background processing a 2. pillérben, `DIST-DELIVERY-IDEMPOTENCY`, event-driven architektúra.
 - **Célbizonyíték:** queue- vagy streamalapú workflow megvalósítása, ordering/lag/DLQ viselkedés ellenőrzése és broker választási trade-off magyarázata.
 
 ### `DIST-DELIVERY-IDEMPOTENCY` — Kézbesítési szemantika és idempotencia
 
 - **Tartalom:** at-most-once, at-least-once és effektív exactly-once viselkedés, duplicate, acknowledgement, redelivery, idempotency key, deduplication, inbox és replay.
-- **Előfeltételek:** `DIST-MESSAGING-STREAMING`, tranzakciók a 3. pillérben.
+- **Előfeltételek:** `DIST-FAILURE-MODELS` és tranzakciós alapok a 3. pillérben; a messaging csak az üzenetkézbesítési ág előfeltétele.
 - **Kapcsolatok:** HTTP-idempotencia a 2. pillérben, `DIST-TRANSACTIONS-SAGAS`.
 - **Célbizonyíték:** duplikált kézbesítést túlélő consumer vagy API-művelet, crashpontok tesztelése és a választott kézbesítési garancia pontos magyarázata.
 
 ### `DIST-RESILIENCE-CONTROL` — Timeout, retry, circuit breaker és backpressure
 
-- **Tartalom:** timeout budget, retry feltétel, exponential backoff és jitter, retry storm, circuit breaker, bulkhead, load shedding, rate limit, backpressure és fallback.
+- **Tartalom:** deadline, cancellation propagation, timeout budget, retry feltétel, exponential backoff és jitter, retry storm, circuit breaker, bulkhead, load shedding, rate limit, backpressure és fallback.
 - **Előfeltételek:** `DIST-FAILURE-MODELS`, `DIST-COMMUNICATION-CONTRACTS`.
 - **Kapcsolatok:** async/cancellation a 2. pillérben, reliability a 7. pillérben.
 - **Célbizonyíték:** lassú vagy hibás függőség kontrollált szimulációja, deadline-t tiszteletben tartó resilience policy, valamint retry amplification vagy resource exhaustion diagnózisa.
@@ -132,14 +153,14 @@ Ez függőségi iránytű, nem merev sorrend. Konkrét queue-, cache- vagy skál
 ### `DIST-OBSERVABILITY` — Elosztott observability és hibakeresés
 
 - **Tartalom:** correlation és trace context propagáció, span relationship, service/dependency map, baggage korlátai, metrics/log/trace összekapcsolása, sampling és magas cardinality.
-- **Előfeltételek:** logging, metrics és tracing a 7. pillérben.
+- **Előfeltételek:** strukturált log és trace context alapjai a 7. pillérben; a teljes metrics/tracing mélység nem belépési feltétel.
 - **Kapcsolatok:** `DIST-FAILURE-MODELS`, `DIST-RESILIENCE-CONTROL`.
 - **Célbizonyíték:** több szolgáltatáson vagy aszinkron hopon átmenő művelet követése, részleges hiba gyökérokának telemetry-alapú azonosítása és hiányzó context propagation javítása.
 
 ### `DIST-SYSTEM-DESIGN` — Rendszertervezés, kapacitás és trade-offok
 
 - **Tartalom:** funkcionális és minőségi követelmény, workload és nagyságrendi becslés, adatút, API, storage, cache, queue, bottleneck, fault domain, költség, evolúciós út és döntési bizonytalanság.
-- **Előfeltételek:** a pillér alapmechanizmusai, architekturális döntések az 5. pillérben és production engineering a 7. pillérben.
+- **Előfeltételek:** könnyű tervezési gyakorlathoz követelmény-, adatút- és hibamód-alapok; a nagy léptékű tervhez a ténylegesen használt mechanizmusok, az 5. pillér döntési és a 7. pillér production alapjai.
 - **Kapcsolatok:** minden elosztott altéma.
 - **Célbizonyíték:** konkrét követelményekből kapacitási becsléssel és hibamódokkal alátámasztott rendszerterv, alternatívák összevetése, kritikus trade-offok és fokozatos evolúciós út világos kommunikációja.
 
