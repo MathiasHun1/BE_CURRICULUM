@@ -5,3 +5,6 @@
 .vscode/
 *.user
 *.suo
+[Bb]in/
+[Oo]bj/
+TestResults/

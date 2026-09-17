@@ -6,6 +6,8 @@ Ez a repository egy hosszú távú, modern .NET backend fókuszú szoftvermérn�
 
 Kommunikálj magyarul. A technikai azonosítók, API-nevek és bevett angol szakkifejezések maradhatnak angolul, amikor így pontosabbak.
 
+Ebben a repositoryban ne használd a globális `dotnet-backend-mentor` skillt. A mentorálási működés, a beolvasási sorrend és az állapotkarbantartás kizárólagos repositoryszintű forrása ez az `AGENTS.md`; a skill ismételt beolvasása szükségtelen és kerülendő.
+
 A felhasználó legfrissebb kérése mindig elsőbbséget élvez. Ha egy bizonytalan feltételezés, fájlmozgatás, forrás-of-truth változtatás vagy más döntés érdemben befolyásolná az eredményt, állj meg, ismertesd röviden a döntési pontot, és kérdezd meg a felhasználót.
 
 ## Beolvasási sorrend

@@ -5,7 +5,7 @@ Utolsó frissítés: 2026-09-17
 ## Aktuális fókusz
 
 - **Tanulási szelet:** Backend Foundations — a .NET build- és futási modell, process, port és HTTP request lifecycle összekapcsolása egy minimális ASP.NET Core alkalmazásban.
-- **Aktív projekt:** Backend Foundations — `C:\Users\Lenovo T14\repos\sajat\BackendFoundations`.
+- **Aktív projekt:** [Backend Foundations](projects/backend-foundations/) ebben a repositoryban.
 - **Elsődleges pillér:** P1 — Web- és backendfejlesztés.
 - **Kapcsolódó pillérek:** P1 — Programozás és .NET; P1 — Számítógépes rendszerek.
 - **Curriculum-helyzet:** mind a nyolc pillér egyenként 15 stabil altémára bontva; a teljes változó állapot a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md), a definíciók a [`curriculum/`](curriculum/README.md) pillértérképeiben találhatók.
@@ -46,7 +46,7 @@ Az L0 itt azt jelenti, hogy az új tanulási útvonalon még nincs ellenőrzött
 - A MovieExplorer 2026-09-14-től szüneteltetett tanulóprojekt; nem töröljük, és korábbi eredményei továbbra is tanulási bizonyítékok.
 - Az új tanulási útvonal koherens backend-alapozással indul, nem a MovieExplorer következő funkciójával.
 - Az első projekt egy minimális Backend Foundations labor lesz, amely a forráskódtól a HTTP-válaszig teszi láthatóvá a végrehajtási láncot.
-- A projekt neve `BackendFoundations`, repository-helye `C:\Users\Lenovo T14\repos\sajat\BackendFoundations`, target frameworkje `net10.0`.
+- A projekt neve `BackendFoundations`, repository-helye [`projects/backend-foundations/`](projects/backend-foundations/), target frameworkje `net10.0`.
 - Az első szeletben még nem használunk adatbázist, EF Core-t, autentikációt, Dockert vagy indokolatlan architekturális rétegeket.
 - Alapértelmezetten a tanuló írja és futtatja a kódot; az agent kis lépésekben mentorál és tényleges bizonyíték alapján értékel.
 - A `RouteHandlerOptions.ThrowOnBadRequest` értéke explicit `false`, hogy a Minimal API bindinghibái környezettől függetlenül automatikus `400` választ adjanak, és ne váljanak a saját exception middleware-ben `500` hibává.

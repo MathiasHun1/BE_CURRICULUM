@@ -50,7 +50,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 ### Bizonyítékforrások
 
 - [Aktív globális állapot](LEARNING_STATE.md)
-- [Backend Foundations projektállapot](../sajat/BackendFoundations/MENTORING_STATE.md)
+- [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 
 ## 2. pillér — Web- és backendfejlesztés
@@ -76,7 +76,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 ### Bizonyítékforrások
 
 - [Aktív globális állapot](LEARNING_STATE.md)
-- [Backend Foundations projektállapot](../sajat/BackendFoundations/MENTORING_STATE.md)
+- [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 
 ## 3. pillér — Adatok és adatbázisok
@@ -127,7 +127,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 ### Bizonyítékforrások
 
 - [Aktív globális állapot](LEARNING_STATE.md)
-- [Backend Foundations projektállapot](../sajat/BackendFoundations/MENTORING_STATE.md)
+- [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 
 ## 5. pillér — Szoftverfejlesztés és architektúra
@@ -152,7 +152,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 
 ### Bizonyítékforrások
 
-- [Backend Foundations projektállapot](../sajat/BackendFoundations/MENTORING_STATE.md)
+- [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 - A két projekt tényleges forráskódja, build- és futási eredményei.
 
@@ -178,7 +178,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 
 ### Bizonyítékforrások
 
-- [Backend Foundations projektállapot](../sajat/BackendFoundations/MENTORING_STATE.md)
+- [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 - A tényleges konfiguráció és forráskód, titkok értékének rögzítése nélkül.
 
@@ -204,7 +204,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 
 ### Bizonyítékforrások
 
-- [Backend Foundations projektállapot](../sajat/BackendFoundations/MENTORING_STATE.md)
+- [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 - A MovieExplorer `compose.yaml`, valamint a projektek tényleges konfigurációja, kódja és futási eredményei.
 
@@ -230,7 +230,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 
 ### Bizonyítékforrások
 
-- [Backend Foundations projektállapot](../sajat/BackendFoundations/MENTORING_STATE.md)
+- [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 - A jelenlegi projektek egyprocesses, illetve egyszerű kliens–adatbázis topológiája; a hiányzó elosztott mechanizmusokat nem tekintjük bizonyítéknak.
 

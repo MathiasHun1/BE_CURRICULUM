@@ -8,8 +8,8 @@ Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekk
 
 ### Backend Foundations
 
-- **Repository:** `C:\Users\Lenovo T14\repos\sajat\BackendFoundations`.
-- **Projektspecifikus állapot:** `C:\Users\Lenovo T14\repos\sajat\BackendFoundations\MENTORING_STATE.md`.
+- **Repository:** [`projects/backend-foundations/`](backend-foundations/).
+- **Projektspecifikus állapot:** [`projects/backend-foundations/MENTORING_STATE.md`](backend-foundations/MENTORING_STATE.md).
 - **Szerep a tantervben:** a .NET build- és futási modell, process, Kestrel, port, HTTP request lifecycle, middleware és endpointok összekapcsolása egy minimális ASP.NET Core alkalmazásban.
 - **Elsődlegesen kapcsolódó témák:** `WEB-HTTP-SEMANTICS`, `WEB-REQUEST-LIFECYCLE`, `WEB-ROUTING-ENDPOINTS`, `WEB-BINDING-VALIDATION`, `WEB-MIDDLEWARE-PIPELINE`, `WEB-RESPONSES-SERIALIZATION`, `WEB-ERROR-HANDLING`; keresztkapcsolatok: `DOTNET-BUILD-RUNTIME`, `DOTNET-DELEGATES-EVENTS`, `DOTNET-EXCEPTIONS-RESOURCES`, `DOTNET-ASYNC-TASKS`, `SYSTEMS-PROCESS-PORT`.
 - **Mérnöki keresztkapcsolatok:** `SE-REQUIREMENTS-USE-CASES`, `SE-DEBUGGING-DIAGNOSTICS`, `SE-TESTING-FUNDAMENTALS`; security-határok: `SEC-INPUT-DATA-SECURITY`, `SEC-AUDIT-INCIDENT-RESPONSE`.
