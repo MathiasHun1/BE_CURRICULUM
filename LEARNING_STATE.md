@@ -8,7 +8,7 @@ Utolsó frissítés: 2026-09-17
 - **Aktív projekt:** Backend Foundations — `C:\Users\Lenovo T14\repos\sajat\BackendFoundations`.
 - **Elsődleges pillér:** P1 — Web- és backendfejlesztés.
 - **Kapcsolódó pillérek:** P1 — Programozás és .NET; P1 — Számítógépes rendszerek.
-- **Curriculum-helyzet:** a 2. pillér 15 stabil altémára bontva; a teljes változó állapot a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md), a stabil definíciók a [2. pillér altématérképében](curriculum/02-web-backend.md) találhatók.
+- **Curriculum-helyzet:** mind a nyolc pillér egyenként 15 stabil altémára bontva; a teljes változó állapot a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md), a definíciók a [`curriculum/`](curriculum/README.md) pillértérképeiben találhatók.
 - **Kapcsolódó tanulási anyag:** [HTTP request lifecycle és ASP.NET Core pipeline](learning-materials/web-backend/http-request-lifecycle.md).
 - **Aktuális projektmérföldkő:** `M6 — Önálló integráció és transzfer` (`Active`); `M1`–`M5` bizonyíték alapján `Complete`, az exit gate még `Planned`. A részletes terv a projekt `MENTORING_STATE.md` fájljában található.
 - **Aktuális fázis:** az eddig tanult route/query binding, validáció és HTTP-válaszadás önálló összekapcsolása egy új Minimal API végpontban.

@@ -57,6 +57,8 @@ Nem minden témának kell elérnie az L3 szintet. Az olyan alapvető területekn
 
 **Cél:** erős C#-tudás kialakítása, miközben a nyelv mögötti .NET futtatókörnyezet és absztrakciók működése is érthetővé válik.
 
+**Részletes altématérkép:** [1. pillér — Programozás és .NET](curriculum/01-programming-dotnet.md).
+
 Későbbi témakörök iránya:
 
 ```text
@@ -88,6 +90,8 @@ A böngésző, az Angular kliens, a hálózat és a backend kapcsolata végig l�
 
 **Cél:** az adatbázisok megértése az ORM-ektől függetlenül, majd annak feltárása, hogyan képezi le az EF Core ezeket az alapokat és milyen kompromisszumokat vezet be.
 
+**Részletes altématérkép:** [3. pillér — Adatok és adatbázisok](curriculum/03-data-databases.md).
+
 Későbbi témakörök iránya:
 
 ```text
@@ -115,6 +119,8 @@ EF Core → adatbázis-alapok
 
 **Cél:** az alkalmazás-keretrendszerek alatti számítástechnikai infrastruktúra megértése, hogy világos legyen, hogyan hajtja végre a gép a .NET-, webszerver- és elosztott alkalmazásokat.
 
+**Részletes altématérkép:** [4. pillér — Számítógépes rendszerek](curriculum/04-computer-systems.md).
+
 #### Számítógép-architektúra
 
 CPU, utasítások, regiszterek, gyorsítótárak, RAM és virtuális memória; kapcsolatuk a programok futásával és teljesítményével.
@@ -135,6 +141,8 @@ TCP/IP, portok, socketek, DNS, TLS, HTTP és proxyk; kapcsolatuk a böngészőkk
 
 **Cél:** továbblépés a funkciók implementálásától a karbantartható rendszerek tudatos tervezése felé.
 
+**Részletes altématérkép:** [5. pillér — Szoftverfejlesztés és architektúra](curriculum/05-software-engineering-architecture.md).
+
 Későbbi témakörök iránya:
 
 ```text
@@ -152,6 +160,8 @@ Az architektúrát elsősorban döntések és kompromisszumok elemzésével kell
 
 **Cél:** elegendő biztonsági tudás kialakítása modern webalkalmazások biztonságos tervezéséhez és megvalósításához.
 
+**Részletes altématérkép:** [6. pillér — Biztonság és identitáskezelés](curriculum/06-security-identity.md).
+
 Későbbi témakörök iránya:
 
 ```text
@@ -166,6 +176,8 @@ A fogalmakat később gyakorlati Angular + ASP.NET Core rendszerekhez kell kapcs
 ### 7. Infrastruktúra és production engineering — P2
 
 **Cél:** annak megértése, mi történik az alkalmazáskóddal azután, hogy elhagyja a fejlesztői gépet, és hogyan lehet egy futó rendszert megbízhatóan megfigyelni és hibakeresni.
+
+**Részletes altématérkép:** [7. pillér — Infrastruktúra és production engineering](curriculum/07-infrastructure-production.md).
 
 Későbbi témakörök iránya:
 
@@ -189,6 +201,8 @@ kód → build → artifact / konténer → telepítés → hálózat
 ### 8. Elosztott rendszerek és rendszertervezés — kezdetben P2, később P1
 
 **Cél:** architekturális és rendszertervezési képességek kialakítása, miután az alacsonyabb szintű alapok már elég stabilak.
+
+**Részletes altématérkép:** [8. pillér — Elosztott rendszerek és rendszertervezés](curriculum/08-distributed-systems-design.md).
 
 Későbbi témakörök iránya:
 
@@ -268,7 +282,7 @@ Elsőbbséget élveznek azok a fogalmak, amelyek nyelveken és keretrendszereken
 
 ## Haladás követése
 
-A pillérek altémái fokozatosan, az aktuális tanulási irány szerint készülnek el. A 2. pillér első részletes bontása elkészült; a többi pillér addig magas szintű térképen marad. Az altémák az alábbi egyszerű metaadatokat kapják:
+A pillérek altémái fokozatosan, az aktuális tanulási irány és a bizonyítékok szerint készülnek el. Mind a nyolc pillér első részletes, egyenként 15 altémás bontása elkészült. Az altémák az alábbi egyszerű metaadatokat kapják:
 
 - **Prioritás:** P1 / P2 / P3
 - **Célmélység:** L1 / L2 / L3
@@ -284,9 +298,9 @@ A stabil altémadefiníciók a `curriculum/` könyvtárba, a teljes változó ha
 
 ## Következő iterációk
 
-Ugyanezt a dokumentumot fokozatosan fogjuk továbbépíteni. A későbbi iterációk:
+Az első teljes pillértérkép elkészült. A későbbi iterációk:
 
-1. a még ki nem bontott pilléreket aktiválásukkor körülbelül 10–15 nagyobb altémára bontják;
+1. az aktivált altémák határait és célbizonyítékait valós tapasztalat alapján finomítják;
 2. azonosítják a témák közötti függőségeket;
 3. hozzárendelik a célként kitűzött tudásmélységet;
 4. rögzítik az előfeltételeket;
@@ -297,4 +311,4 @@ Ugyanezt a dokumentumot fokozatosan fogjuk továbbépíteni. A későbbi iterác
 9. válogatott, magas minőségű tanulási forrásokat rendelnek a témákhoz;
 10. követhető roadmapet hoznak létre anélkül, hogy a dokumentum kezelhetetlen ellenőrzőlistává válna.
 
-Ez az első változat szándékosan csak a tanterv architektúráját rögzíti. Nem tartalmaz heti beosztást, teljesítési határidőket, önkényesen választott kurzusokat vagy több száz részletes leckét.
+Ez a curriculum szándékosan stabil tudástérképet rögzít, nem heti beosztást vagy több száz részletes leckét. A konkrét sorrendet és feladatokat az aktuális projekt, a bizonyítékok és az egyetlen következő tanulási lépés határozza meg.

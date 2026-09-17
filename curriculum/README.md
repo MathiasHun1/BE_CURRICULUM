@@ -4,7 +4,7 @@ Ez a könyvtár a nyolc pillér fokozatos kibontására szolgál.
 
 A `software-engineering-curriculum.md` marad a magas szintű térkép és az elsődleges belépési pont. Külön pillérfájl csak akkor jöjjön létre, amikor az adott terület részletes bontása valóban aktuálissá válik. Nem hozunk létre előre több száz üres témakártyát.
 
-Egy későbbi témabejegyzés várható minimális mezői:
+Egy témabejegyzés minimális mezői:
 
 - stabil témaazonosító;
 - prioritás;
@@ -18,8 +18,15 @@ A változó jelenlegi tudásszintet és státuszt nem kell minden részletes cur
 
 ## Kibontott pillérek
 
+- [1. Programozás és .NET](01-programming-dotnet.md) — 15 stabil altéma, a C# nyelvi alapoktól a CLR-en és memórián át az async/concurrency és DI témákig.
 - [2. Web- és backendfejlesztés](02-web-backend.md) — 15 stabil altéma, ajánlott tanulási hullámok, előfeltételek és célbizonyítékok.
+- [3. Adatok és adatbázisok](03-data-databases.md) — 15 stabil altéma a relációs modelltől az SQL-en, indexeken és tranzakciókon át az EF Core-ig és a sémamigrációkig.
+- [4. Számítógépes rendszerek](04-computer-systems.md) — 15 stabil altéma a CPU-, memória- és operációsrendszer-alapoktól az I/O-n és konkurencián át a hálózati útvonalig.
+- [5. Szoftverfejlesztés és architektúra](05-software-engineering-architecture.md) — 15 stabil altéma a követelményektől, kódminőségtől és teszteléstől a moduláris és architekturális döntésekig.
+- [6. Biztonság és identitáskezelés](06-security-identity.md) — 15 stabil altéma a threat modelingtől és kriptográfiai alapoktól az identitásprotokollokon át az alkalmazásbiztonságig.
+- [7. Infrastruktúra és production engineering](07-infrastructure-production.md) — 15 stabil altéma a Linux- és konténeralapoktól a CI/CD-n és observabilityn át a megbízható production működésig.
+- [8. Elosztott rendszerek és rendszertervezés](08-distributed-systems-design.md) — 15 stabil altéma a részleges hibáktól és konzisztenciától a messaging-, resilience- és rendszertervezési döntésekig.
 
-## Inkrementális kibontási szabály
+## Inkrementális karbantartási szabály
 
-Egyszerre az aktuális elsődleges pillért bontjuk ki részletesen. A többi pillér magas szintű térképen marad; a keresztpilléres bizonyítékokat megőrizzük, majd a megfelelő pillér aktiválásakor normalizáljuk. Így a curriculum követhető marad anélkül, hogy több száz spekulatív, üres témakártya jönne létre.
+Mind a nyolc pillér első stabil altématérképe elkészült. További részletezést csak az aktuális tanulási út, új bizonyíték vagy valós szakmai igény indokoljon; a témák ne bomoljanak előre több száz spekulatív leckére. A keresztpilléres bizonyítékokat aktiváláskor kell pontosítani és a progress ledgerben normalizálni.
