@@ -1,6 +1,6 @@
 # Teljes curriculum — haladási nyilvántartás
 
-Utolsó frissítés: 2026-09-17
+Utolsó frissítés: 2026-09-18
 
 ## Szerep és értelmezés
 
@@ -58,16 +58,16 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | Témaazonosító | Cél | Bizonyított mélység | Állapot | Bizonyíték és nyitott rés |
 |---|---:|---:|---|---|
 | `WEB-HTTP-SEMANTICS` | L3 | L1 | Practiced | `200`, `400`, `404`, `405`, `418`, `500` futási próbák; a kliens- és szerverhibák alapvető magyarázata. Nyitott: safe/idempotent szemantika, cache, protokollmélység. |
-| `WEB-REQUEST-LIFECYCLE` | L2 | L1 | Practiced | Kestrel → middleware → endpoint → response útvonal több ága ellenőrizve; `Response.HasStarted` megfigyelés. Az önálló teljes lifecycle-magyarázat az aktív `M6` gate része. |
-| `WEB-ROUTING-ENDPOINTS` | L2 | L1 | Practiced | `/`, `/health`, `/greet/{name}`, `/divide`; `404`/`405` különbség és `MapGet` szerepe ellenőrizve. Nyitott: constraint, metadata, route-konfliktus. |
-| `WEB-BINDING-VALIDATION` | L2 | L1 | Practiced | Route/query binding, hiányzó és hibás `int` automatikus `400`, nulla osztó explicit `400`; handler előtti binding felismerve. Nyitott: body/header/form binding és összetettebb validáció. |
+| `WEB-REQUEST-LIFECYCLE` | L2 | L1 | Practiced | Kestrel → `HttpContext` → middleware → routing/binding → endpoint → szerializáció → response útvonal sikeres és hibás ágai ellenőrizve; `Response.HasStarted` megfigyelés. Az `M6` felidézésben a tanuló a lánc fő elemeit és az `await next` visszatérő ágát saját szavaival összekapcsolta; L2-höz késleltetett vagy új kontextusú önálló bizonyíték kell. |
+| `WEB-ROUTING-ENDPOINTS` | L2 | L1 | Practiced | `/`, `/health`, `/greet/{name}`, `/divide`, `/rectangle/{width}`; `404`/`405` különbség és `MapGet` szerepe ellenőrizve. A tanuló felismerte, hogy a `{width:int}` constraint a binding előtt kizárta az endpointot és ezért `404`-et eredményezett. Nyitott: metadata és route-konfliktus. |
+| `WEB-BINDING-VALIDATION` | L2 | L1 | Practiced | Route/query binding, hiányzó és hibás `int` automatikus `400`, valamint handleren belüli explicit `400` ágak ellenőrizve. A `/rectangle` önálló implementációja és a constraint/binding hibahatár diagnózisa elkészült. Nyitott: body/header/form binding és összetettebb validáció. |
 | `WEB-MIDDLEWARE-PIPELINE` | L2 | L1 | Practiced | Inline logging middleware, előtte/utána ág, short-circuit `418`, exception middleware és sorrend gyakorlati ellenőrzése. Nyitott: branching és új kontextusú önálló alkalmazás. |
-| `WEB-RESPONSES-SERIALIZATION` | L2 | L0 | Learning | JSON és text válaszok, `IResult`, `Results.Ok`/`BadRequest` használata megtörtént. A szerializációs és content-negotiation mentális modell még nincs felmérve. |
+| `WEB-RESPONSES-SERIALIZATION` | L2 | L1 | Practiced | JSON és text válaszok, explicit sikeres DTO, `IResult`, `Results.Ok`/`BadRequest`, media type és `ReadFromJsonAsync<T>` deszerializáció futással ellenőrzött. A tanuló elkülönítette a `Results.Ok` eredmény/státusz szerepét a `System.Text.Json` szerializációjától, és magyarázta a kliensoldali deszerializálást; a DTO → JSON bájtok → `StreamContent` határ még segítséget igényelt. Nyitott: typed results és content negotiation. |
 | `WEB-ERROR-HANDLING` | L2 | L1 | Practiced | `/fail`, kontrollált JSON `500`, `Response.HasStarted`, explicit és automatikus `400`; a `4xx`/`5xx` felelősségi különbsége saját szavakkal megfogalmazva. |
-| `WEB-API-DESIGN-CONTRACTS` | L2 | — | Unassessed | Vannak működő endpointok, de önálló szerződéstervezési bizonyíték még nincs értékelve. |
+| `WEB-API-DESIGN-CONTRACTS` | L2 | L1 | Practiced | Elkészült a szervizköltség-operation explicit `GET` contractja: fogyasztó, route/query input, szerveroldali díjszabás, stabil sikeres DTO, Problem Details hibatípusok és `400`/`404` határ. A tanuló a safe metódust, a route mismatch és az érvénytelen üzleti input különbségét, valamint a stabil problémaazonosító szerepét saját szavaival részben megindokolta. L2-höz új contract önálló tervezése és változtatási trade-off kell. |
 | `WEB-DI-CONFIGURATION` | L2 | L0 | Learning | `RouteHandlerOptions` konfiguráció használata megtörtént. DI lifetime-ok, providerek és options pattern még nem kerültek felmérésre. |
 | `WEB-ASYNC-CANCELLATION` | L2 | L1 | Learning | Aszinkron body-írás, flush és kivételterjedés gyakorlati érintése; az `await` hibás `Task`-ot újradobó működése felidézve. Cancellation és backpressure nyitott. |
-| `WEB-API-TESTING` | L2 | L0 | Learning | Kézi `curl` regressziós mátrix készült; automatizált integration teszt még nincs. |
+| `WEB-API-TESTING` | L2 | L1 | Practiced | Az első `WebApplicationFactory<Program>`/`HttpClient` contractteszt red–green átmenete után a státusz, media type és a deszerializált sikeres DTO mind az öt mezője warning nélkül zöld. A tanuló saját szavaival azonosította a státusz-only teszt vakfoltját és az integration teszt teljes HTTP-láncot ellenőrző jellegét. L2-höz a hibaágak önálló tesztdizájnja, határesetek és diagnózis hiányzik. |
 | `WEB-SECURITY-INTEGRATION` | L2 | — | Unassessed | Ebben a tanulási szeletben tudatosan nincs autentikáció vagy authorization. |
 | `WEB-BACKGROUND-PROCESSING` | L2 | — | Unassessed | Még nincs célzott bizonyíték. |
 | `WEB-API-EVOLUTION` | L2 | — | Unassessed | Még nincs célzott bizonyíték. |
@@ -142,7 +142,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `SE-MODULARITY-COUPLING` | L3 | L0 | Learning | A MovieExplorer API és importer külön projekt, a Backend Foundations pedig tudatosan minimális maradt. Kohézió, csatolás és függőségi irány önálló elemzése még nincs felmérve. |
 | `SE-SOLID-DESIGN` | L2 | — | Unassessed | Interface- és DI-használat önmagában nem bizonyítja a SOLID elvek megértését vagy megfelelő alkalmazását. |
 | `SE-DESIGN-PATTERNS` | L2 | — | Unassessed | Frameworkminták használata megtörtént, de tervezési minta tudatos kiválasztására és trade-offjának magyarázatára nincs bizonyíték. |
-| `SE-TESTING-FUNDAMENTALS` | L3 | L0 | Learning | Kézi sikeres, hibás és regressziós HTTP-próbák készültek; automatizált unit/integration teszt és tesztdizájn még nincs. |
+| `SE-TESTING-FUNDAMENTALS` | L3 | L1 | Practiced | Elkészült egy Arrange–Act–Assert integration teszt szándékos red állapottal, zöldre váltással és teljes response-assertionnel. A tanuló saját szavaival megmagyarázta a státusz-only teszt vakfoltját és a teljes API-lánc miatt integration teszt jelleget. Önálló tesztdizájn, teszthatár-trade-off és új kontextusú diagnózis még nyitott. |
 | `SE-TEST-STRATEGY` | L2 | L0 | Learning | A Backend Foundations exit gate-je és kézi regressziós ágai visszajelzési pontokat adnak, de kockázatalapú automatizált tesztportfólió még nem készült. |
 | `SE-ARCHITECTURE-BOUNDARIES` | L3 | L0 | Learning | Az API és importer process-/projekthatára, illetve a felesleges rétegek elhalasztása tudatos döntés volt. Komponens- és függőségi határok önálló tervezése még nincs bizonyítva. |
 | `SE-LAYERED-CLEAN-ARCHITECTURE` | L2 | — | Unassessed | A projektekben tudatosan nincs teljes réteges vagy Clean Architecture szerkezet; használatára és kritikájára nincs célzott bizonyíték. |
@@ -236,4 +236,4 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 
 ## Következő curriculum-karbantartási lépés
 
-Az aktív Backend Foundations `M6` és exit audit után az érintett 1., 2., 4., 5. és 7. pillér bizonyítéktérképét felül kell vizsgálni, majd ki kell jelölni a következő elsődleges tanulási szeletet. Mind a nyolc pillér első stabil bontása elkészült; további curriculum-karbantartás az aktivált témák bizonyítékainak, függőségeinek és célfeladatainak finomítása legyen, ne újabb előzetes témaszaporítás.
+Az aktív API Contract Testing projekt `M4` mérföldkövében először az ismeretlen márka `400 application/problem+json` contractját kell piros integration teszttel rögzíteni, majd a legkisebb endpointváltoztatással zöldre váltani.

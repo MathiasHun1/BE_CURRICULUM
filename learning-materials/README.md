@@ -21,3 +21,7 @@ Az itt található fájlok nem helyettesítik:
 ### Web- és backendfejlesztés
 
 - [HTTP request lifecycle és ASP.NET Core pipeline](web-backend/http-request-lifecycle.md)
+
+### Tesztelés
+
+- [ASP.NET Core integration tesztelési alapok](testing/aspnet-core-integration-testing-basics.md)

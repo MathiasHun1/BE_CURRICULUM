@@ -1,10 +1,10 @@
 # Backend Foundations — mentoring state
 
-Utolsó frissítés: 2026-09-17
+Utolsó frissítés: 2026-09-18
 
 ## Current Goal
 
-A .NET buildtől a futó processen és Kestrelen át a Minimal API HTTP-válaszig tartó végrehajtási lánc gyakorlati megértése.
+A .NET buildtől a futó processen és Kestrelen át a Minimal API HTTP-válaszig tartó végrehajtási lánc gyakorlati megértése. A projekt tanulási célja teljesült; a projekt lezárt.
 
 ## Milestone Plan
 
@@ -15,8 +15,8 @@ A .NET buildtől a futó processen és Kestrelen át a Minimal API HTTP-válaszi
 | `M3` | Middleware-sorrend és short-circuit | Request/response naplózás; a `next` előtti és utáni ág magyarázata; `/short-circuit` explicit `418` válasszal. | `Complete` |
 | `M4` | Kivételterjedés és response lifecycle | `/fail` kontrollált JSON `500`; `/partial-fail`, `Response.HasStarted`, részleges body és kliensoldali hibás lezárás megfigyelése. | `Complete` |
 | `M5` | Várható klienshiba és váratlan szerverhiba megkülönböztetése | Endpoint-validáció és framework binding különválasztása; `4xx`/`5xx` futási próbák és saját szavas magyarázat. | `Complete` |
-| `M6` | Önálló integráció és transzfer | Új route- és query bindingot, validációt és JSON-választ kombináló endpoint részletes recept nélkül; regressziós próbák; a teljes request lifecycle saját szavas végigkövetése. | `Active` |
-| `EXIT` | Projektlezárás és irányváltás | Az M1–M6 bizonyítékainak rövid auditja, a megmaradt hiányok `Deferred` besorolása, a projekt státuszának lezárása és a következő tanulási szelet kijelölése. | `Planned` |
+| `M6` | Önálló integráció és transzfer | Új route- és query bindingot, validációt és JSON-választ kombináló endpoint részletes recept nélkül; regressziós próbák; a teljes request lifecycle saját szavas végigkövetése. | `Complete` |
+| `EXIT` | Projektlezárás és irányváltás | Az M1–M6 bizonyítékainak rövid auditja, a megmaradt hiányok `Deferred` besorolása, a projekt státuszának lezárása és a következő tanulási szelet kijelölése. | `Complete` |
 
 A mérföldkő `Complete` állapota a projekt adott kimenetéhez szükséges gyakorlati bizonyítékot jelenti; önmagában nem emeli automatikusan a kapcsolódó témát `L2` vagy `Confident` szintre.
 
@@ -54,6 +54,9 @@ A mérföldkő `Complete` állapota a projekt adott kimenetéhez szükséges gya
 - Elkészült az aszinkron `GET /partial-fail` endpoint: `await`elt body-írás és flush után kivételt dob. A kliens megkapta a már elindult `200` választ és a részleges body-t, majd `curl: (18)` hibával jelezte a szabálytalanul lezárult chunked átvitelt. A `/fail` JSON `500` és a `/health` `200` regressziós próbája változatlanul sikeres. A tanuló felismerte a flush, a `Response.HasStarted` és a státusz megváltoztathatatlanságának kapcsolatát; a hiányos átvitel protokollszintű okának önálló magyarázata még nem bizonyított.
 - Elkészült a `GET /divide` endpoint két kötelező egész query paraméterrel. A sikeres `200`, az explicit nulla osztós `400`, valamint a hiányzó és nem egész paraméter automatikus `400` válasza HTTP-klienssel ellenőrizve lett; a `/health` `200` és a `/fail` kontrollált JSON `500` regresszió sikeres maradt.
 - A tanuló felismerte, hogy a parameter binding a handler meghívása előtt történik, a `Results.BadRequest` szabályos válasz és nem kivétel, továbbá saját szavaival megkülönböztette a kliensoldali `4xx` hibát a kezeletlen szerveroldali `5xx` hibától.
+- A tanuló részletes recept nélkül elkészítette a `GET /rectangle/{width}?height=...` endpointot route- és query bindinggal, pozitivitási validációval és JSON területválasszal. A build 0 hibával és 0 warninggal zárult; a `200`, explicit `400`, automatikus `400`, `/health` `200` és `/fail` JSON `500` ágak futási próbája sikeres volt.
+- Az első `{width:int}` változat hibás szöveges szélességnél `404`-et adott, mert a route constraint az endpointkiválasztásnál kizárta a jelöltet. A tanuló saját szavaival diagnosztizálta ezt, eltávolította a constraintet, majd a binding automatikus `400` ága ellenőrzötten működött.
+- Az aktív felidézésben a tanuló összekapcsolta Kestrelt, a middleware pipeline-t, az endpointot és a választ; megkülönböztette a route/query forrást, a handler előtti bindinghibát a handleren belüli validációtól, a `Results.Ok` szerepét a `System.Text.Json` szerializációjától, valamint felismerte az `await next(context)` utáni visszatérő ágat és az ott látható `200` státuszt.
 
 ## Decisions
 
@@ -75,7 +78,7 @@ A mérföldkő `Complete` állapota a projekt adott kimenetéhez szükséges gya
 
 ## Next Step
 
-Az `M6` mérföldkő részeként a tanuló részletes recept nélkül elkészít és HTTP-klienssel ellenőriz egy `GET /rectangle/{width}?height=...` endpointot, amely pozitív méreteknél területet ad, nem pozitív méretnél explicit `400` választ küld, hibás bindingnál pedig a framework automatikus `400` válaszát használja.
+Nincs aktív projektszintű következő lépés. A tanulás az [API Contract Testing](../api-contract-testing/) projektben folytatódik.
 
 ## Session Notes
 
@@ -108,3 +111,11 @@ Az `M6` mérföldkő részeként a tanuló részletes recept nélkül elkészít
 - A felhasználó jóváhagyásával bevezetésre került a véges M1–M6 mérföldkőterv és az explicit exit gate. Az eddigi bizonyítékok alapján M1–M5 `Complete`, M6 `Active`; a nem blokkoló `curl: (18)` protokollmélyítés `Deferred` lett, hogy ne nyújtsa korlátlanul a projektet.
 - Elkészült a 2. curriculum-pillér 15 altémás bontása és a teljes curriculum inkrementális progress ledgerje; a projekt M1–M6 mérföldkövei hozzá lettek rendelve az érintett web/backend altémákhoz.
 - Elkészült az 1. curriculum-pillér 15 altémás bontása; a projekt build/runtime, delegate/lambda, exception és async bizonyítékai hozzá lettek rendelve a kapcsolódó .NET-altémákhoz.
+
+### 2026-09-18
+
+- Elkészült az önálló `/rectangle/{width}` endpoint; a route/query binding, explicit és automatikus `400`, JSON `200`, valamint a `/health` és `/fail` regressziós ágak builddel és futással ellenőrizve lettek.
+- A `{width:int}` constraint okozta `404` hibát a tanuló helyesen az endpointkiválasztáshoz kötötte, majd a javítás után a hibás `int` binding `400` válasza működött.
+- A lifecycle-felidézés tisztázta a Kestrel → middleware → routing/binding → handler → `IResult`/JSON → visszatérő middleware ágat. Az `M6` bizonyíték alapján `Complete`; az `EXIT` gate `Active`.
+- Az M1–M6 audit minden kötelező projekteredményhez ellenőrzött bizonyítékot talált. A pontos HTTP/1.1 `curl: (18)` protokollmélyítés, az assembly metadata/dependency resolution és az L2-höz szükséges késleltetett transzfer nem blokkolja a projekt lezárását; ezek a curriculum megfelelő pontjain maradnak nyitva.
+- A felhasználó a következő tanulási szeletként jóváhagyta egy kis API-contract és automatizált integration teszt elkészítését. Az `EXIT` gate `Complete`, a Backend Foundations projekt lezárt.

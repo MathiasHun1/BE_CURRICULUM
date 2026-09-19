@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<RouteHandlerOptions>(options =>
 {
@@ -75,7 +78,17 @@ app.MapGet("/divide", (int dividend, int divisor ) => {
     }
     
     return Results.Ok(dividend / divisor);
+});
+
+app.MapGet("/rectangle/{width}", (int width, [FromQuery] int height) =>
+{
+    if (width <= 0 || height <= 0)
+    {
+        return Results.BadRequest();
+    }
     
+    var area = width * height;
+    return Results.Ok(new { width, height, area });
 });
 
 app.Run();
