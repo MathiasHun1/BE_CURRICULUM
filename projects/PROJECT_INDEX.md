@@ -1,10 +1,14 @@
 # Gyakorlóprojektek indexe
 
-Utolsó frissítés: 2026-09-18
+Utolsó frissítés: 2026-09-22
 
 Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekkel. A projektek részletes előzményeit és döntéseit nem másolja ide.
 
 ## Aktív projekt
+
+Jelenleg nincs aktív fő gyakorlóprojekt. A következő DI és konfigurációs tanulási lépés a `LEARNING_STATE.md` fájlban szerepel.
+
+## Lezárt projektek
 
 ### API Contract Testing
 
@@ -13,9 +17,8 @@ Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekk
 - **Szerep a tantervben:** egy kis HTTP API-szerződés tudatos megtervezése, minimális implementációja, valamint sikeres, hibás és határeseteinek `WebApplicationFactory`- és `HttpClient`-alapú integration tesztelése.
 - **Elsődlegesen kapcsolódó témák:** `WEB-API-DESIGN-CONTRACTS`, `WEB-API-TESTING`, `WEB-RESPONSES-SERIALIZATION`, `WEB-ERROR-HANDLING`.
 - **Mérnöki keresztkapcsolat:** `SE-TESTING-FUNDAMENTALS`; későbbi mélyítés: `SE-TEST-STRATEGY`.
-- **Állapot:** aktív.
-
-## Lezárt projektek
+- **Lezárás oka:** `M1`–`M4` teljesült, a teljes HTTP contractsuite `5/5` zöld. A felhasználó kérésére az `M5` mélyebb tesztelési kísérlete `Deferred`; az exit gate a rövidebb tanulási cél szerint teljesült.
+- **Állapot:** lezárt.
 
 ### Backend Foundations
 

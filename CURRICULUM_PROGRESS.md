@@ -1,6 +1,6 @@
 # Teljes curriculum — haladási nyilvántartás
 
-Utolsó frissítés: 2026-09-18
+Utolsó frissítés: 2026-09-19
 
 ## Szerep és értelmezés
 
@@ -67,7 +67,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `WEB-API-DESIGN-CONTRACTS` | L2 | L1 | Practiced | Elkészült a szervizköltség-operation explicit `GET` contractja: fogyasztó, route/query input, szerveroldali díjszabás, stabil sikeres DTO, Problem Details hibatípusok és `400`/`404` határ. A tanuló a safe metódust, a route mismatch és az érvénytelen üzleti input különbségét, valamint a stabil problémaazonosító szerepét saját szavaival részben megindokolta. L2-höz új contract önálló tervezése és változtatási trade-off kell. |
 | `WEB-DI-CONFIGURATION` | L2 | L0 | Learning | `RouteHandlerOptions` konfiguráció használata megtörtént. DI lifetime-ok, providerek és options pattern még nem kerültek felmérésre. |
 | `WEB-ASYNC-CANCELLATION` | L2 | L1 | Learning | Aszinkron body-írás, flush és kivételterjedés gyakorlati érintése; az `await` hibás `Task`-ot újradobó működése felidézve. Cancellation és backpressure nyitott. |
-| `WEB-API-TESTING` | L2 | L1 | Practiced | Az első `WebApplicationFactory<Program>`/`HttpClient` contractteszt red–green átmenete után a státusz, media type és a deszerializált sikeres DTO mind az öt mezője warning nélkül zöld. A tanuló saját szavaival azonosította a státusz-only teszt vakfoltját és az integration teszt teljes HTTP-láncot ellenőrző jellegét. L2-höz a hibaágak önálló tesztdizájnja, határesetek és diagnózis hiányzik. |
+| `WEB-API-TESTING` | L2 | L1 | Practiced | A sikeres, ismeretlenmárka-, nulla, 200 fölötti munkaórás és hiányzó szegmenses `404` contractteszt `5/5` zöld. A felső határon túli teszt tanulói önálló munka; a `404` utolsó konfigurációja és tesztkorrekciója agent-asszisztált. A felhasználó a mélyítést most elhalasztotta; L2-höz további önálló diagnózis és új kontextusú tesztdizájn hiányzik. |
 | `WEB-SECURITY-INTEGRATION` | L2 | — | Unassessed | Ebben a tanulási szeletben tudatosan nincs autentikáció vagy authorization. |
 | `WEB-BACKGROUND-PROCESSING` | L2 | — | Unassessed | Még nincs célzott bizonyíték. |
 | `WEB-API-EVOLUTION` | L2 | — | Unassessed | Még nincs célzott bizonyíték. |
@@ -142,8 +142,8 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `SE-MODULARITY-COUPLING` | L3 | L0 | Learning | A MovieExplorer API és importer külön projekt, a Backend Foundations pedig tudatosan minimális maradt. Kohézió, csatolás és függőségi irány önálló elemzése még nincs felmérve. |
 | `SE-SOLID-DESIGN` | L2 | — | Unassessed | Interface- és DI-használat önmagában nem bizonyítja a SOLID elvek megértését vagy megfelelő alkalmazását. |
 | `SE-DESIGN-PATTERNS` | L2 | — | Unassessed | Frameworkminták használata megtörtént, de tervezési minta tudatos kiválasztására és trade-offjának magyarázatára nincs bizonyíték. |
-| `SE-TESTING-FUNDAMENTALS` | L3 | L1 | Practiced | Elkészült egy Arrange–Act–Assert integration teszt szándékos red állapottal, zöldre váltással és teljes response-assertionnel. A tanuló saját szavaival megmagyarázta a státusz-only teszt vakfoltját és a teljes API-lánc miatt integration teszt jelleget. Önálló tesztdizájn, teszthatár-trade-off és új kontextusú diagnózis még nyitott. |
-| `SE-TEST-STRATEGY` | L2 | L0 | Learning | A Backend Foundations exit gate-je és kézi regressziós ágai visszajelzési pontokat adnak, de kockázatalapú automatizált tesztportfólió még nem készült. |
+| `SE-TESTING-FUNDAMENTALS` | L3 | L1 | Practiced | Elkészült Arrange–Act–Assert integration teszt szándékos red–green átmenettel és teljes response-assertionnel; a tanuló önállóan adott hozzá egy felső határon túli hibás tesztesetet. Saját szavaival megmagyarázta a státusz-only teszt vakfoltját és a teljes API-lánc miatt integration teszt jelleget. Az önálló tesztdizájn új kontextusban, teszthatár-trade-off és diagnózis későbbi, igényvezérelt mélyítés. |
+| `SE-TEST-STRATEGY` | L2 | L0 | Learning | A Backend Foundations exit gate-je és kézi regressziós ágai visszajelzési pontokat adnak, de kockázatalapú automatizált tesztportfólió még nem készült. A felhasználó 2026-09-22-én a mélyebb tesztstratégiát más backendtémák javára elhalasztotta. |
 | `SE-ARCHITECTURE-BOUNDARIES` | L3 | L0 | Learning | Az API és importer process-/projekthatára, illetve a felesleges rétegek elhalasztása tudatos döntés volt. Komponens- és függőségi határok önálló tervezése még nincs bizonyítva. |
 | `SE-LAYERED-CLEAN-ARCHITECTURE` | L2 | — | Unassessed | A projektekben tudatosan nincs teljes réteges vagy Clean Architecture szerkezet; használatára és kritikájára nincs célzott bizonyíték. |
 | `SE-DOMAIN-MODELING-DDD` | L2 | L0 | Learning | A MovieExplorer domainentitásai és invariánsai részben kialakultak, de aggregate, bounded context és domainmodell/adatmodell határ nincs felmérve. |
@@ -236,4 +236,4 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 
 ## Következő curriculum-karbantartási lépés
 
-Az aktív API Contract Testing projekt `M4` mérföldkövében először az ismeretlen márka `400 application/problem+json` contractját kell piros integration teszttel rögzíteni, majd a legkisebb endpointváltoztatással zöldre váltani.
+Az aktív API Contract Testing projekt `M4` mérföldkövében a hiányzó márkaszegmens `404 application/problem+json` contractját kell előbb piros integration teszttel rögzíteni. A négy jelenlegi teszt zöld; a szerveroldali javítás csak a célzott red eredmény után következik.

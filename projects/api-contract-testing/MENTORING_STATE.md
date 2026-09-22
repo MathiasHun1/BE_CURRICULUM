@@ -1,6 +1,8 @@
 # API Contract Testing — mentoring state
 
-Utolsó frissítés: 2026-09-18
+Utolsó frissítés: 2026-09-22
+
+Állapot: lezárt. Az `M5` mélyebb regressziós kísérlete a felhasználó döntése alapján `Deferred`.
 
 ## Current Goal
 
@@ -13,9 +15,9 @@ Egy kicsi, explicit HTTP API-szerződés megtervezése, minimális ASP.NET Core 
 | `M1` | Kis API-operation contract és tesztmátrix | Egy operation célja, fogyasztója, metódusa, útvonala, input/output DTO-ja, media type-ja, sikeres és legalább két fontos hibás válasza konkrét példákkal; a státuszválasztások saját szavas indoklása. | `Complete` |
 | `M2` | Futtatható alkalmazás- és integrationteszt-váz | Sikeres build; tesztprojekt; `WebApplicationFactory`/teszthost és `HttpClient`; legalább egy szándékosan bukó contractteszt igazolja a bekötést. | `Complete` |
 | `M3` | Sikeres contractág implementációja | A legkisebb szükséges endpoint és stabil response DTO elkészül; a státusz, content type és JSON body integration tesztje zöld. | `Complete` |
-| `M4` | Hibás és határesetek konzisztens contractja | A kiválasztott klienshibaágak `ProblemDetails` válasszal és automatizált tesztekkel ellenőrzöttek; a szerkezeti és üzleti validáció határa magyarázható. | `Active` |
-| `M5` | Determinisztikus regressziós csomag és teszthatár-magyarázat | A fontos contractágak ismételhetően zöldek; egy kontrollált contracttörés piros tesztet eredményez; a tanuló indokolja, miért integration teszt és mit nem bizonyít. | `Planned` |
-| `EXIT` | Projektlezárás és transzfer | M1–M5 bizonyítékaudit; nyitott mélyítések `Deferred` besorolása; egy kis contract- vagy tesztváltoztatás önálló elvégzése; következő tanulási irány kijelölése. | `Planned` |
+| `M4` | Hibás és határesetek konzisztens contractja | A kiválasztott klienshibaágak `ProblemDetails` válasszal és automatizált tesztekkel ellenőrzöttek; a szerkezeti és üzleti validáció határa magyarázható. | `Complete` |
+| `M5` | Determinisztikus regressziós csomag és teszthatár-magyarázat | A fontos contractágak ismételhetően zöldek; egy kontrollált contracttörés piros tesztet eredményez; a tanuló indokolja, miért integration teszt és mit nem bizonyít. | `Deferred` |
+| `EXIT` | Projektlezárás és transzfer | M1–M5 bizonyítékaudit; nyitott mélyítések `Deferred` besorolása; egy kis contract- vagy tesztváltoztatás önálló elvégzése; következő tanulási irány kijelölése. | `Complete` |
 
 A mérföldkő `Complete` állapota a projekt adott kimenetéhez szükséges bizonyítékot jelenti; tudásszintet csak a curriculum ledgerben rögzített, megfelelő mélységű bizonyíték emel.
 
@@ -72,22 +74,22 @@ A mérföldkő `Complete` állapota a projekt adott kimenetéhez szükséges biz
 - Az első szeletben nincs adatbázis, autentikáció, külső szolgáltatás, Docker vagy indokolatlan architekturális réteg.
 - A production implementáció a contract teljesítéséhez szükséges legkisebb megoldás marad; a tesztek a publikus HTTP-viselkedést, nem belső implementációs részleteket rögzítenek.
 - Alapértelmezetten a tanuló írja és futtatja a kódot.
-- A `hourlyRate` nem kliensinput: a szerveroldali díjszabás rendeli hozzá a `bikeType` értékéhez. A publikus request csak a kerékpártípust és a munkaórát tartalmazza.
+- A `hourlyRate` nem kliensinput: a szerveroldali díjszabás rendeli hozzá a `bikeBrand` értékéhez. A publikus request csak a motorkerékpár márkáját és a munkaórát tartalmazza.
 - A választott publikus operation: `GET /services/wage-calculation/{bikeBrand}?workHours=...`. ASP.NET route-template-ben a placeholder `{bikeBrand}`; a `:bike-brand` jelölés nem az ASP.NET route-szintaxisa.
 - A `workHours` publikus típusa `decimal`, tartománya `(0, 200]`. A költség `appliedHourlyRate(brand) * workHours`, majd `Math.Ceiling` szemantikával egész HUF-ra kerekítendő.
 - Az első tesztframework xUnit; a tesztek az ASP.NET Core teszthostot `WebApplicationFactory` segítségével fogják indítani.
 
 ## Open Questions
 
-- Jelenleg nincs az `M4` ismeretlen márka tesztjét blokkoló nyitott kérdés.
+- Nincs projektlezárást blokkoló kérdés. Az `M5` kontrollált törését és a mélyebb tesztstratégiát a felhasználó kérésére halasztjuk.
 
 ## Learning Materials
 
-- [ASP.NET Core integration tesztelési alapok](../../learning-materials/testing/aspnet-core-integration-testing-basics.md) — rövid xUnit, Arrange–Act–Assert, `WebApplicationFactory`, TestServer és red–green mentális modell.
+- [ASP.NET Core integration tesztelési alapok](../../learning-materials/testing/aspnet-core-integration-testing-basics.md) — lezáró minimum: teszthatár, contract, generált tesztek ellenőrzése és a zöld suite korlátai.
 
 ## Next Step
 
-A tanuló először tesztet ír az ismeretlen `bmw` márkaágra. A teszt `400 Bad Request`, `application/problem+json` media type és deszerializált `ProblemDetails` mezők (`type`, `title`, `status`, `detail`) alapján legyen piros a jelenlegi egyszerű szöveges hibaválaszon; az endpoint implementációja csak a bizonyított red állapot után következik.
+A projekt lezárt. A következő tanulási irány a DI és konfiguráció; a konkrét következő lépés a globális `LEARNING_STATE.md` fájlban található.
 
 ## Session Notes
 
@@ -112,3 +114,26 @@ A tanuló először tesztet ír az ismeretlen `bmw` márkaágra. A teszt `400 Ba
 - A tanuló önállóan hozzáadta a `Math.Ceiling` kerekítést és a media-type assertiont. A kibővített teszt szándékosan hasznos piros állapotot adott: `response.Content.GetType()` ténylegesen `StreamContent`, nem `WageCalculationResponse`, mert a HTTP body hordozóját még deszerializálni kell. A futás eredménye `0/1`, emellett a közvetlen `ContentType.MediaType` elérés nullable warningot adott (`CS8602`).
 - A tanuló `ReadFromJsonAsync<WageCalculationResponse>()` segítségével helyesen deszerializálta a body-t, null-ellenőrzést és mind az öt mezőre assertiont írt, valamint nullable-biztos media-type ellenőrzést használt. A teljes solution tesztfutása warning nélkül `1/1` zöld. Ezzel az `M3` teljesítési bizonyítéka elkészült; az `M3` `Complete`, az `M4` `Active`.
 - Az `M3` utáni felidézésben a tanuló helyesen elmagyarázta a `ReadFromJsonAsync<T>` beolvasó/deszerializáló szerepét és a property assertionök előtti null-ellenőrzés szükségességét. Nyitott részletként a szerveroldali DTO és a HTTP-n átvitt JSON-bájtokat hordozó kliensoldali `StreamContent` közötti határ igényelt magyarázatot.
+
+### 2026-09-19
+
+- A tanuló megírta a második, ismeretlen márkára vonatkozó integration teszt első változatát. A teljes futásban a sikeres ág zöld (`1/2`), a hibaág `JsonException` miatt piros: a jelenlegi `Results.BadRequest("Invalid bike brand")` JSON-sztringje nem deszerializálható `ProblemDetails` objektummá. A teszt a deszerializálást az assertionök előtt végzi, `application/json` media type-ot vár, a `Title` üres, a `Detail` pedig eltér a jóváhagyott contracttól. Következő lépés a teszt elvárásainak és sorrendjének korrekciója; az endpoint továbbra sem változik.
+- A tanuló kijavította a `Title`, `Detail` és media-type elvárásokat a jóváhagyott contractra. Az újabb `dotnet test` továbbra is `1/2`: a deszerializálás a státusz/media-type assertionök előtt maradt, ezért a teszt újra `JsonException`-nel áll meg, nem a media-type contracteltérést jelzi. A következő egyetlen javítás a `ReadFromJsonAsync<ProblemDetails>()` sor áthelyezése a két HTTP-assertion után.
+- A tanuló a státusz és media-type assertionöket a deszerializálás elé helyezte. A teljes `dotnet test` futásban a sikeres ág zöld, az ismeretlen márka tesztje pontosan a kívánt contracteltérésnél piros: várt `application/problem+json`, tényleges `application/json` (`1/2`). A szerveroldali implementáció eddig változatlan; ez az `M4` első bizonyított red állapota.
+- Az aktív felidézésben a tanuló helyesen azonosította, hogy a tesztben a `400` státusz assertionje átment, és egy későbbi assertion bukott. A HTTP-státusz és a Problem Details body `status` mezője közötti két külön contractfelület még magyarázatot igényelt. A szerveroldali `Results.Problem` zöldre váltás továbbra is a következő lépés.
+- A tanuló az ismeretlen márka ágát nevesített argumentumokkal `Results.Problem` válaszra cserélte. A teljes `dotnet test` futás warning nélkül `2/2` zöld; az `M4` ismeretlenmárka-ágának publikus `400 application/problem+json` és `ProblemDetails` contractja bizonyított. A tanuló a munkaóra-hibaágat is `Results.Problem` válaszra állította, de erre még nincs teszt; a contract szerinti egyedi `type` nincs megadva, és a "between 1 and 200" részlet pontatlan a jóváhagyott `(0, 200]` tartományhoz képest. Az `M4` továbbra is `Active`.
+- A harmadik teszt és a munkaóra-hibaág együtt módosult: a teljes futás warning nélkül `3/3` zöld, de az elvárt és tényleges `type` egyaránt `urn:problem:Invalid-work-hours` a jóváhagyott kisbetűs `urn:problem:invalid-work-hours` helyett; a `Detail` mindkét helyen `between 0 and 200`, ami nem fejezi ki, hogy 0 kizárt. A `workHours=0` esetet teszteli, de a contract helyes teljesítését és a test-first red állapotot ez a futás nem bizonyítja. Az `M4` továbbra is `Active`.
+- A felhasználó kifejezetten kérte a contracteltérés közvetlen javítását. Az agent előbb csak a harmadik teszt `Type`/`Detail` elvárásait javította a jóváhagyott contractra; a futás célzottan piros lett (`2/3`, `Invalid-work-hours` kontra `invalid-work-hours`). Ezután a szerveroldali munkaóra-választ javította, és a teljes solution tesztje warning nélkül `3/3` zöld. A harmadik teszt `Act`/`Assert` kommentjei is helyreálltak. Ez agent-asszisztált contracthelyreállítás, nem bizonyít önálló tanulói hibadiagnózist; az `M4` továbbra is `Active` a további határesetek és a hiányzó route-szegmens `404` contractja miatt.
+- A tanuló a korábbi teszt mintájára önállóan hozzáadta a `workHours=200.5` felső határ feletti integration tesztet. A teljes solution warning nélkül `4/4` zöld, és mindkét érvénytelen munkaóraérték ugyanazt a `400 application/problem+json` body-contractot kapja. Az `M4` továbbra is `Active`: a hiányzó route-szegmens `404` contractja még nincs tesztelve; a `Scenario_1`/`Scenario_2` tesztnevek később kifejezőbbé tehetők.
+- A 2026-09-19-i állapotfrissítéskor a teljes solution tesztjeit újrafuttattuk: warning nélkül `4/4` zöld. A tesztfájlban továbbra is négy `[Fact]` található, `404` teszt még nincs; az egyetlen következő lépés változatlan.
+
+### 2026-09-22
+
+- A tanuló ötödik tesztje `GET /services/wage-calculation/notexistingsegment?workHours=1.5` kérésre `404`-et várt. A teljes solution futása `4/5`: az új teszt `Expected: NotFound, Actual: BadRequest` miatt bukott, a korábbi négy zöld maradt. A megadott szegmens illeszkedik a route-hoz, majd a handler ismeretlen márkaként `400`-at ad. Ez nem a jóváhagyott hiányzó szegmens `404` contracttesztje; az `M4` `Active` marad.
+- A tanuló a kérésből elhagyta a márkaszegmenst, így az új teszt `404` státuszt kap. A teljes futás `4/5`: az ötödik teszt a várt `application/problem+json` és a tényleges `null` media type eltérésén bukik. A jelenlegi kérésben még záró `/` és `workHours=1.5` szerepel a jóváhagyott pontos URL helyett; a tesztben a `ProblemDetails` mezőassertionök is hiányoznak. Ez már célzott red állapot, de a teljes tesztcontract még nincs kész; `M4` `Active`.
+- A tanuló pontosította az ötödik teszt URL-jét és elkezdett kézi `app.Use` middleware-t írni a `404` válaszhoz. A `context.Response.Body.Title` kifejezés félbemaradt; a solution buildje `CS1002` hibán áll. A `Response.Body` stream, nem `ProblemDetails` objektum. A tesztben `urn:problem:not-found`, `Not found`, `Detail = Not found`, illetve `Status = 400` szerepel, miközben a jóváhagyott contract `about:blank`, `Not Found`, `Status = 404`, kötött `Detail` nélkül. A következő lépés a beépített szolgáltatás/middleware bekötése és a tesztértékek helyreigazítása; `M4` `Active`.
+- A tanuló a kézi middleware helyett `AddProblemDetails()` és `UseStatusCodePages()` használatára váltott; az ötödik teszt pontos URL-t, `404` státuszt és deszerializált body-t ellenőriz. A teljes solution futása `4/5`: a `Type` várt `about:blank` értéke helyett az ASP.NET Core alapértelmezett RFC 9110 linkje érkezik. A teszt `Title = "Not Found"` elvárása már jó, de a `Status` assertion még `400`, a media type assertion pedig hiányzik. A következő lépés a teszt helyreigazítása és a `404` `Type` célzott konfigurálása; `M4` `Active`.
+- A felhasználó kérésére az agent a `404` válasz `Type` mezőjét a `CustomizeProblemDetails` callbackben `about:blank` értékre szűkítette, az ötödik tesztbe visszaállította az `application/problem+json` media type assertiont, és a body `Status` elvárását `404`-re javította. A teljes solution 2026-09-22-én warning nélkül `5/5` zöld; az üzleti `400` hibaágak regresszió nélkül maradtak. Az `M4` még `Active`, mert a routing, binding és üzleti validáció határának tanulói magyarázata hiányzik; ez az agent-asszisztált javítás önmagában nem emel tudásszintet.
+- A tanuló helyesen azonosította, hogy hiányzó márkaszegmensnél nem fut handler és a framework ad `404`-et; `workHours=0` és ismeretlen, de jelen lévő márka esetén a handlerig jut a kérés. Két terminológiai hiba maradt: a `workHours=abc` a query paraméter bindingján bukik, nem route-paraméteren, és az ismeretlen márkára a handler `400` eredményt ad vissza, nem kivételt dob. Az `M4` addig `Active`, amíg ezt a tanuló saját szavaival nem pontosítja.
+- A felhasználó jelezte, hogy a mentor által pontosított query binding és `Results.Problem`-eredmény különbségét megértette, és továbblépést kért. Az `M4` lezárását a `5/5` zöld publikus contractteszt és a korábbi, részben önálló hibaút-diagnózis támasztja alá; a pontosítás nem önálló L2-bizonyíték. Az `M4` `Complete`, az `M5` `Active`.
+- A felhasználó a tesztelés mélyítése helyett más backendterületeket priorizált, és kérte a projekt lezárását. A teljes solution 2026-09-22-én újrafuttatva `5/5` zöld. Az audit szerint `M1`–`M4` teljesült; az önálló felső munkaórahatár-teszt kis tanulói tesztváltoztatás bizonyítéka. A kontrollált contracttörés és a részletes tesztstratégia nem történt meg, ezért `M5` `Deferred`, tudásszint nem emelkedett. A felhasználó által jóváhagyott rövidebb exit gate teljesült; `EXIT` `Complete`, a projekt lezárt. Következő irány: `WEB-DI-CONFIGURATION` és `DOTNET-DI-COMPOSITION`.

@@ -12,7 +12,19 @@ var hourlyRates = new Dictionary<string, decimal>
 
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddProblemDetails(options =>
+{
+  options.CustomizeProblemDetails = context =>
+  {
+    if (context.HttpContext.Response.StatusCode == StatusCodes.Status404NotFound)
+    {
+      context.ProblemDetails.Type = "about:blank";
+    }
+  };
+});
 var app = builder.Build();
+
+app.UseStatusCodePages();
 
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/services/wage-calculation/{bikeBrand}", (string bikeBrand, [FromQuery] decimal workHours) =>
@@ -22,12 +34,17 @@ app.MapGet("/services/wage-calculation/{bikeBrand}", (string bikeBrand, [FromQue
   
   if (!hourlyRates.TryGetValue(normalizedBikeBrand, out hourlyRate))
   {
-    return Results.BadRequest("Invalid bike brand");
+    return Results.Problem(title: "Unsupported bike brand", detail: "Choose another brand",
+      type: "urn:problem:unsupported-bike-brand", statusCode: 400);
   }
 
   if (workHours <= 0 || workHours > 200)
   {
-    return Results.BadRequest("Invalid work hours");
+    return Results.Problem(
+      title: "Invalid work hours",
+      detail: "Work hours must be greater than 0 and at most 200",
+      type: "urn:problem:invalid-work-hours",
+      statusCode: 400);
   }
   
   return Results.Ok(new WageCalculationResponse

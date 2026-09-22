@@ -1,19 +1,20 @@
 # ASP.NET Core integration tesztelési alapok
 
-Utolsó linkellenőrzés: 2026-09-18  
+Utolsó linkellenőrzés: 2026-09-22
 Technológiai kontextus: .NET 10, ASP.NET Core Minimal API, xUnit v2, `WebApplicationFactory`
 
 ## Miért aktuális?
 
-Az API Contract Testing projektben elkészült az első automatizált HTTP contractteszt. A teszt `200 OK` választ vár a szervizköltség endpointtól, de az endpoint hiánya miatt jelenleg helyesen `404 Not Found` eredménnyel bukik.
+Az API Contract Testing projektben öt publikus HTTP-contractteszt készült, és a teljes suite `5/5` zöld. A tesztelés mélyítése most későbbre kerül. A napi munkához az a minimum fontos, amellyel a generált teszteket is értelmesen lehet átnézni.
 
-A cél most nem a teljes tesztelési elmélet megtanulása. Elég megérteni:
+A rövid áttekintés célja:
 
 - mit csinál az xUnit test runner;
 - mi a `[Fact]`, az assertion és az Arrange–Act–Assert felosztás;
 - hogyan indít teszthostot a `WebApplicationFactory<Program>`;
 - mit bizonyít és mit nem bizonyít az in-memory HTTP integration teszt;
-- miért hasznos előbb látni a tesztet piros, majd zöld állapotban.
+- miért nem bizonyít mindent a zöld suite vagy a magas coverage;
+- hogyan ellenőrizhető, hogy egy generált teszt a valódi contractot védi-e.
 
 ## Rövid mentális modell
 
@@ -33,15 +34,15 @@ A tesztprojekt project reference-szel hivatkozik az API-projektre. A `Microsoft.
 
 ## Ajánlott olvasási sorrend
 
-### 1. Először a saját piros teszt
+### 1. Először a saját tesztmátrix
 
-Nyisd meg a projekt `WageCalculationContractTests` osztályát, és azonosítsd:
+Nyisd meg a projekt `WageCalculationContractTests` osztályát. Öt ellenőrzött példa van: sikeres válasz, ismeretlen márka, két érvénytelen munkaóra és hiányzó route-szegmens. Azonosítsd bennük:
 
 - **Arrange:** a kliens létrehozása;
 - **Act:** a `GetAsync(...)` hívás;
-- **Assert:** a várt `OK` és a tényleges státusz összehasonlítása.
+- **Assert:** a státusz, media type és a publikus JSON-mezők összehasonlítása.
 
-A `404` itt nem hibás tesztet jelent. Azt bizonyítja, hogy a teszt eléri az alkalmazást, és érzékeli a hiányzó viselkedést.
+A hiányzó route-szegmens tesztje a korábbi üres `404` válasznál előbb a media type-on bukott; a `StatusCodePages` és Problem Details beállítása után zöld lett. Ez konkrét példa arra, hogy egy célzott piros teszt a contracteltérés helyét is megmutatja.
 
 ### 2. ASP.NET Core integration tesztek
 
@@ -66,39 +67,49 @@ Most csak ezekre figyelj:
 - `Assert`: a teszt automatikus pass/fail döntése;
 - `dotnet test`: build, tesztfelfedezés, futtatás és eredményjelentés.
 
-A jelenlegi projekt xUnit `2.9.3` verziót használ, ezért a v2 dokumentáció illeszkedik hozzá.
+A projekt xUnit v2-t használ, ezért a v2 dokumentáció illeszkedik hozzá.
 
 ### 4. Olvasható teszt szerkezete
 
 [Best practices for writing unit tests — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices)
 
-Bár a mostani teszt integration teszt, ebből az oldalról három általános elvet használunk:
+Bár a projektben integration tesztek vannak, ebből az oldalból négy általános elv hasznos:
 
 - Arrange–Act–Assert;
 - beszédes tesztnév;
 - tesztenként egy lényegi Act.
+- ismételhető eredmény és a publikus viselkedésre összpontosító assertion.
 
-## Mit bizonyít a jelenlegi teszt?
+## Mit bizonyít a jelenlegi suite?
 
 - A solution és a project reference működik.
 - Az xUnit megtalálja és lefuttatja a tesztet.
 - A `WebApplicationFactory` fel tudja építeni az API teszthostját.
 - A `HttpClient` kérése eljut az ASP.NET Core routingig.
-- A teszt felismeri, hogy a contract szerinti endpoint még hiányzik.
+- A kiválasztott öt HTTP-kérés válasza a tesztelt státusz, media type és JSON-mezők szerint megfelel az elfogadott contractnak.
 
 ## Mit nem bizonyít?
 
 - Nem használ valódi Kestrel listening socketet vagy TCP-portot.
 - Nem ellenőrzi a TLS-t, proxyt vagy deploymentet.
-- A jelenlegi egyetlen assertion még nem ellenőrzi a content type-ot vagy a JSON body-t.
-- Nem bizonyítja a hibás contractágak működését.
+- Nem bizonyít nem tesztelt bemeneteket, minden kerekítési határt vagy későbbi contractváltoztatás kompatibilitását.
+- Nem bizonyítja, hogy az elvárt értékek helyesek: egy generált teszt a hibás implementáció értékeit is átveheti.
+- A coverage csak azt mutatja, hogy mely kódrészek futottak teszt közben; önmagában nem mutatja meg, hogy az assertion felismerne-e hibás viselkedést.
+
+## Minimum ellenőrzés generált teszthez
+
+1. **Melyik kockázatot védi?** A sikeres ág mellett van-e fontos hibás vagy határeset?
+2. **Honnan jön az elvárt érték?** A jóváhagyott contractból vagy csupán a jelenlegi implementációból?
+3. **Mi bukna el egy hibánál?** Az assertion a publikus viselkedést figyeli-e, és tud-e hasznos hibaüzenetet adni?
+4. **Megismételhető-e?** Nem függ-e véletlen sorrendtől, órától, külső állapottól vagy megosztott tesztadattól?
+
+Példa a jelenlegi suite vakfoltjára: `18 000 * 1.5 = 27 000`, ezért ez az egy sikeres példa nem különbözteti meg a `Math.Ceiling` és `Math.Floor` kerekítést. Ez nem mostani új feladat, hanem emlékeztető arra, hogy a tesztadatnak különbséget kell tennie a fontos viselkedések között.
 
 ## Kapcsolódó gyakorlati kísérletek
 
-1. **Red:** a hiányzó endpoint miatt `Expected: OK`, `Actual: NotFound`.
-2. **Green:** a legkisebb sikeres endpoint implementációja után ugyanaz a teszt zöld lesz.
-3. **Erősebb contract:** külön assertion a content type-ra és a JSON mezőkre.
-4. **Kontrollált törés:** egy response mező átnevezése piros tesztet okoz, majd a contract helyreállítása ismét zöldet.
+1. Kódmódosítás nélkül nevezd meg, melyik meglévő teszt bukna, ha a sikeres válasz `currency` mezője `EUR` lenne.
+2. Kódmódosítás nélkül keress olyan kerekítési bemenetet, amelynél a `Math.Ceiling` és `Math.Floor` más eredményt adna.
+3. Valós új feature-nél válaszd ki az egy legfontosabb hibás ágat, és ellenőrizd, hogy a generált teszt a publikus contractot védi-e.
 
 ## Opcionális mélyítés
 
@@ -109,7 +120,8 @@ Csak később, valós igény esetén:
 - tesztadatbázis és izoláció;
 - authentication tesztelése;
 - `[Theory]` több bemeneti esettel;
-- párhuzamos tesztfuttatás és megosztott állapot.
+- párhuzamos tesztfuttatás és megosztott állapot;
+- mutation testing és kockázatalapú tesztstratégia.
 
 ## Ellenőrző kérdések
 
