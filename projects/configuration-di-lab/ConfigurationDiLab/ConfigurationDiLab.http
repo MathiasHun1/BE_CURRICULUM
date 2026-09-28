@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:5187
+
+### Alkalmazás
+GET {{baseUrl}}/
+
+### Alapár: Ducati, 1.5 óra → 27000 HUF
+GET {{baseUrl}}/services/wage-calculation/ducati?workHours=1.5
+
+### Case-insensitive márka
+GET {{baseUrl}}/services/wage-calculation/DUCATI?workHours=1.5
+
+### A kerekítés látható: Suzuki, 0.00001 óra → 1 HUF
+GET {{baseUrl}}/services/wage-calculation/suzuki?workHours=0.00001
+
+### Ismeretlen márka → 400
+GET {{baseUrl}}/services/wage-calculation/bmw?workHours=1.5
+
+### Érvénytelen munkaóra → 400
+GET {{baseUrl}}/services/wage-calculation/ducati?workHours=0
+
+### Query binding hiba → 400
+GET {{baseUrl}}/services/wage-calculation/ducati?workHours=abc
+
+### Hiányzó márkaszegmens → 404
+GET {{baseUrl}}/services/wage-calculation?workHours=1.5

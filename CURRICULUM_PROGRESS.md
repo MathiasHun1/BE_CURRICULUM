@@ -1,6 +1,6 @@
 # Teljes curriculum — haladási nyilvántartás
 
-Utolsó frissítés: 2026-09-19
+Utolsó frissítés: 2026-09-28
 
 ## Szerep és értelmezés
 
@@ -45,7 +45,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `DOTNET-ASYNC-TASKS` | L3 | L1 | Practiced | Aszinkron endpointok és EF Core műveletek, `Task`, `await`, kivételterjedés és részleges response gyakorlati ellenőrzése. Cancellation, `WhenAll` és sync-over-async nyitott. |
 | `DOTNET-CONCURRENCY-THREADING` | L3 | — | Unassessed | Az async és process témák nem bizonyítják a szálkezelés, ThreadPool és szinkronizáció ismeretét. |
 | `DOTNET-REFLECTION-METADATA` | L2 | — | Unassessed | Még nincs célzott bizonyíték. |
-| `DOTNET-DI-COMPOSITION` | L2 | L1 | Learning | MovieExplorer `AppDbContext` constructor injection és service registration; Backend Foundations options-konfiguráció. Lifetime-, scope- és captive dependency diagnózis nyitott. |
+| `DOTNET-DI-COMPOSITION` | L2 | L1 | Learning | MovieExplorer `AppDbContext` constructor injection és service registration; Backend Foundations options-konfiguráció. 2026-09-28: mérlegelte a service kiemelését; a konstruktorban kapott óradíjtáblát választotta kétféle díjszabáshoz, és felismerte, hogy ehhez elegendő kézi `new`, container nem szükséges. Rövid felismerési bizonyíték; az összeállítás felelősségének saját magyarázata, új önálló implementáció, lifetime-, scope- és captive dependency diagnózis nyitott. |
 
 ### Bizonyítékforrások
 
@@ -65,7 +65,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `WEB-RESPONSES-SERIALIZATION` | L2 | L1 | Practiced | JSON és text válaszok, explicit sikeres DTO, `IResult`, `Results.Ok`/`BadRequest`, media type és `ReadFromJsonAsync<T>` deszerializáció futással ellenőrzött. A tanuló elkülönítette a `Results.Ok` eredmény/státusz szerepét a `System.Text.Json` szerializációjától, és magyarázta a kliensoldali deszerializálást; a DTO → JSON bájtok → `StreamContent` határ még segítséget igényelt. Nyitott: typed results és content negotiation. |
 | `WEB-ERROR-HANDLING` | L2 | L1 | Practiced | `/fail`, kontrollált JSON `500`, `Response.HasStarted`, explicit és automatikus `400`; a `4xx`/`5xx` felelősségi különbsége saját szavakkal megfogalmazva. |
 | `WEB-API-DESIGN-CONTRACTS` | L2 | L1 | Practiced | Elkészült a szervizköltség-operation explicit `GET` contractja: fogyasztó, route/query input, szerveroldali díjszabás, stabil sikeres DTO, Problem Details hibatípusok és `400`/`404` határ. A tanuló a safe metódust, a route mismatch és az érvénytelen üzleti input különbségét, valamint a stabil problémaazonosító szerepét saját szavaival részben megindokolta. L2-höz új contract önálló tervezése és változtatási trade-off kell. |
-| `WEB-DI-CONFIGURATION` | L2 | L0 | Learning | `RouteHandlerOptions` konfiguráció használata megtörtént. DI lifetime-ok, providerek és options pattern még nem kerültek felmérésre. |
+| `WEB-DI-CONFIGURATION` | L2 | L0 | Learning | `RouteHandlerOptions` konfiguráció használata megtörtént. 2026-09-28: saját magyarázatban az óradíjat konfigurációs adatként, a kerekítést üzleti viselkedésként azonosította, felismerte a külső állíthatóság előnyét. Részleges fogalmi bizonyíték; DI lifetime-ok, providerek, options és a módosítás érvényesülése még nincs igazolva. |
 | `WEB-ASYNC-CANCELLATION` | L2 | L1 | Learning | Aszinkron body-írás, flush és kivételterjedés gyakorlati érintése; az `await` hibás `Task`-ot újradobó működése felidézve. Cancellation és backpressure nyitott. |
 | `WEB-API-TESTING` | L2 | L1 | Practiced | A sikeres, ismeretlenmárka-, nulla, 200 fölötti munkaórás és hiányzó szegmenses `404` contractteszt `5/5` zöld. A felső határon túli teszt tanulói önálló munka; a `404` utolsó konfigurációja és tesztkorrekciója agent-asszisztált. A felhasználó a mélyítést most elhalasztotta; L2-höz további önálló diagnózis és új kontextusú tesztdizájn hiányzik. |
 | `WEB-SECURITY-INTEGRATION` | L2 | — | Unassessed | Ebben a tanulási szeletben tudatosan nincs autentikáció vagy authorization. |

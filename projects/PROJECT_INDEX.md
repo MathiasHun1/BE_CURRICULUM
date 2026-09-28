@@ -1,12 +1,21 @@
 # Gyakorlóprojektek indexe
 
-Utolsó frissítés: 2026-09-22
+Utolsó frissítés: 2026-09-28
 
 Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekkel. A projektek részletes előzményeit és döntéseit nem másolja ide.
 
 ## Aktív projekt
 
-Jelenleg nincs aktív fő gyakorlóprojekt. A következő DI és konfigurációs tanulási lépés a `LEARNING_STATE.md` fájlban szerepel.
+### ConfigurationDiLab
+
+- **Repository:** [`projects/configuration-di-lab/`](configuration-di-lab/).
+- **Projektspecifikus állapot:** [MENTORING_STATE.md](configuration-di-lab/MENTORING_STATE.md).
+- **Aktuális feladat:** [TASKS.md](configuration-di-lab/TASKS.md).
+- **Szerep a tantervben:** kézi constructor injection, DI container és lifetime, külső konfiguráció/options és kontrollált hibadiagnózis az ismert szervizköltség-számítással.
+- **Elsődlegesen kapcsolódó témák:** `WEB-DI-CONFIGURATION`, `DOTNET-DI-COMPOSITION`.
+- **Közvetlen kapcsolatok:** `WEB-API-TESTING`, `WEB-BINDING-VALIDATION`, `WEB-ERROR-HANDLING`.
+- **Aktív mérföldkő:** `M1` — kézi constructor injection. A négy mérföldkő és az explicit exit gate a saját állapotfájlban szerepel.
+- **Állapot:** aktív; a scaffold agent által előkészítve, a kalkulátor implementációja tanulói feladat.
 
 ## Lezárt projektek
 

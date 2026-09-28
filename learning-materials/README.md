@@ -21,6 +21,7 @@ Az itt található fájlok nem helyettesítik:
 ### Web- és backendfejlesztés
 
 - [HTTP request lifecycle és ASP.NET Core pipeline](web-backend/http-request-lifecycle.md)
+- [Dependency injection és konfiguráció — backend alapok](web-backend/dependency-injection-and-configuration.md)
 
 ### Tesztelés
 

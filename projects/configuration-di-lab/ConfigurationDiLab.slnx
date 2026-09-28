@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ConfigurationDiLab/ConfigurationDiLab.csproj" />
+  <Project Path="ConfigurationDiLab.Tests/ConfigurationDiLab.Tests.csproj" />
+</Solution>

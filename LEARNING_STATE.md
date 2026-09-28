@@ -1,26 +1,27 @@
 # Globális tanulási állapot
 
-Utolsó frissítés: 2026-09-22
+Utolsó frissítés: 2026-09-28
 
 ## Aktuális fókusz
 
 - **Tanulási szelet:** dependency injection és konfiguráció szerepének megértése egy kis .NET backendben.
-- **Aktív projekt:** jelenleg nincs; az [API Contract Testing](projects/api-contract-testing/) projekt lezárt, a következő gyakorlóprojekt a belépő diagnózis után kap konkrét szerepet.
+- **Aktív projekt:** [ConfigurationDiLab](projects/configuration-di-lab/), projektspecifikus terv: [MENTORING_STATE.md](projects/configuration-di-lab/MENTORING_STATE.md).
 - **Elsődleges pillér:** P1 — Web- és backendfejlesztés (`WEB-DI-CONFIGURATION`).
 - **Kapcsolódó pillér:** P1 — Programozás és .NET (`DOTNET-DI-COMPOSITION`).
 - **Curriculum-helyzet:** mind a nyolc pillér egyenként 15 stabil altémára bontva; a teljes változó állapot a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md), a definíciók a [`curriculum/`](curriculum/README.md) pillértérképeiben találhatók.
 - **Lezáró tanulási anyag:** [ASP.NET Core integration tesztelési alapok](learning-materials/testing/aspnet-core-integration-testing-basics.md), benne a generált tesztek értékelésének minimumával.
-- **Projektmérföldkő:** nincs aktív. Az API Contract Testing `M1`–`M4` és a rövidített `EXIT` `Complete`; `M5` `Deferred` a felhasználó prioritási döntése alapján.
-- **Aktuális fázis:** az API contractsuite 2026-09-22-én ismét `5/5` zöld; a projekt lezárt. Következik a DI/konfiguráció belépő diagnózisa. A tesztelési tudásszintek nem emelkedtek automatikusan; a mélyítés valós későbbi igénynél tér vissza.
+- **Aktuális tanulási anyag:** [Dependency injection és konfiguráció — backend alapok](learning-materials/web-backend/dependency-injection-and-configuration.md); M1 előtt az első olvasási lépés aktuális, majd következik a kalkulátor implementációja.
+- **Projektmérföldkő:** ConfigurationDiLab `M1` — kézi constructor injection — `Active`. A négy mérföldkő és az exit gate a projekt saját állapotfájljában található.
+- **Aktuális fázis:** a felhasználó új projektet választott, és az előkészítést az agentre bízta az önálló feladatokig. A scaffold és a regressziós tesztcsomag elkészült; a kalkulátor implementációja tanulói feladat. A belépő diagnózis részleges fogalmi bizonyítékait megőrizzük, a scaffold nem emel tudásszintet.
 
 ## Aktív témák
 
-Az L0 itt azt jelenti, hogy az új tanulási útvonalon még nincs ellenőrzött bizonyíték; nem állítja, hogy a tanuló korábban nem találkozott a témával.
+Az L0 itt azt jelenti, hogy a teljes altéma L1-es alapmodellje még nincs igazolva; részleges bizonyíték már lehet, és nem állítja, hogy a tanuló korábban nem találkozott a témával.
 
 | Témaazonosító | Pillér | Célmélység | Jelenlegi mélység | Állapot | Eddigi bizonyíték |
 |---|---|---:|---:|---|---|
-| `WEB-DI-CONFIGURATION` | Web- és backendfejlesztés | L2 | L0 | Learning | `RouteHandlerOptions` és Problem Details konfigurációt használtunk, de a configuration providerek, options és lifetime-ok tudatos alkalmazása még nincs ellenőrizve. |
-| `DOTNET-DI-COMPOSITION` | Programozás és .NET | L2 | L1 | Learning | A MovieExplorerben constructor injection és service registration, a Backend Foundations projektben options-konfiguráció jelent meg. Scope, lifetime és composition root diagnózis nyitott. |
+| `WEB-DI-CONFIGURATION` | Web- és backendfejlesztés | L2 | L0 | Learning | 2026-09-28: saját magyarázatban elkülönítette az óradíjadatot és a kerekítési viselkedést, megnevezte a külső állíthatóság előnyét. A kódmódosítás utáni build/telepítés/újraindítás lánca, providerek és options még nincs igazolva. |
+| `DOTNET-DI-COMPOSITION` | Programozás és .NET | L2 | L1 | Learning | Korábbi constructor injection és service registration. 2026-09-28: mérlegelte a service kiemelését; helyesen választotta a konstruktorban kapott óradíjtáblát kétféle díjszabáshoz, és jelezte, hogy ez kézi `new` hívással megvalósítható. Az összeállítás felelősségének saját magyarázata, önálló implementáció, scope és lifetime diagnózisa még hiányzik. |
 
 ## A következő tanulási szelet iránya
 
@@ -30,8 +31,8 @@ Az L0 itt azt jelenti, hogy az új tanulási útvonalon még nincs ellenőrzött
 
 ## A következő lépés elfogadási feltételei
 
-- A tanuló a lezárt ServiceCostApi `hourlyRates` táblája és számítási szabálya alapján megnevezi, melyik rész konfigurációs adat és melyik üzleti viselkedés.
-- Egy mondatban indokolja, lenne-e a jelenlegi méretben haszna külön service-nek és constructor injectionnek.
+- A kalkulátor kívülről kapott óradíjtáblával számol; két példány Ducati 1.5 órára 27000 és 36000 HUF eredményt ad.
+- Az API az alapdíjas kalkulátort használja, a build tiszta és a kilenc regressziós teszteset zöld; részletes feladat: [TASKS.md](projects/configuration-di-lab/TASKS.md).
 
 ## Döntések
 
@@ -47,6 +48,7 @@ Az L0 itt azt jelenti, hogy az új tanulási útvonalon még nincs ellenőrzött
 - A curriculum végrehajtása a korai munkaképességet és a spirális mélyítést követi: először témánként a legkisebb koherens, gyakorlattal és hibamóddal bizonyított szelet készül el, az L3-részletekhez pedig valós projekt-, diagnosztikai vagy teljesítménytrigger alapján térünk vissza.
 - A tesztelés az első működő feature-től a delivery-loop része; architekturális réteg, minta vagy modul csak megnevezhető változási probléma és ellenőrizhető előny alapján kerül be.
 - A felhasználó a generált tesztek mindennapi használata mellett a tesztelési mélyítést most elhalasztotta; az API Contract Testing `M5` kontrollált contracttörése nem történt meg. A minimum elméleti lezáró anyag megmarad, a következő fókusz DI és konfiguráció.
+- A következő fő gyakorlóprojekt a ConfigurationDiLab (`net10.0`), külön könyvtárban. A felhasználó 2026-09-28-án elfogadta az új projektet és az előkészítést az agentre bízta; a saját DI/configuration implementáció tanulói munka marad.
 - A security P1 keresztmetszeti alap: minden új üzleti szelet arányos threat-, input/output-, secret-, hozzáférés- és naplózási minimumot kap; a teljes identity- és kriptográfiai mélység a tényleges felelősséghez igazodik.
 - A production minimum az első telepíthető szolgáltatástól együtt kezeli az immutable artifactot, külső konfigurációt, visszaállítható deploymentet, strukturált telemetriát és elkülönített startup/readiness/liveness jelzést; a cloud- és orchestration-mélység szükségvezérelt.
 - Elosztott rendszereknél az első külső dependencyvel együtt jön a deadline/cancellation, timeout, biztonságos retry, idempotencia és korreláció; cache, broker, replika, shard, konszenzus vagy saga csak mért korlát vagy konkrét workflow-igény alapján kerül be.
@@ -67,4 +69,4 @@ Az L0 itt azt jelenti, hogy az új tanulási útvonalon még nincs ellenőrzött
 
 ## Egyetlen következő konkrét lépés
 
-A tanuló a lezárt ServiceCostApi `hourlyRates` táblája és költségszámítása alapján röviden elkülöníti a konfigurációs adatot az üzleti viselkedéstől, és megindokolja, hozna-e most értéket egy külön injektált service.
+A tanuló elvégzi a ConfigurationDiLab [TASKS.md](projects/configuration-di-lab/TASKS.md) `M1` feladatát: constructor injection, kézi példányosítás, endpoint-bekötés, két díjszabás futási bizonyítéka és zöld regressziós tesztek.

@@ -26,18 +26,21 @@ var app = builder.Build();
 
 app.UseStatusCodePages();
 
+// --------- ENDPOINTOK ------------//
+
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/services/wage-calculation/{bikeBrand}", (string bikeBrand, [FromQuery] decimal workHours) =>
 {
   var normalizedBikeBrand = bikeBrand.ToLower();
-  decimal hourlyRate;
   
-  if (!hourlyRates.TryGetValue(normalizedBikeBrand, out hourlyRate))
+  // Hiányzó márka a URL-ben
+  if (!hourlyRates.TryGetValue(normalizedBikeBrand, out var hourlyRate))
   {
     return Results.Problem(title: "Unsupported bike brand", detail: "Choose another brand",
       type: "urn:problem:unsupported-bike-brand", statusCode: 400);
   }
 
+  // Hibás query param érték
   if (workHours <= 0 || workHours > 200)
   {
     return Results.Problem(
