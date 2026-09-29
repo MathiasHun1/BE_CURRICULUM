@@ -1,18 +1,23 @@
+using ConfigurationDiLab.Configuration;
 using ConfigurationDiLab.Contracts;
+using ConfigurationDiLab.Services;
 using Microsoft.AspNetCore.Mvc;
 
-var hourlyRates = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase)
-{
-    ["suzuki"] = 10000m,
-    ["honda"] = 12000m,
-    ["kawasaki"] = 15000m,
-    ["ducati"] = 18000m,
-    ["aprilia"] = 20000m
-};
-
-// M1: itt állítsd össze kézzel a kalkulátor függőségeit.
-
 var builder = WebApplication.CreateBuilder(args);
+
+var pricingOptions = builder.Configuration
+    .GetSection("Pricing")
+    .Get<PricingOptions>();
+
+if (pricingOptions is null)
+{
+    throw new InvalidOperationException("PricingOptions not found");
+}
+
+if (pricingOptions.HourlyRates.Count == 0)
+{
+    throw new InvalidOperationException("No hourly rates found");   
+}
 
 builder.Services.Configure<RouteHandlerOptions>(options =>
     options.ThrowOnBadRequest = false);
@@ -27,19 +32,23 @@ builder.Services.AddProblemDetails(options =>
     };
 });
 
+builder.Services.AddSingleton<IReadOnlyDictionary<string, decimal>>(pricingOptions.HourlyRates);
+builder.Services.AddScoped<ICostCalculatorService, CostCalculatorService>();
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 
+
 app.MapGet("/", () => Results.Ok(new { application = "ConfigurationDiLab" }));
 
 app.MapGet("/services/wage-calculation/{bikeBrand}",
-    (string bikeBrand, [FromQuery] decimal workHours) =>
+    (string bikeBrand, [FromQuery] decimal workHours, [FromServices] ICostCalculatorService calculator) =>
     {
         var normalizedBikeBrand = bikeBrand.ToLowerInvariant();
 
-        if (!hourlyRates.TryGetValue(normalizedBikeBrand, out var hourlyRate))
+        if (!pricingOptions.HourlyRates.TryGetValue(normalizedBikeBrand, out var hourlyRate))
         {
             return Results.Problem(
                 title: "Unsupported bike brand",
@@ -62,8 +71,7 @@ app.MapGet("/services/wage-calculation/{bikeBrand}",
             BikeBrand = normalizedBikeBrand,
             WorkHours = workHours,
             AppliedHourlyRate = hourlyRate,
-            // M1: ezt a számítást helyettesítsd a kalkulátor hívásával.
-            TotalCost = Math.Ceiling(hourlyRate * workHours),
+            TotalCost = calculator.Calculate(normalizedBikeBrand, workHours),
             Currency = "HUF"
         });
     });
