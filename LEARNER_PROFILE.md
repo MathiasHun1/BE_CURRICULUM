@@ -1,6 +1,6 @@
 # Tanulói profil
 
-Utolsó frissítés: 2026-09-14
+Utolsó frissítés: 2026-09-28
 
 ## Háttér
 
@@ -23,6 +23,7 @@ Utolsó frissítés: 2026-09-14
 - A kommunikáció és a magyarázat nyelve magyar.
 - A tanulás valós projektben, kis és ellenőrizhető lépésekben történjen.
 - Alapértelmezetten a tanuló írja és futtatja a kódot; az agent mentorál és ellenőriz.
+- Az állapot-Markdownokat csak explicit `update` vagy külön fájlfrissítési kérés után frissítsük, a haladást egyben rögzítve. A minden lépés utáni dokumentálást a tanuló lassúnak találja; közben chatben haladjunk (2026-09-28-i explicit kérés).
 - Egy új fogalom röviddel a gyakorlati használata előtt jelenjen meg.
 - A magyarázat térjen ki arra is, mi történik az absztrakció alatt.
 - A helyes használat mellett a hibamódok, teljesítményhatások és trade-offok is fontosak.

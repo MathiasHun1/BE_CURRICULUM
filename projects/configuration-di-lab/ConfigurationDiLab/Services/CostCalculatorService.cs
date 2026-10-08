@@ -1,12 +1,15 @@
+using ConfigurationDiLab.Configuration;
+using Microsoft.Extensions.Options;
+
 namespace ConfigurationDiLab.Services;
 
 public sealed class CostCalculatorService: ICostCalculatorService
 {
     private readonly IReadOnlyDictionary<string, decimal> _hourlyRates;
     
-    public CostCalculatorService(IReadOnlyDictionary<string, decimal> hourlyRates)
+    public CostCalculatorService(IOptionsSnapshot<PricingOptions> pricingOptions)
     {
-        _hourlyRates = hourlyRates;
+        _hourlyRates = pricingOptions.Value.HourlyRates;
     }
     
     public decimal Calculate(string bikeBrand, decimal workHours)

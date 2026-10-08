@@ -1,38 +1,39 @@
 # Globális tanulási állapot
 
-Utolsó frissítés: 2026-09-28
+Utolsó frissítés: 2026-10-07
 
 ## Aktuális fókusz
 
-- **Tanulási szelet:** dependency injection és konfiguráció szerepének megértése egy kis .NET backendben.
-- **Aktív projekt:** [ConfigurationDiLab](projects/configuration-di-lab/), projektspecifikus terv: [MENTORING_STATE.md](projects/configuration-di-lab/MENTORING_STATE.md).
-- **Elsődleges pillér:** P1 — Web- és backendfejlesztés (`WEB-DI-CONFIGURATION`).
-- **Kapcsolódó pillér:** P1 — Programozás és .NET (`DOTNET-DI-COMPOSITION`).
-- **Curriculum-helyzet:** mind a nyolc pillér egyenként 15 stabil altémára bontva; a teljes változó állapot a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md), a definíciók a [`curriculum/`](curriculum/README.md) pillértérképeiben találhatók.
-- **Lezáró tanulási anyag:** [ASP.NET Core integration tesztelési alapok](learning-materials/testing/aspnet-core-integration-testing-basics.md), benne a generált tesztek értékelésének minimumával.
-- **Aktuális tanulási anyag:** [Dependency injection és konfiguráció — backend alapok](learning-materials/web-backend/dependency-injection-and-configuration.md); M1 előtt az első olvasási lépés aktuális, majd következik a kalkulátor implementációja.
-- **Projektmérföldkő:** ConfigurationDiLab `M1` — kézi constructor injection — `Active`. A négy mérföldkő és az exit gate a projekt saját állapotfájljában található.
-- **Aktuális fázis:** a felhasználó új projektet választott, és az előkészítést az agentre bízta az önálló feladatokig. A scaffold és a regressziós tesztcsomag elkészült; a kalkulátor implementációja tanulói feladat. A belépő diagnózis részleges fogalmi bizonyítékait megőrizzük, a scaffold nem emel tudásszintet.
+- **Tanulási szelet:** átmenet a DI/configuration alapozásból az aszinkron I/O, request cancellation és külső HTTP-hívások témájába.
+- **Projektállapot:** a [ConfigurationDiLab](projects/configuration-di-lab/) alapozó labor lezárt; M1–M4 `Complete`, a bizonyítékok és korlátaik a [MENTORING_STATE.md](projects/configuration-di-lab/MENTORING_STATE.md) fájlban. Nincs új aktív fő projekt vagy aktív projektmérföldkő.
+- **Elsődleges pillér:** P1 — Web- és backendfejlesztés (`WEB-ASYNC-CANCELLATION`).
+- **Kapcsolódó pillér:** P1 — Programozás és .NET (`DOTNET-ASYNC-TASKS`); a DI/configuration tanulságai átvezető témák.
+- **Aktuális fázis:** az async/await és a szálak viszonyának belépő kérdése kiadva, még nincs válasz vagy új async implementáció. A gyakorlati projekt helyét és véges tervét a diagnózis után kell egyeztetni.
+- **Utolsó ellenőrzés:** a ConfigurationDiLab tesztcsomagja `9/9` zöld (2026-10-07, 441 ms); a handler és a scoped kalkulátor is `IOptionsSnapshot<PricingOptions>`-t kap, a Ducati-alapdíj 18000.
+- **Lezárt tanulási anyag:** [Dependency injection és konfiguráció — backend alapok](learning-materials/web-backend/dependency-injection-and-configuration.md).
+- **Curriculum-helyzet:** a tudástérkép a [curriculum/](curriculum/README.md), a teljes haladási ledger a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md).
 
 ## Aktív témák
 
-Az L0 itt azt jelenti, hogy a teljes altéma L1-es alapmodellje még nincs igazolva; részleges bizonyíték már lehet, és nem állítja, hogy a tanuló korábban nem találkozott a témával.
+A DI/configuration sorok az új szelethez átviendő tudást jelölik; a projektlezárás nem jelent automatikus L2-t.
 
 | Témaazonosító | Pillér | Célmélység | Jelenlegi mélység | Állapot | Eddigi bizonyíték |
 |---|---|---:|---:|---|---|
-| `WEB-DI-CONFIGURATION` | Web- és backendfejlesztés | L2 | L0 | Learning | 2026-09-28: saját magyarázatban elkülönítette az óradíjadatot és a kerekítési viselkedést, megnevezte a külső állíthatóság előnyét. A kódmódosítás utáni build/telepítés/újraindítás lánca, providerek és options még nincs igazolva. |
-| `DOTNET-DI-COMPOSITION` | Programozás és .NET | L2 | L1 | Learning | Korábbi constructor injection és service registration. 2026-09-28: mérlegelte a service kiemelését; helyesen választotta a konstruktorban kapott óradíjtáblát kétféle díjszabáshoz, és jelezte, hogy ez kézi `new` hívással megvalósítható. Az összeállítás felelősségének saját magyarázata, önálló implementáció, scope és lifetime diagnózisa még hiányzik. |
+| `WEB-ASYNC-CANCELLATION` | Web- és backendfejlesztés | L2 | L1 | Learning | Korábbi aszinkron response/flush és kivételterjedés. Új belépő kérdés kiadva; cancellation, timeout és outbound HTTP még nyitott. |
+| `DOTNET-ASYNC-TASKS` | Programozás és .NET | L3 | L1 | Practiced | Korábbi Task/await és EF Core alkalmazások. A szálak és az aszinkron várakozás viszonyára most még nincs új tanulói válasz. |
+| `WEB-DI-CONFIGURATION` | Web- és backendfejlesztés | L2 | L1 | Practiced | Binding/validáció, üres konfiguráció bemásolt OptionsValidationException hibája, snapshot-fogyasztók, 9/9 teszt. Env-prioritás és runtime-betöltés saját magyarázattal; az időzítés és a 19000 × 1,5 = 28500 eredmény mentor által korrigált. |
+| `DOTNET-DI-COMPOSITION` | Programozás és .NET | L2 | L1 | Practiced | Scoped/transient probe HTTP-próbával igazolt; singleton helyes következtetése felhasználói kérésre elfogadva a feladat lezárásához. Captive dependency vezetett reprodukció/javítás; regisztráció és feloldáskori példányosítás saját válasszal elkülönítve. |
 
 ## A következő tanulási szelet iránya
 
-- A kódba égetett adat, az alkalmazáskonfiguráció és az üzleti viselkedés felelőssége elkülönül.
-- Egy kis objektumgráfban a service registration, constructor injection és lifetime megválasztása gyakorlati bizonyítékot kap.
-- A konfiguráció hiánya vagy hibája és egy indokolt lifetime-hiba diagnosztizálható lesz; a részletes exit gate az új gyakorlóprojekt tervében rögzül.
+- Aszinkron I/O és szálhasználat alapmodelljének felmérése, majd a hiányokhoz igazított kísérlet.
+- Lassú külső HTTP-függőség, a kliens megszakítása és a cancellation továbbadása lesz a gyakorlati irány.
+- Új projekt és mérföldkőterv még nincs; a ConfigurationDiLab nem bővül automatikusan új feladatokkal.
 
 ## A következő lépés elfogadási feltételei
 
-- A kalkulátor kívülről kapott óradíjtáblával számol; két példány Ducati 1.5 órára 27000 és 36000 HUF eredményt ad.
-- Az API az alapdíjas kalkulátort használja, a build tiszta és a kilenc regressziós teszteset zöld; részletes feladat: [TASKS.md](projects/configuration-di-lab/TASKS.md).
+- A tanuló saját szavaival elmondja, mit gondol a szál viselkedéséről egy még be nem fejeződött aszinkron HTTP-művelet await-je közben.
+- Kitér arra, jelent-e az async kulcsszó új szál létrehozását. Ez belépő diagnózis, nem már igazolt tudás.
 
 ## Döntések
 
@@ -42,6 +43,7 @@ Az L0 itt azt jelenti, hogy a teljes altéma L1-es alapmodellje még nincs igazo
 - A projekt neve `BackendFoundations`, repository-helye [`projects/backend-foundations/`](projects/backend-foundations/), target frameworkje `net10.0`.
 - Az első szeletben még nem használunk adatbázist, EF Core-t, autentikációt, Dockert vagy indokolatlan architekturális rétegeket.
 - Alapértelmezetten a tanuló írja és futtatja a kódot; az agent kis lépésekben mentorál és tényleges bizonyíték alapján értékel.
+- A felhasználó 2026-09-28-i kérése alapján a tanulási állapotokat csak explicit `update` vagy külön fájlfrissítési kérés után aktualizáljuk, az addigi bizonyított haladást egyben rögzítve. Közben chatben mentorálunk és ellenőrizzük a kódot.
 - A `RouteHandlerOptions.ThrowOnBadRequest` értéke explicit `false`, hogy a Minimal API bindinghibái környezettől függetlenül automatikus `400` választ adjanak, és ne váljanak a saját exception middleware-ben `500` hibává.
 - Az aktív projektek véges, bizonyíték-alapú mérföldkőtervet és explicit exit gate-et kapnak; egyszerre egy mérföldkő és azon belül egy konkrét lépés aktív.
 - A curriculum pillérei inkrementálisan bomlanak altémákra; a teljes haladási ledger és az aktív fókuszállapot külön forrás-of-truth fájlban marad.
@@ -53,9 +55,11 @@ Az L0 itt azt jelenti, hogy a teljes altéma L1-es alapmodellje még nincs igazo
 - A production minimum az első telepíthető szolgáltatástól együtt kezeli az immutable artifactot, külső konfigurációt, visszaállítható deploymentet, strukturált telemetriát és elkülönített startup/readiness/liveness jelzést; a cloud- és orchestration-mélység szükségvezérelt.
 - Elosztott rendszereknél az első külső dependencyvel együtt jön a deadline/cancellation, timeout, biztonságos retry, idempotencia és korreláció; cache, broker, replika, shard, konszenzus vagy saga csak mért korlát vagy konkrét workflow-igény alapján kerül be.
 
+- 2026-10-07: a scoped/transient probe futásai után a felhasználó a singleton helyes következtetését kérte elfogadni a kísérlet teljesítéséhez. Ez elfogadott lezárási bizonyíték; külön singleton probe-futást nem állítunk. A DI/configuration alapozó szelet lezárult, a következő irány a tantervi async/cancellation szelet.
+
 ## Nyitott döntések
 
-- Jelenleg nincs a következő lépést blokkoló nyitott döntés.
+Az async belépő kérdés után egyeztetendő a gyakorlóprojekt helye és véges mérföldkőterve. Ez a fogalmi belépő kérdést nem blokkolja.
 
 ## Megőrzött korábbi bizonyíték
 
@@ -69,4 +73,4 @@ Az L0 itt azt jelenti, hogy a teljes altéma L1-es alapmodellje még nincs igazo
 
 ## Egyetlen következő konkrét lépés
 
-A tanuló elvégzi a ConfigurationDiLab [TASKS.md](projects/configuration-di-lab/TASKS.md) `M1` feladatát: constructor injection, kézi példányosítás, endpoint-bekötés, két díjszabás futási bizonyítéka és zöld regressziós tesztek.
+A tanuló megválaszolja az async belépő kérdést: egy endpoint 3 másodpercig await-tel vár egy külső HTTP-válaszra; mi történik ezalatt a kérést addig végrehajtó szállal, és létrehoz-e az async külön szálat? Válasz még nem érkezett.

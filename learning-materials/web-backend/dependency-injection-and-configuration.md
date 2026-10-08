@@ -8,7 +8,7 @@ Kapcsolódó altémák: `DOTNET-DI-COMPOSITION`, `WEB-DI-CONFIGURATION`
 
 A [ConfigurationDiLab](../../projects/configuration-di-lab/README.md) az ismert szervizköltség-számítással teszi láthatóvá a díjadatok, a számítás és az objektumok összeállításának felelősségét. Az első feladat a kézi constructor injection; a container, lifetime és konfiguráció a következő mérföldköveken kerül elő.
 
-**Most az 1. olvasási lépést végezd el, majd térj vissza az M1 implementációhoz.** A teljes anyagot a labor négy mérföldkövével együtt dolgozd fel. Az olvasás nem helyettesíti a kódot, a futási bizonyítékot és a saját magyarázatot.
+**Az aktuális mérföldkőhöz tartozó olvasási lépést végezd el, majd térj vissza a gyakorlathoz.** A teljes anyagot a labor négy mérföldkövével együtt dolgozd fel. Az olvasás nem helyettesíti a kódot, a futási bizonyítékot és a saját magyarázatot.
 
 ## Rövid mentális modell
 
@@ -36,6 +36,14 @@ Olvasd a bevezetést és a **The concept** részt. Figyeld meg a saját maga ál
 [Dependency injection in ASP.NET Core — Microsoft Learn](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0)
 
 Olvasd a **Service registration methods**, majd a **Lifetime and registration options** részt. A webes példákban az alkalmazásindításkor megadott regisztráció és a fogyasztó számára feloldott példány kapcsolatát keresd.
+
+[Service registration — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/service-registration)
+
+Olvasd az implementációtípussal és a meglévő instance-szal történő regisztráció példáit. A service-típus az a típus, amelyet a fogyasztó kér. Ha a konstruktor `IReadOnlyDictionary<string, decimal>` paramétert vár, a táblát ezen a típuson keresztül kell elérhetővé tenni; a concrete `Dictionary` regisztrációjából a container nem következtet automatikusan minden implementált interfész regisztrációjára.
+
+[Minimal API parameter binding — Microsoft Learn](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/parameter-binding?view=aspnetcore-10.0#parameter-binding-with-dependency-injection)
+
+Olvasd a **Parameter binding with dependency injection** részt. Az endpoint service-paramétere a containerből érkezik; a `[FromServices]` ezt explicit jelzi. A regisztrált service-típusoknál az attribútum nélkül is felismerhető ez a forrás. A kliens route/query adatai és a szerver szolgáltatásai külön binding-források.
 
 [Service lifetimes — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/service-lifetimes)
 
@@ -71,7 +79,7 @@ appsettings.json
 
 Az azonos kulcsú érték felülíródik; más kulcsok megmaradnak. A környezeti változókban a `__` a hierarchikus kulcs `:` elválasztóját helyettesíti. Például `Pricing__HourlyRates__ducati` a `Pricing:HourlyRates:ducati` kulcsnak felel meg, ha ezt a szekciónevet választjuk.
 
-**Kísérlet:** a Ducati óradíját környezeti változóval állítsd `19000`-re. Az új értéket öröklő alkalmazás újraindítása után 1.5 órára `28500` HUF legyen az eredmény, új build nélkül. Az override eltávolítása és újraindítás után az alapdíj térjen vissza. Ezt az M3-ban készítjük elő; a jelenlegi M1 kód még beégetett díjtáblát használ.
+**Kísérlet:** a Ducati óradíját környezeti változóval állítsd `19000`-re. Az új értéket öröklő alkalmazás újraindítása után 1.5 órára `28500` HUF legyen az eredmény, új build nélkül. Az override eltávolítása és újraindítás után az alapdíj térjen vissza. Ezt az M3-ban készítjük elő; az M1 kiinduló kódja még beégetett díjtáblát használ.
 
 Az óradíj konfigurációs adat, a kerekítés számítási szabály. Jelszó és token külön kezelendő titok; ne kerüljenek verziózott konfigurációs fájlba.
 
@@ -97,6 +105,7 @@ Ezt a részt az M2 megfigyelései után olvasd. Ha egy singleton eltárol egy sc
 
 ## Kompromisszumok és gyakori félreértések
 
+- Az `app.Use(...)` a HTTP middleware pipeline összeállítására szolgál. Egy üzleti kalkulátorpéldányt az endpoint hív meg; a kézi constructor injection lépésében a `Program.cs` hozza létre `new` hívással. [ASP.NET Core middleware — Microsoft Learn](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-10.0).
 - A kézi összeállítás kis objektumgráfnál áttekinthető; a container több összekapcsolt service és élettartam kezelését segíti.
 - Egy külön service indokoltságát a változó felelősség és ellenőrizhetőség alapján mérlegeld, ne pusztán a függvény hosszából.
 - A singleton nem automatikus teljesítménymegoldás. Megosztott állapotával és függőségeivel együtt kell vizsgálni.

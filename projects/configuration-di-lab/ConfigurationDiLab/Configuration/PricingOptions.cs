@@ -2,5 +2,5 @@
 
 public class PricingOptions
 {
-    public Dictionary<string, decimal> HourlyRates { get; set; } = new();
+    public Dictionary<string, decimal> HourlyRates { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 }

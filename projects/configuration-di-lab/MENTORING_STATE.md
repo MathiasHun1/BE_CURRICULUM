@@ -1,8 +1,8 @@
 # ConfigurationDiLab — mentoring state
 
-Utolsó frissítés: 2026-09-28
+Utolsó frissítés: 2026-10-07
 
-Állapot: aktív. Aktív mérföldkő: `M2`.
+Állapot: lezárt alapozó labor. M1–M4 `Complete`; nincs aktív mérföldkő.
 
 ## Current Goal
 
@@ -10,18 +10,26 @@ Az ismert szervizköltség-számítással bizonyítani a constructor injection, 
 
 ## Current Checkpoint
 
-2026-09-28, a DI-bekötés után az M3 konfigurációs szelete megkezdődött. A díjtábla az appsettings.json Pricing szekciójából Get<PricingOptions>() bindinggal érkezik; az endpoint és a kalkulátor ugyanazt a dictionary-t használja. A null és Count==0 startup guard a tényleges forrásban ellenőrzött. Az utolsó solution tesztfutás warning nélkül `9/9` zöld. A szerverkonfigurációs hiba és kliensinput saját elkülönítése helyes. A következő feladat az env override két HTTP-válaszának bemutatása; eredmény még nincs. A mérföldkőterv nem változott: M2 formálisan `Active`, az azonosítós kísérlet félretett és nem teljesült; M3 `Planned`, részleges bizonyítékkal. IOptions és ValidateOnStart még nincs az implementációban.
+2026-10-07: a DI/configuration alapozó szelet a chatben lezárva. A kalkulátor scoped, a konstruktor és a handler is `IOptionsSnapshot<PricingOptions>`-t kér. Az `AddOptions → Bind → Validate → ValidateOnStart` és az `OrdinalIgnoreCase` dictionary megmaradt. A régi kommentelt guardok eltűntek. A JSON Ducati-díja ismét 18000.
+
+A `/debug/lifetime` endpoint két `LifeTimeProbe` paramétert hasonlít össze GUID-okkal és `sameInstance` mezővel. A probe végső regisztrációja transient, az `InstanceId` csak olvasható auto-property egyszeri inicializálással. Scoped/transient működés agent HTTP-próbákkal igazolt; singleton helyes következtetése a felhasználó kifejezett kérésére elfogadva a kísérlet teljesítéséhez, külön singleton probe-futás nélkül.
+
+Üres díjtábla OptionsValidationException hibája és singleton kalkulátor → scoped snapshot hiba bemutatva, javítás ellenőrizve. Utolsó agent-futtatás: `dotnet test projects/configuration-di-lab/ConfigurationDiLab.slnx --verbosity minimal`, 9 passed, 0 failed, 0 skipped, 441 ms; buildhiba vagy warning nem jelent meg.
+
+A lezárás az alapozó gyakorlat elfogadását jelenti. A magyarázatok több ponton vezetett pontosítást igényeltek; a két fő curriculum-téma L1 / Practiced marad. A következő irány async I/O/cancellation; belépő kérdés kiadva, még megválaszolatlan.
 
 ## Milestone Plan
 
 | ID | Eredmény | Teljesítési bizonyíték | Állapot |
 |---|---|---|---|
 | `M1` | Kézi constructor injection | A tanuló a kalkulátort két kívülről átadott díjtáblával példányosítja; Ducati 1.5 órára 27000 és 36000 HUF. Az API az alapdíjas kalkulátort használja, a regressziós tesztek zöldek. Saját magyarázat a függőség létrehozójáról és fogyasztójáról, illetve a container nélküli DI-ról. | `Complete` |
-| `M2` | DI container és indokolt lifetime | A kalkulátor regisztrált service-ként kerül az endpointba. Egy kis azonosítós kísérletben a transient/scoped/singleton példányazonosság megfigyelhető azonos scope-on belül és több HTTP-kérés között. A tanuló indokolja a kalkulátor választott lifetime-ját; a tesztek zöldek. | `Active` |
-| `M3` | Külső konfiguráció és options | A díjtábla JSON-konfigurációból, típusos options objektumon keresztül érkezik. A tanuló környezeti változóval felülírja a Ducati óradíját 19000-re; 1.5 órára 28500 HUF, új build nélkül, újraindítás után. Megmagyarázza a provider-sorrendet; felülírás nélkül az alaptesztek zöldek. | `Planned` |
-| `M4` | Hibadiagnózis és lezárás | Egy hiányzó vagy üres díjtábla és egy nem pozitív óradíj startup validation hibát ad. Egy kontrollált singleton → scoped captive dependency hiba scope validation mellett reprodukálható, megmagyarázható és javítható. A helyes konfiguráció és registration visszaállítása után a teljes tesztcsomag zöld. | `Planned` |
+| `M2` | DI container és indokolt lifetime | A kalkulátor regisztrált service-ként kerül az endpointba. Scoped/transient példányazonosság megfigyelése azonos scope-on belül és több HTTP-kérés között; singleton esetén a helyes tanulói következtetés a felhasználó kérésére elfogadott a futási próba helyett. A tanuló indokolja a kalkulátor választott lifetime-ját; a tesztek zöldek. | `Complete` |
+| `M3` | Külső konfiguráció és options | A díjtábla JSON-konfigurációból, típusos options objektumon keresztül érkezik. A tanuló környezeti változóval felülírja a Ducati óradíját 19000-re; 1.5 órára 28500 HUF, új build nélkül, újraindítás után. Megmagyarázza a provider-sorrendet; felülírás nélkül az alaptesztek zöldek. | `Complete` |
+| `M4` | Hibadiagnózis és lezárás | Egy hiányzó vagy üres díjtábla és egy nem pozitív óradíj startup validation hibát ad. Egy kontrollált singleton → scoped captive dependency hiba scope validation mellett reprodukálható, megmagyarázható és javítható. A helyes konfiguráció és registration visszaállítása után a teljes tesztcsomag zöld. | `Complete` |
 
-Egyszerre egy mérföldkő aktív. A scaffold agent által készített infrastruktúra; önmagában nem teljesíti az `M1`-et és nem emel tanulói tudásszintet.
+Aktív projektben egyszerre egy mérföldkő aktív; a lezárt laborban nincs aktív mérföldkő. A scaffold agent által készített infrastruktúra; önmagában nem teljesíti az `M1`-et és nem emel tanulói tudásszintet.
+
+2026-10-07-i lezárási értékelés: a mérföldkövek alapozó eredményeit a fenti, eltérő erősségű bizonyítékokkal elfogadtuk. A singleton probe következtetésének elfogadása explicit felhasználói döntés. A futás, tanulói sikerjelzés és vezetetten javított magyarázat külön dokumentált; ezek nem jelentenek automatikus L2-t.
 
 ## Exit Gate
 
@@ -31,7 +39,7 @@ Egyszerre egy mérföldkő aktív. A scaffold agent által készített infrastru
 - Saját szavaival végigköveti az adat és a függőség útját: configuration provider → options → objektum-összeállítás → kalkulátor → HTTP-válasz.
 - Megindokolja a lifetime-ot, és elkülöníti a konfigurációs hibát a kliensinput hibájától.
 
-A feltételek teljesülése után a projekt lezárható. A tudásszintek a curriculum ledgerben, a tényleges tanulói bizonyíték alapján értékelendők.
+2026-10-07: az alapozó szelet lezárását a chatben elfogadtuk. Az exit gate eredményei a mérföldkőtáblában és az Evidence alatt. Bizonyítékkorlát: az env override teljes HTTP-válasza nincs megőrizve, a végső összefüggő magyarázat sorrendje és számtani eredménye mentor által korrigált. Ezt vezetett alapozó lezárásként, nem teljesen önálló vizsgaként rögzítjük. Az önálló alkalmazás és késleltetett felidézés a curriculum nyitott része; nem hosszabbítjuk automatikusan a labort.
 
 ## Curriculum Mapping
 
@@ -40,6 +48,8 @@ A feltételek teljesülése után a projekt lezárható. A tudásszintek a curri
 - **Konfigurációhatár:** `OPS-ARTIFACT-CONFIG-SECRETS`; a labor díjtáblája nem titok. Credential nem kerül a repositoryba.
 
 ## Decisions
+
+- 2026-10-07: a felhasználó kérésére a singleton probe helyes következtetése elfogadott az M2 teljesítéséhez; nincs újabb kötelező singleton futás. A labor alapozó szeletét lezártuk; a következő irány async/cancellation, a tudásszintek L1-en maradnak.
 
 - A felhasználó 2026-09-28-án új projektet választott, és az agentre bízta az előkészítést az önálló feladatokig.
 - Hely: `projects/configuration-di-lab/`. API: `ConfigurationDiLab`; target: `net10.0`.
@@ -81,19 +91,46 @@ A feltételek teljesülése után a projekt lezárható. A tudásszintek a curri
 - 2026-09-28, startup guard: a tanuló binding-magyarázata még pontatlan volt, és azt jósolta, hogy a null guard felismeri a hiányzó HourlyRates-t. A mentor pontosította a szekcióobjektum, a bound PricingOptions és a property üres kezdőértékének különbségét. A tanuló megvalósította a Count==0 ellenőrzést a Build előtt, InvalidOperationException-nel. A forrás ellenőrzött, a solution tesztfutás warning nélkül `9/9` zöld (377 ms tesztidő). A külön, ideiglenes üres konfigurációs indítás parancsát az automatikus ellenőrzés blokkolta, részletes indok nélkül; ennek runtime-bizonyítéka nincs. A tanuló az induláskor felismerés előnyét és az üres díjtábla szerverkonfigurációs / workHours=0 kliensinput-hiba különbségét helyesen megfogalmazta.
 - 2026-09-28, következő kísérlet kiadva: PowerShell Pricing__HourlyRates__ducati=19000 és dotnet run --no-build, 1.5 órára 19000/28500 HTTP-válasz, majd override eltávolítása és újraindítás után 18000/27000. A JSON marad 18000. A két HTTP-válasz, a provider-sorrend és a változatlan build saját magyarázata még hiányzik.
 
+### 2026-10-06 — környezeti felülírás, diagnózis és options
+
+- Környezeti változó: a tanuló PowerShellben 19000-et olvasott vissza, miközben az API `400 Unsupported bike brand` választ adott az agent kérésére. Rider Attach to Process és Evaluate Expression vezetett használatával bemutatta a tényleges táblát: `aprilia=20000`, `Ducati=19000`, `honda=12000`, `kawasaki=15000`, `suzuki=10000`. A mentor a kisbetűs kereséssel összevetve diagnosztizálta a hibát. A tanuló `new(StringComparer.OrdinalIgnoreCase)` inicializálással javított, az agent a forrást ellenőrizte.
+- A tanuló 19000-es eredményt, majd az override eltávolítása és újraindítás után sikert jelzett. Teljes HTTP-választ nem küldött. A JSON Ducati-alapdíja az ellenőrzéskor 18000 volt. Kódjavításkor build kellett; a konfigurációcsere önmagában nem igényel új buildet, ezt a tanuló saját szavaival helyesen megfogalmazta.
+- Windows env-casing: az agent külön, ideiglenes változóval reprodukálta, hogy a korábban nagy D-vel létrehozott név kisbetűs értékadás után is megőrizheti írásmódját. A tanuló megerősítette, hogy nála ez történt. Process-környezet, memóriabeli tárolás, gyermekfolyamat öröklése és az újraindítás oka mentor által magyarázott. A TryGetValue sikertelensége az out változónak ad alapértéket, nem a tárolt díjat írja át; ez mentor által pontosított.
+- A tanuló foreach alapú nem pozitív díj-ellenőrzést írt a Build elé, és bemásolta a futási hibát: `System.InvalidOperationException: Invalid hourly rate for ducati: -3000`. Felismerte, hogy üres kollekciónál a ciklus nem fog hibát, ezért a Count ellenőrzés külön kell; dictionary/array szóhasználat pontosítva. A JSON -3000 és env 19000 példában az env értékét helyesen nevezte meg a validáció bemeneteként.
+- Options átállás: a tanuló a kalkulátorban IOptions-t használt, de először az endpointban concrete PricingOptions-t kért, és csak AddOptions-t regisztrált Bind nélkül. Az agent forrásvizsgálata azonosította mindkét hiányt; a build ettől még 0 warning/0 error eredményű volt. Vezetett javítás után mindkét fogyasztó IOptions-t kap, a Bind a Pricing szekcióra mutat. A külön dictionary-regisztráció megszűnt.
+- Validáció: az első Validate lambda saját InvalidOperationException-t dobott (`Invalid hourly rate for suzuki: 0`, tanuló által bemásolva). A mentor a bool predicate és a külön failureMessage szerepét pontosította. A javított kódban null/üres tábla és nem pozitív díj esetén false az eredmény, a végén true; ValidateOnStart szerepel. A tanuló jelezte, hogy a várt OptionsValidationException érkezik. Ennek teljes stack trace-ét nem másolta be. Az üres/hiányzó konfiguráció elutasítása forrásból következik, külön futása nincs igazolva. A régi kézi guardok kommentként még a Program.cs-ben vannak.
+- Regresszió: az agent `dotnet test projects/configuration-di-lab/ConfigurationDiLab.slnx --no-restore --verbosity minimal` futása sikeres: 9 passed, 0 failed, 0 skipped, 376 ms; warning nem jelent meg. A JSON ekkor helyes alapdíjakat tartalmazott.
+- Felidézés: a tanuló az IOptions-t wrapperként, a Value-t az options eléréseként, a Bind-ot betöltésként és a Validate-et ellenőrzésként helyesen írta le; interface/property és regisztráció/végrehajtás megkülönböztetése mentor által pontosított. ValidateOnStart nélkül az első Value-hozzáférés időzítését nem tudta, magyarázat után helyesen következtetett arra, hogy a `/` végpont nem váltaná ki a validációt. A WEB-DI-CONFIGURATION L1 / Practiced szintet kap az ellenőrzött alkalmazás és saját alapmagyarázatok alapján; önálló L2-diagnózist nem állítunk.
+- Következő kísérlet kiadva: csak a kalkulátor konstruktorában IOptions → IOptionsSnapshot csere, a registrationben AddScoped → AddSingleton, majd Development indítás új builddel és a scope-validation hiba bemutatása. A tanuló még nem küldött eredményt, az update-kori forrásban a két változtatás sincs meg.
+
+### 2026-10-07 — lifetime, snapshot, validáció és lezárás
+
+- Captive dependency: az első módosítás csak a handlerbe tett snapshotot, a singleton kalkulátor IOptions-t kapott, ezért nem volt lifetime-hiba. Az agent ezt forrásból diagnosztizálta. A konstruktor snapshotra állítása után a tanuló service descriptor validation InvalidOperationException részletet küldött; a teljes belső kivételszöveg nem érkezett meg. A hibás singleton/scoped gráf forrással igazolt. AddScoped-ra visszaállítva a hiba megszűnt; a tanuló a lifetime-párokat helyesen nevezte meg.
+- Snapshot-konzisztencia: a handler IOptions és a kalkulátor snapshot vegyes használatából eredő eltérést mentor magyarázta. Mindkét fogyasztó snapshotra állítása ellenőrzött. A JSON 20000-es futás közbeni módosítására a tanuló sikert jelzett, teljes válasz nélkül. A scoped választás közvetlen oka a scoped snapshotfüggőség; a tanuló először önmagában a runtime configváltozással indokolt. Az IOptionsMonitor singleton alternatíva mentor által bevezetett, nem gyakorolt.
+- Üres tábla: üres HourlyRates JSON ellenőrizve; bemásolt hiba: `Microsoft.Extensions.Options.OptionsValidationException: Pricing options are invalid`. Saját magyarázat: a dictionary nem null, nincs foreach-iteráció, Count==0 nélkül a végső true jönne. A startup hibát először fordításkorinak mondta; pontosítás után helyesen állította, hogy runtime betöltés miatt újrafordítás nélkül is meghiúsulhat az indítás.
+- Regresszió: a bent maradt 20000-es Ducati-díjjal agent 7 passed / 2 failed eredmény (expected 18000, actual 20000). Az alapdíj 18000-re visszaállt; a végső teljes tesztfutás 9 passed / 0 failed / 0 skipped, 441 ms, warning nélkül. Ez a munkamenet korábbi futása; az update miatt nem ismételtük.
+- Scoped probe: két agent HTTP-kérésben az azonosítópárok 209a597e…/209a597e… és 39ed0529…/39ed0529…, mindkét sameInstance true. Egy scope-ban azonos, külön kérésekben külön példány igazolt.
+- Transient probe: két agent HTTP-kérésben bf7f4a72…/168f3f4b… és 9de48b18…/bd0201b1…, mindkét sameInstance false. A tanuló előre helyesen jósolta a külön példányokat, mert két paraméterhez két feloldás tartozik.
+- Singleton probe: a tanuló helyesen jósolta az azonosságot kérésen belül és kérések között. A kód és az ellenőrzött futás még transient volt. Ezután a felhasználó kifejezetten kérte a helyes következtetés elfogadását (`tekintsd annak, egyertelmu`); a kísérletet ennek megfelelően lezártuk. Ez elfogadott feladatbizonyíték, nem megfigyelt singleton futás.
+- C# mellékszál: az InstanceId nyilvános mezőből readonly mező, majd `public Guid InstanceId { get; } = Guid.NewGuid();` auto-property lett. Mező/property, getter, rejtett tárolómező és getterenként új GUID különbsége magyarázva; önálló fogalmi visszamérés még nincs.
+- Felidézés: a tanuló megkülönböztette a külön HTTP-kérések scope-jait, ugyanazon scope két feloldását és a regisztrációtól különálló példányosítást. Helyesen mondta, hogy a regisztráció nem fut újra kérésenként, és pusztán AddScoped miatt még nincs kalkulátorpéldány. A kezdeti snapshot miatti példányazonosság-indoklás mentor által javított.
+- Lezáró lánc: az env 19000-es prioritását helyesen nevezte meg, de a végösszeget kétszer 27000-nek adta; a 28500 mentor által korrigált. A startup regisztráció/validáció és a HTTP-kéréshez tartozó példányosítás sorrendje is pontosítást igényelt. Az utolsó kérdésre helyesen válaszolta, hogy az első feloldás előtt nincs kalkulátorpéldány. Alapozó lezárás elfogadva; L1 / Practiced marad.
+- Átvezetés: WEB-ASYNC-CANCELLATION / DOTNET-ASYNC-TASKS belépő kérdése kiadva: 3 másodperces külső HTTP-várakozás alatt mi történik a szállal, és hoz-e létre új szálat az async? Még nincs válasz, új projekt vagy implementáció.
+
 ## Deferred
 
-- Runtime reload, saját configuration provider, named/keyed services, factory- és disposal-mélyítés: csak későbbi konkrét igénynél.
-- Adatbázis, EF Core, külső szolgáltatás és deployment nem szükséges a labor exit gate-jéhez.
+- Saját configuration provider, named/keyed services, factory/disposal és IOptionsMonitor részletes alkalmazása: későbbi konkrét igénynél. A snapshotos JSON-reload alapkísérlet tanulói sikerjelzést kapott.
+- Önálló, új kontextusú DI/config diagnózis és a teljes startup → kérés → válasz lánc késleltetett felidézése a curriculum L2-höz szükséges nyitott része.
+- Adatbázis, EF Core, külső szolgáltatás és deployment nem kerül utólag a lezárt laborba.
 
 ## Open Questions
 
-Nincs az aktuális feladatot blokkoló nyitott döntés.
+Nincs a lezárt laborban aktív feladat. A következő async-projekt helye és terve még nincs egyeztetve; előbb a globális belépő kérdés következik.
 
 ## Learning Materials
 
-- [Dependency injection és konfiguráció — backend alapok](../../learning-materials/web-backend/dependency-injection-and-configuration.md) — jelenleg a 3. olvasási lépés configuration provider és környezeti felülírás része aktuális. A Get<T> binding és a startup guard nem igazolja önmagában az IOptions/ValidateOnStart használatát. Az olvasás nem tudásszint-bizonyíték.
+- [Dependency injection és konfiguráció — backend alapok](../../learning-materials/web-backend/dependency-injection-and-configuration.md) — a lezárt labor referenciaanyaga; a bizonyítékok fent. Az olvasás önmagában nem tudásszint-bizonyíték.
 
 ## Next Step
 
-A tanuló elvégzi a [TASKS.md](TASKS.md) környezeti változós felülírási kísérletét: változatlan JSON és --no-build mellett előbb 19000/28500, majd az override törlése és újraindítás után 18000/27000 HTTP-választ küld. A mérföldkövek lezárását és az M2 félretett kísérletének sorsát külön értékeljük; nem jelöljük automatikusan késznek.
+A labor lezárt. A következő lépés a [globális állapotban](../../LEARNING_STATE.md) rögzített async belépő kérdés; ebben a projektben nincs új implementációs feladat.

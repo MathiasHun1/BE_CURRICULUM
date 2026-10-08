@@ -1,6 +1,6 @@
 # Teljes curriculum — haladási nyilvántartás
 
-Utolsó frissítés: 2026-09-28
+Utolsó frissítés: 2026-10-07
 
 ## Szerep és értelmezés
 
@@ -33,9 +33,9 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 |---|---:|---:|---|---|
 | `CSHARP-LANGUAGE-FUNDAMENTALS` | L2 | L1 | Practiced | Több saját endpoint és vezérlési ág készült, a fordítóhibák javítása és lambda használata ellenőrizve. Nyitott: szélesebb, új kontextusú önálló C# diagnózis. |
 | `DOTNET-TYPE-SYSTEM` | L3 | L0 | Learning | `int`, `Guid`, nullable bemenet, `required`, `List<T>`/`IEnumerable<T>` és handler-visszatérési típusok gyakorlati érintése. A value/reference, konverzió és nullability mentális modell nincs célzottan felmérve. |
-| `CSHARP-OBJECT-MODEL` | L2 | L0 | Learning | MovieExplorer entitások, propertyk, controller és `DbContext` használata megtörtént; absztrakciós döntések önálló magyarázata még nincs értékelve. |
+| `CSHARP-OBJECT-MODEL` | L2 | L0 | Learning | MovieExplorer entitások, propertyk, controller és DbContext korábbi használata. 2026-10-07: a LifeTimeProbe nyilvános mezőből readonly mező, majd csak olvasható auto-property lett, forrással ellenőrizve. Mező/property, rejtett tárolómező és getterenként új GUID különbsége mentor által magyarázott; önálló magyarázat és absztrakciós döntés még hiányzik. |
 | `DOTNET-GENERICS` | L2 | L0 | Learning | `List<T>`, `IEnumerable<T>`, `Task<T>`, `ILogger<T>` és framework API-k használata megtörtént; constraint és variance nincs felmérve. |
-| `DOTNET-COLLECTIONS` | L2 | L0 | Learning | Listák, tömbök és nagy import-adathalmaz feldolgozása megjelent a projektekben; adatszerkezet-választás és komplexitás nincs célzottan értékelve. |
+| `DOTNET-COLLECTIONS` | L2 | L0 | Learning | Korábbi listák, tömbök, import és vezetett OrdinalIgnoreCase-javítás. 2026-10-07: a tanuló helyesen magyarázta, hogy a létező üres dictionary nem null, a foreach törzse nem fut, ezért a Count==0 ellenőrzés külön kell. Adatszerkezet-választás és komplexitás nincs célzottan értékelve; a teljes altéma L1-e nem igazolt. |
 | `DOTNET-DELEGATES-EVENTS` | L2 | L1 | Learning | A tanuló a delegate-et típusos, később meghívható metódushivatkozásként azonosította; Minimal API lambdát használt. Event, closure és multicast viselkedés nyitott. |
 | `DOTNET-EXCEPTIONS-RESOURCES` | L2 | L1 | Practiced | Kivételterjedés, `await` utáni újradobás, `finally`, `throw;` és a válasz kontra exception határ saját magyarázattal és futási próbával ellenőrizve. `IDisposable`/`IAsyncDisposable` nyitott. |
 | `DOTNET-LINQ-EXECUTION` | L2 | L1 | Practiced | MovieExplorerben többtáblás LINQ-lekérdezés, deferred execution és `ToListAsync()` materializálás áttekintve. A kompozíciós lépés félbemaradt, ezért az önálló alkalmazás még nem L2. |
@@ -45,11 +45,12 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `DOTNET-ASYNC-TASKS` | L3 | L1 | Practiced | Aszinkron endpointok és EF Core műveletek, `Task`, `await`, kivételterjedés és részleges response gyakorlati ellenőrzése. Cancellation, `WhenAll` és sync-over-async nyitott. |
 | `DOTNET-CONCURRENCY-THREADING` | L3 | — | Unassessed | Az async és process témák nem bizonyítják a szálkezelés, ThreadPool és szinkronizáció ismeretét. |
 | `DOTNET-REFLECTION-METADATA` | L2 | — | Unassessed | Még nincs célzott bizonyíték. |
-| `DOTNET-DI-COMPOSITION` | L2 | L1 | Learning | MovieExplorer `AppDbContext` constructor injection és service registration; Backend Foundations options-konfiguráció. 2026-09-28: mérlegelte a service kiemelését; a konstruktorban kapott óradíjtáblát választotta kétféle díjszabáshoz, és felismerte, hogy ehhez elegendő kézi `new`, container nem szükséges. Rövid felismerési bizonyíték; az összeállítás felelősségének saját magyarázata, új önálló implementáció, lifetime-, scope- és captive dependency diagnózis nyitott. |
+| `DOTNET-DI-COMPOSITION` | L2 | L1 | Practiced | 2026-10-07: scoped/transient LifeTimeProbe példányazonosság forrással és két-két HTTP-kéréssel igazolt. Singleton helyes következtetése felhasználói kérésre elfogadva a feladat lezárásához; külön singleton probe-futás nincs. Singleton kalkulátor → scoped snapshot hiba vezetetten reprodukálva és javítva. Saját magyarázat: scope-onkénti példány, transient külön feloldások, regisztráció nem fut újra kérésenként; első feloldás előtt nincs kalkulátorpéldány. Scope és lifetime-indoklás pontosítást igényelt; önálló L2-diagnózis és új kontextus nyitott. |
 
 ### Bizonyítékforrások
 
 - [Aktív globális állapot](LEARNING_STATE.md)
+- [ConfigurationDiLab projektállapot](projects/configuration-di-lab/MENTORING_STATE.md)
 - [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 
@@ -65,7 +66,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `WEB-RESPONSES-SERIALIZATION` | L2 | L1 | Practiced | JSON és text válaszok, explicit sikeres DTO, `IResult`, `Results.Ok`/`BadRequest`, media type és `ReadFromJsonAsync<T>` deszerializáció futással ellenőrzött. A tanuló elkülönítette a `Results.Ok` eredmény/státusz szerepét a `System.Text.Json` szerializációjától, és magyarázta a kliensoldali deszerializálást; a DTO → JSON bájtok → `StreamContent` határ még segítséget igényelt. Nyitott: typed results és content negotiation. |
 | `WEB-ERROR-HANDLING` | L2 | L1 | Practiced | `/fail`, kontrollált JSON `500`, `Response.HasStarted`, explicit és automatikus `400`; a `4xx`/`5xx` felelősségi különbsége saját szavakkal megfogalmazva. |
 | `WEB-API-DESIGN-CONTRACTS` | L2 | L1 | Practiced | Elkészült a szervizköltség-operation explicit `GET` contractja: fogyasztó, route/query input, szerveroldali díjszabás, stabil sikeres DTO, Problem Details hibatípusok és `400`/`404` határ. A tanuló a safe metódust, a route mismatch és az érvénytelen üzleti input különbségét, valamint a stabil problémaazonosító szerepét saját szavaival részben megindokolta. L2-höz új contract önálló tervezése és változtatási trade-off kell. |
-| `WEB-DI-CONFIGURATION` | L2 | L0 | Learning | `RouteHandlerOptions` konfiguráció használata megtörtént. 2026-09-28: saját magyarázatban az óradíjat konfigurációs adatként, a kerekítést üzleti viselkedésként azonosította, felismerte a külső állíthatóság előnyét. Részleges fogalmi bizonyíték; DI lifetime-ok, providerek, options és a módosítás érvényesülése még nincs igazolva. |
+| `WEB-DI-CONFIGURATION` | L2 | L1 | Practiced | ConfigurationDiLab alapozó lezárás, 2026-10-07: binding/Validate/ValidateOnStart, snapshot-fogyasztók és 9/9 regresszió. Üres JSON-díjtábla forrással és bemásolt OptionsValidationExceptionnel igazolt; nem pozitív díj korábbi bizonyítéka megmarad. Env 19000/visszaállás és snapshot reload tanulói sikerjelzés, teljes válaszok nélkül. Saját magyarázat: env prioritás, üres dictionary, runtime betöltés. Összefüggő időzítés és 19000 × 1,5 = 28500 végösszeg mentor által javított; önálló L2-alkalmazás/diagnózis továbbra is nyitott. |
 | `WEB-ASYNC-CANCELLATION` | L2 | L1 | Learning | Aszinkron body-írás, flush és kivételterjedés gyakorlati érintése; az `await` hibás `Task`-ot újradobó működése felidézve. Cancellation és backpressure nyitott. |
 | `WEB-API-TESTING` | L2 | L1 | Practiced | A sikeres, ismeretlenmárka-, nulla, 200 fölötti munkaórás és hiányzó szegmenses `404` contractteszt `5/5` zöld. A felső határon túli teszt tanulói önálló munka; a `404` utolsó konfigurációja és tesztkorrekciója agent-asszisztált. A felhasználó a mélyítést most elhalasztotta; L2-höz további önálló diagnózis és új kontextusú tesztdizájn hiányzik. |
 | `WEB-SECURITY-INTEGRATION` | L2 | — | Unassessed | Ebben a tanulási szeletben tudatosan nincs autentikáció vagy authorization. |
@@ -76,6 +77,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 ### Bizonyítékforrások
 
 - [Aktív globális állapot](LEARNING_STATE.md)
+- [ConfigurationDiLab projektállapot](projects/configuration-di-lab/MENTORING_STATE.md)
 - [Backend Foundations projektállapot](projects/backend-foundations/MENTORING_STATE.md)
 - [MovieExplorer projektállapot](../sajat/MovieExplorer/MENTORING_STATE.md)
 
@@ -112,7 +114,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `SYSTEMS-CPU-EXECUTION` | L2 | L0 | Learning | A CIL/JIT és gépi kód alaplánca áttekintésre került; CPU-utasítás, regiszter és CPU-bound viselkedés nem kapott önálló gyakorlati bizonyítékot. |
 | `SYSTEMS-MEMORY-HIERARCHY` | L2 | — | Unassessed | Cache-, RAM-, lokalitás- vagy memória-sávszélesség kísérlet még nem történt. |
 | `SYSTEMS-VIRTUAL-MEMORY` | L2 | — | Unassessed | Address space, page, stack/heap és operációs rendszerbeli memóriahasználat még nincs célzottan felmérve. |
-| `SYSTEMS-PROCESS-PORT` | L2 | L1 | Practiced | A futó `BackendFoundations` process, PID, Kestrel és az IPv4/IPv6 `5003` figyelő socket ténylegesen ellenőrizve; a fájl és process különbségét a tanuló elmagyarázta. |
+| `SYSTEMS-PROCESS-PORT` | L2 | L1 | Practiced | A BackendFoundations process/PID/Kestrel/socket és fájl/process különbség korábbi bizonyítékai megmaradnak. 2026-10-06: process-szintű PowerShell env, gyermekfolyamat általi öröklés és újraindítás mentor által magyarázva; változatlan kód miatti buildelhagyás saját magyarázata helyes. A Windows case-insensitive, írásmódot megőrző env-nevét agent-próba reprodukálta, a korábbi nagy D-s létrehozást a tanuló megerősítette. |
 | `SYSTEMS-THREADS-SCHEDULING` | L3 | — | Unassessed | Az async endpointok nem bizonyítják a thread, scheduler, ThreadPool vagy starvation megértését. |
 | `SYSTEMS-KERNEL-SYSCALLS` | L2 | — | Unassessed | User/kernel mode és system call szintű vizsgálat még nem történt. |
 | `SYSTEMS-FILESYSTEMS-STORAGE` | L2 | L0 | Learning | A MovieExplorer importer fájlt streamel és a fájl/process különbség felidézésre került; filesystem-, permission-, buffering- és durability-modell nincs felmérve. |
@@ -136,7 +138,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 |---|---:|---:|---|---|
 | `SE-REQUIREMENTS-USE-CASES` | L2 | L1 | Practiced | A MovieExplorer use case-ei és API-műveletei, valamint a Backend Foundations mérföldkövei és elfogadási feltételei rögzítve lettek. Új, homályos igény önálló tisztázása még nincs célzottan felmérve. |
 | `SE-VERSION-CONTROL-COLLABORATION` | L2 | L0 | Learning | A projektek Git repositoryban vannak, de áttekinthető commit-workflowra, konfliktuskezelésre vagy code review-ra még nincs ellenőrzött bizonyíték. |
-| `SE-DEBUGGING-DIAGNOSTICS` | L3 | L1 | Practiced | Buildhibák, stack trace, middleware-sorrend, bindinghiba, process/port és HTTP-ágak bizonyíték-alapú diagnózisa megtörtént. Ismeretlen, többkomponensű hiba önálló végigvitele még nyitott. |
+| `SE-DEBUGGING-DIAGNOSTICS` | L3 | L1 | Practiced | Korábbi build-, middleware-, binding- és process/port-diagnózis mellett 2026-10-06: Rider Attach to Process és Evaluate Expression vezetett használata; tanuló bemutatta a dictionary tényleges Ducati=19000 tartalmát. A mentor a ducati kereséssel összevetve diagnosztizálta a casing hibát, a tanuló comparerrel javította és sikeresnek jelezte. Önálló többkomponensű diagnózis továbbra is nyitott. |
 | `SE-CODE-QUALITY-READABILITY` | L2 | L0 | Learning | Kis, fókuszált lépések, formázás és guard jellegű validáció megjelent; önálló olvashatósági refaktor és trade-off-magyarázat még nincs értékelve. |
 | `SE-REFACTORING-TECH-DEBT` | L2 | — | Unassessed | Nem történt célzott, teszttel biztosított refaktorálási gyakorlat vagy technikaiadósság-priorizálás. |
 | `SE-MODULARITY-COUPLING` | L3 | L0 | Learning | A MovieExplorer API és importer külön projekt, a Backend Foundations pedig tudatosan minimális maradt. Kohézió, csatolás és függőségi irány önálló elemzése még nincs felmérve. |
@@ -192,7 +194,7 @@ Nem számítunk teljes curriculum-százalékot. A haladást pillérenként, alt�
 | `OPS-CONTAINER-IMAGES` | L2 | L0 | Learning | A MovieExplorer hivatalos `postgres:16-alpine` image-et használ, de saját reprodukálható/multi-stage image build még nem készült. |
 | `OPS-CONTAINER-RUNTIME-COMPOSE` | L2 | L0 | Learning | A helyi PostgreSQL Docker Compose service elindult és az alkalmazás elérte. Container lifecycle, resource limit, restart és hibadiagnózis nincs önállóan felmérve. |
 | `OPS-CONTAINER-NETWORK-STORAGE` | L2 | L0 | Learning | A Compose publisholt `5432` portot és névvel ellátott `postgres-data` volume-ot használ. Service DNS-, mount- és adat-élettartam-hibák diagnózisa még nincs. |
-| `OPS-ARTIFACT-CONFIG-SECRETS` | L2 | L0 | Learning | Build artifact, `appsettings`, environmentváltozók, connection string és .NET User Secrets használata megtörtént. Több környezet azonos artifacttal és production secret injection még nincs bizonyítva. |
+| `OPS-ARTIFACT-CONFIG-SECRETS` | L2 | L0 | Learning | Build artifact, appsettings, connection string és User Secrets korábbi használata mellett 2026-10-06: env override 19000 és visszaállás tanulói sikerjelzéssel, teljes HTTP-válaszok nélkül; a kísérlet közben a comparer kódjavítása miatt rebuild is történt. Konfigurációcsere és kódváltozás/build különbségét saját szavaival helyesen indokolta. Több környezet azonos artifacttal és production secret injection még nyitott. |
 | `OPS-CI-BUILD-QUALITY` | L2 | — | Unassessed | Nincs repositoryhoz kötött, tiszta környezetben futó CI pipeline és publikált artifact. |
 | `OPS-RELEASE-DEPLOYMENT` | L3 | — | Unassessed | Nincs környezetek közötti promotion, deployment-, rollback- vagy kompatibilitási gyakorlat. |
 | `OPS-REVERSE-PROXY-TLS` | L2 | — | Unassessed | Nincs reverse proxy, HTTPS termination vagy forwarding header konfiguráció. |

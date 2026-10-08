@@ -2,22 +2,9 @@ using ConfigurationDiLab.Configuration;
 using ConfigurationDiLab.Contracts;
 using ConfigurationDiLab.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var pricingOptions = builder.Configuration
-    .GetSection("Pricing")
-    .Get<PricingOptions>();
-
-if (pricingOptions is null)
-{
-    throw new InvalidOperationException("PricingOptions not found");
-}
-
-if (pricingOptions.HourlyRates.Count == 0)
-{
-    throw new InvalidOperationException("No hourly rates found");   
-}
 
 builder.Services.Configure<RouteHandlerOptions>(options =>
     options.ThrowOnBadRequest = false);
@@ -31,9 +18,36 @@ builder.Services.AddProblemDetails(options =>
         }
     };
 });
+builder.Services
+    .AddOptions<PricingOptions>()
+    .Bind(builder.Configuration.GetSection("Pricing"))
+    .Validate((pricingOptions) =>
+    {
+        if (pricingOptions.HourlyRates is null)
+        {
+            return false;      
+        }
 
-builder.Services.AddSingleton<IReadOnlyDictionary<string, decimal>>(pricingOptions.HourlyRates);
+        foreach (var (key, value) in pricingOptions.HourlyRates)
+        {
+            if (value <= 0)
+            {
+                return false;
+
+            }
+        }
+
+        if (pricingOptions.HourlyRates.Count == 0)
+        {
+            return false;
+
+        }
+        return true;
+    }, "Pricing options are invalid")
+    .ValidateOnStart();
+
 builder.Services.AddScoped<ICostCalculatorService, CostCalculatorService>();
+builder.Services.AddTransient<LifeTimeProbe>();
 
 var app = builder.Build();
 
@@ -44,11 +58,11 @@ app.UseStatusCodePages();
 app.MapGet("/", () => Results.Ok(new { application = "ConfigurationDiLab" }));
 
 app.MapGet("/services/wage-calculation/{bikeBrand}",
-    (string bikeBrand, [FromQuery] decimal workHours, [FromServices] ICostCalculatorService calculator) =>
+    (string bikeBrand, [FromQuery] decimal workHours, [FromServices] ICostCalculatorService calculator, [FromServices] IOptionsSnapshot<PricingOptions> pricingOptions) =>
     {
         var normalizedBikeBrand = bikeBrand.ToLowerInvariant();
 
-        if (!pricingOptions.HourlyRates.TryGetValue(normalizedBikeBrand, out var hourlyRate))
+        if (!pricingOptions.Value.HourlyRates.TryGetValue(normalizedBikeBrand, out var hourlyRate))
         {
             return Results.Problem(
                 title: "Unsupported bike brand",
@@ -75,6 +89,14 @@ app.MapGet("/services/wage-calculation/{bikeBrand}",
             Currency = "HUF"
         });
     });
+
+app.MapGet("/debug/lifetime", ([FromServices] LifeTimeProbe probeOne, [FromServices] LifeTimeProbe probeTwo) =>
+{
+    var firstIDep = probeOne.InstanceId;
+    var secondIDep = probeTwo.InstanceId;
+    var sameInstance = Object.ReferenceEquals(probeOne, probeTwo);
+    return Results.Ok(new { firstIDep, secondIDep, sameInstance });
+});
 
 app.Run();
 
