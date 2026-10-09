@@ -1,12 +1,19 @@
 # Gyakorlóprojektek indexe
 
-Utolsó frissítés: 2026-10-07
+Utolsó frissítés: 2026-10-09
 
 Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekkel. A projektek részletes előzményeit és döntéseit nem másolja ide.
 
 ## Aktív projekt
 
-Jelenleg nincs aktív fő gyakorlóprojekt. A következő szelet az async I/O és cancellation belépő diagnózisa; a projekt és terv még nincs egyeztetve. Az egyetlen következő lépés a [globális állapotban](../LEARNING_STATE.md).
+### AsyncHttpLab
+
+- **Repository:** [`projects/async-http-lab/`](async-http-lab/).
+- **Projektspecifikus állapot és elfogadott terv:** [MENTORING_STATE.md](async-http-lab/MENTORING_STATE.md).
+- **Indítás és aktuális feladat:** [README.md](async-http-lab/README.md).
+- **Szerep:** aszinkron HTTP I/O, szálhasználat, több művelet, cancellation és timeout egy helyi lassú függőséggel.
+- **Elsődleges témák:** `WEB-ASYNC-CANCELLATION`, `DOTNET-ASYNC-TASKS`.
+- **Állapot:** aktív; M1 — Aszinkron várakozás. A környezet előkészítve és ellenőrizve, a `/fetch` implementációja tanulói munka.
 
 ## Lezárt projektek
 
@@ -18,7 +25,7 @@ Jelenleg nincs aktív fő gyakorlóprojekt. A következő szelet az async I/O é
 - **Elsődleges témák:** `WEB-DI-CONFIGURATION`, `DOTNET-DI-COMPOSITION`.
 - **Lezárás:** 2026-10-07, M1–M4 `Complete`, alapozó szelet elfogadva. Scoped/transient probe HTTP-próbával igazolt; singleton helyes következtetése felhasználói kérésre elfogadva a feladat teljesítéséhez. Üres konfigurációs hiba és captive dependency reprodukció/javítás, végső regresszió `9/9`.
 - **Bizonyítékkorlát:** env override és snapshot reload tanulói sikerjelzés; a végső magyarázat vezetett pontosítást igényelt. L1 / Practiced marad, részletek a projektállapotban.
-- **Állapot:** lezárt alapozó labor; új async-projekt még nincs.
+- **Állapot:** lezárt alapozó labor; a következő fő projekt az AsyncHttpLab.
 
 ### API Contract Testing
 

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="LabApi/LabApi.csproj" />
+  <Project Path="SlowService/SlowService.csproj" />
+</Solution>

@@ -40,7 +40,6 @@ builder.Services
         if (pricingOptions.HourlyRates.Count == 0)
         {
             return false;
-
         }
         return true;
     }, "Pricing options are invalid")

@@ -1,15 +1,15 @@
 # Globális tanulási állapot
 
-Utolsó frissítés: 2026-10-07
+Utolsó frissítés: 2026-10-09 — az elfogadott új projekt indítása; a teljes haladási ledger aktualizálása külön `update` során.
 
 ## Aktuális fókusz
 
-- **Tanulási szelet:** átmenet a DI/configuration alapozásból az aszinkron I/O, request cancellation és külső HTTP-hívások témájába.
-- **Projektállapot:** a [ConfigurationDiLab](projects/configuration-di-lab/) alapozó labor lezárt; M1–M4 `Complete`, a bizonyítékok és korlátaik a [MENTORING_STATE.md](projects/configuration-di-lab/MENTORING_STATE.md) fájlban. Nincs új aktív fő projekt vagy aktív projektmérföldkő.
+- **Tanulási szelet:** aszinkron I/O, request cancellation és külső HTTP-hívások.
+- **Projektállapot:** az [AsyncHttpLab](projects/async-http-lab/) aktív; M1 — Aszinkron várakozás. Az elfogadott terv és exit gate a saját [MENTORING_STATE.md](projects/async-http-lab/MENTORING_STATE.md) fájljában. A ConfigurationDiLab alapozó labor lezárt.
 - **Elsődleges pillér:** P1 — Web- és backendfejlesztés (`WEB-ASYNC-CANCELLATION`).
 - **Kapcsolódó pillér:** P1 — Programozás és .NET (`DOTNET-ASYNC-TASKS`); a DI/configuration tanulságai átvezető témák.
-- **Aktuális fázis:** az async/await és a szálak viszonyának belépő kérdése kiadva, még nincs válasz vagy új async implementáció. A gyakorlati projekt helyét és véges tervét a diagnózis után kell egyeztetni.
-- **Utolsó ellenőrzés:** a ConfigurationDiLab tesztcsomagja `9/9` zöld (2026-10-07, 441 ms); a handler és a scoped kalkulátor is `IOptionsSnapshot<PricingOptions>`-t kap, a Ducati-alapdíj 18000.
+- **Aktuális fázis:** a belépő diagnózis és vezetett fogalmi magyarázat után a projektváz elkészült. A `/fetch` implementációja a következő tanulói feladat.
+- **Utolsó ellenőrzés:** AsyncHttpLab build: 0 warning/error; mentor HTTP smoke próba: 3156 ms-os lassú válasz, health és hibás bemenetek ellenőrizve. Ez környezetellenőrzés, nem tanulói M1-teljesítés.
 - **Lezárt tanulási anyag:** [Dependency injection és konfiguráció — backend alapok](learning-materials/web-backend/dependency-injection-and-configuration.md).
 - **Curriculum-helyzet:** a tudástérkép a [curriculum/](curriculum/README.md), a teljes haladási ledger a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md).
 
@@ -19,21 +19,21 @@ A DI/configuration sorok az új szelethez átviendő tudást jelölik; a projekt
 
 | Témaazonosító | Pillér | Célmélység | Jelenlegi mélység | Állapot | Eddigi bizonyíték |
 |---|---|---:|---:|---|---|
-| `WEB-ASYNC-CANCELLATION` | Web- és backendfejlesztés | L2 | L1 | Learning | Korábbi aszinkron response/flush és kivételterjedés. Új belépő kérdés kiadva; cancellation, timeout és outbound HTTP még nyitott. |
-| `DOTNET-ASYNC-TASKS` | Programozás és .NET | L3 | L1 | Practiced | Korábbi Task/await és EF Core alkalmazások. A szálak és az aszinkron várakozás viszonyára most még nincs új tanulói válasz. |
+| `WEB-ASYNC-CANCELLATION` | Web- és backendfejlesztés | L2 | L1 | Learning | Korábbi aszinkron response/flush és kivételterjedés. Az AsyncHttpLab M1 elkezdődött; tanulói outbound HTTP implementáció, cancellation és timeout még nyitott. |
+| `DOTNET-ASYNC-TASKS` | Programozás és .NET | L3 | L1 | Practiced | Korábbi Task/await és EF Core alkalmazások. Új belépő diagnózis és vezetett válaszok az AsyncHttpLab projektállapotában; tudásszint-emelés nincs. |
 | `WEB-DI-CONFIGURATION` | Web- és backendfejlesztés | L2 | L1 | Practiced | Binding/validáció, üres konfiguráció bemásolt OptionsValidationException hibája, snapshot-fogyasztók, 9/9 teszt. Env-prioritás és runtime-betöltés saját magyarázattal; az időzítés és a 19000 × 1,5 = 28500 eredmény mentor által korrigált. |
 | `DOTNET-DI-COMPOSITION` | Programozás és .NET | L2 | L1 | Practiced | Scoped/transient probe HTTP-próbával igazolt; singleton helyes következtetése felhasználói kérésre elfogadva a feladat lezárásához. Captive dependency vezetett reprodukció/javítás; regisztráció és feloldáskori példányosítás saját válasszal elkülönítve. |
 
 ## A következő tanulási szelet iránya
 
-- Aszinkron I/O és szálhasználat alapmodelljének felmérése, majd a hiányokhoz igazított kísérlet.
+- Aszinkron I/O és szálhasználat alapmodelljének gyakorlati ellenőrzése az AsyncHttpLab M1-ben.
 - Lassú külső HTTP-függőség, a kliens megszakítása és a cancellation továbbadása lesz a gyakorlati irány.
-- Új projekt és mérföldkőterv még nincs; a ConfigurationDiLab nem bővül automatikusan új feladatokkal.
+- Az AsyncHttpLab helye és négylépéses terve elfogadva; a részletek a projektállapotban.
 
 ## A következő lépés elfogadási feltételei
 
-- A tanuló saját szavaival elmondja, mit gondol a szál viselkedéséről egy még be nem fejeződött aszinkron HTTP-művelet await-je közben.
-- Kitér arra, jelent-e az async kulcsszó új szál létrehozását. Ez belépő diagnózis, nem már igazolt tudás.
+- A `/fetch` valódi aszinkron HTTP-hívással kb. 3 másodperc után visszaadja a tesztfüggőség szövegét.
+- A tanuló bemutatja a kódot, HTTP-választ és az await előtti/utáni időpontot, szálazonosítót; értelmezi a megfigyelés korlátait. Részletes feladat: [AsyncHttpLab README](projects/async-http-lab/README.md).
 
 ## Döntések
 
@@ -59,7 +59,7 @@ A DI/configuration sorok az új szelethez átviendő tudást jelölik; a projekt
 
 ## Nyitott döntések
 
-Az async belépő kérdés után egyeztetendő a gyakorlóprojekt helye és véges mérföldkőterve. Ez a fogalmi belépő kérdést nem blokkolja.
+Az AsyncHttpLab helyét és M1–M4 tervét a felhasználó 2026-10-09-én elfogadta. Az M1 indítását nem blokkolja nyitott döntés.
 
 ## Megőrzött korábbi bizonyíték
 
@@ -73,4 +73,4 @@ Az async belépő kérdés után egyeztetendő a gyakorlóprojekt helye és vég
 
 ## Egyetlen következő konkrét lépés
 
-A tanuló megválaszolja az async belépő kérdést: egy endpoint 3 másodpercig await-tel vár egy külső HTTP-válaszra; mi történik ezalatt a kérést addig végrehajtó szállal, és létrehoz-e az async külön szálat? Válasz még nem érkezett.
+A tanuló implementálja és lefuttatja az AsyncHttpLab `LabApi/Program.cs` `/fetch` endpointját a [README M1 feladata](projects/async-http-lab/README.md) szerint, majd bemutatja a HTTP-választ és a két naplósort.
