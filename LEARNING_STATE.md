@@ -1,39 +1,36 @@
 # Globális tanulási állapot
 
-Utolsó frissítés: 2026-10-09 — az elfogadott új projekt indítása; a teljes haladási ledger aktualizálása külön `update` során.
+Utolsó frissítés: 2026-10-21 — M4 írási és tracking-próbák, valamint M5 tranzakciós kísérletek alapján.
 
 ## Aktuális fókusz
 
-- **Tanulási szelet:** aszinkron I/O, request cancellation és külső HTTP-hívások.
-- **Projektállapot:** az [AsyncHttpLab](projects/async-http-lab/) aktív; M1 — Aszinkron várakozás. Az elfogadott terv és exit gate a saját [MENTORING_STATE.md](projects/async-http-lab/MENTORING_STATE.md) fájljában. A ConfigurationDiLab alapozó labor lezárt.
-- **Elsődleges pillér:** P1 — Web- és backendfejlesztés (`WEB-ASYNC-CANCELLATION`).
-- **Kapcsolódó pillér:** P1 — Programozás és .NET (`DOTNET-ASYNC-TASKS`); a DI/configuration tanulságai átvezető témák.
-- **Aktuális fázis:** a belépő diagnózis és vezetett fogalmi magyarázat után a projektváz elkészült. A `/fetch` implementációja a következő tanulói feladat.
-- **Utolsó ellenőrzés:** AsyncHttpLab build: 0 warning/error; mentor HTTP smoke próba: 3156 ms-os lassú válasz, health és hibás bemenetek ellenőrizve. Ez környezetellenőrzés, nem tanulói M1-teljesítés.
-- **Lezárt tanulási anyag:** [Dependency injection és konfiguráció — backend alapok](learning-materials/web-backend/dependency-injection-and-configuration.md).
+- **Tanulási szelet:** relációs modell, PostgreSQL, SQL és EF Core újbóli, fokozatos gyakorlása.
+- **Projektállapot:** a [DataAccessLab](projects/data-access-lab/) aktív; M1–M4 `Complete`, M5 — Tranzakció és hibadiagnózis `Active`. A véges terv és exit gate a saját [MENTORING_STATE.md](projects/data-access-lab/MENTORING_STATE.md) fájljában van.
+- **Elsődleges pillér:** P1 — Adatok és adatbázisok (most `DATA-TRANSACTIONS` és `DATA-INTEGRITY-CONSTRAINTS`; az M4-ben `DATA-EF-MAPPING-TRACKING`).
+- **Kapcsolódó pillérek:** Web- és backendfejlesztés (API-válasz és validáció), szoftvermérnökség (hibadiagnózis).
+- **Aktuális fázis:** a POST és PATCH írási út forrása ellenőrzött, a POST mentését közvetlen GET igazolta; a PATCH sikerét a tanuló jelezte. A tracking/no-tracking különbség és a PostgreSQL `23503` FK-hiba megfigyelt. Az M5 sikeres és hibás tranzakciós ága után egy új constraint-hiba önálló diagnózisa következik.
+- **Korábbi bizonyíték:** a MovieExplorerben relációs modell, SQL JOIN-ok, PostgreSQL, EF Core mapping/query és migráció készült. Ezek a ledgerben maradnak, de az aktuális önálló felidézést és alkalmazást az új laborban ellenőrizzük.
 - **Curriculum-helyzet:** a tudástérkép a [curriculum/](curriculum/README.md), a teljes haladási ledger a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md).
 
 ## Aktív témák
 
-A DI/configuration sorok az új szelethez átviendő tudást jelölik; a projektlezárás nem jelent automatikus L2-t.
+A korábbi MovieExplorer-bizonyíték nem jelent automatikusan mostani önálló alkalmazást vagy L2-szintet.
 
 | Témaazonosító | Pillér | Célmélység | Jelenlegi mélység | Állapot | Eddigi bizonyíték |
 |---|---|---:|---:|---|---|
-| `WEB-ASYNC-CANCELLATION` | Web- és backendfejlesztés | L2 | L1 | Learning | Korábbi aszinkron response/flush és kivételterjedés. Az AsyncHttpLab M1 elkezdődött; tanulói outbound HTTP implementáció, cancellation és timeout még nyitott. |
-| `DOTNET-ASYNC-TASKS` | Programozás és .NET | L3 | L1 | Practiced | Korábbi Task/await és EF Core alkalmazások. Új belépő diagnózis és vezetett válaszok az AsyncHttpLab projektállapotában; tudásszint-emelés nincs. |
-| `WEB-DI-CONFIGURATION` | Web- és backendfejlesztés | L2 | L1 | Practiced | Binding/validáció, üres konfiguráció bemásolt OptionsValidationException hibája, snapshot-fogyasztók, 9/9 teszt. Env-prioritás és runtime-betöltés saját magyarázattal; az időzítés és a 19000 × 1,5 = 28500 eredmény mentor által korrigált. |
-| `DOTNET-DI-COMPOSITION` | Programozás és .NET | L2 | L1 | Practiced | Scoped/transient probe HTTP-próbával igazolt; singleton helyes következtetése felhasználói kérésre elfogadva a feladat lezárásához. Captive dependency vezetett reprodukció/javítás; regisztráció és feloldáskori példányosítás saját válasszal elkülönítve. |
+| `DATA-TRANSACTIONS` | Adatok és adatbázisok | L3 | L1 | Practiced | Sikertelen `BEGIN`–`UPDATE`–FK-sértő `INSERT` után `ROLLBACK` és változatlan adatbázis-állapot; javított két frissítés után mindkét cím perzisztált. A tanuló a `COMMIT` előtti láthatóságot és a tranzakció nélküli részleges eredményt helyesen magyarázta. |
+| `DATA-INTEGRITY-CONSTRAINTS` | Adatok és adatbázisok | L3 | L1 | Practiced | A nem létező projektet az API `404`-gyel utasította el a tanuló beszámolója szerint; közvetlen SQL-beszúrás `23503` FK-hibát adott. Új constraint-hiba önálló diagnózisa nyitott. |
+| `DATA-EF-MAPPING-TRACKING` | Adatok és adatbázisok | L2 | L1 | Practiced | POST mentését GET igazolta; a PATCH forrása a projekt- és munkatételazonosítóra szűr. Ideiglenes `AsNoTracking()` mellett a válasz módosult, az adatbázis nem; a tanuló helyesen magyarázta a `SaveChangesAsync` és a követés kapcsolatát. |
 
-## A következő tanulási szelet iránya
+## Az aktuális tanulási szelet iránya
 
-- Aszinkron I/O és szálhasználat alapmodelljének gyakorlati ellenőrzése az AsyncHttpLab M1-ben.
-- Lassú külső HTTP-függőség, a kliens megszakítása és a cancellation továbbadása lesz a gyakorlati irány.
-- Az AsyncHttpLab helye és négylépéses terve elfogadva; a részletek a projektállapotban.
+- A relációs/SQL-alapok, az EF Core modell/séma, a lekérdezés és az írás gyakorlata elkészült; most a tranzakció és a célzott hibadiagnózis lezárása következik.
+- A security- és observability-alapok a konkrét adatfunkció részeként, a teljes védett endpoint és production-mélyítés később következik.
 
-## A következő lépés elfogadási feltételei
+## Nyitott hiányok
 
-- A `/fetch` valódi aszinkron HTTP-hívással kb. 3 másodperc után visszaadja a tesztfüggőség szövegét.
-- A tanuló bemutatja a kódot, HTTP-választ és az await előtti/utáni időpontot, szálazonosítót; értelmezi a megfigyelés korlátait. Részletes feladat: [AsyncHttpLab README](projects/async-http-lab/README.md).
+- Az M4 inputellenőrzése kódban látszik, de külön `400` HTTP-próba nincs rögzítve; a PATCH sikeres futása tanulói beszámoló. A change tracker konkrét entity state-jének debuggeres megfigyelése elmaradt. Az M5 új, célzott hibájának önálló leszűkítése és az exit gate összefoglaló magyarázata nyitott; önálló L2-es alkalmazás nincs igazolva.
+- A lezárt async labor mélyebb hiányai a [projektállapotban](projects/async-http-lab/MENTORING_STATE.md) és a ledgerben maradnak; nem előfeltételei az adatos labornak.
 
 ## Döntések
 
@@ -56,14 +53,17 @@ A DI/configuration sorok az új szelethez átviendő tudást jelölik; a projekt
 - Elosztott rendszereknél az első külső dependencyvel együtt jön a deadline/cancellation, timeout, biztonságos retry, idempotencia és korreláció; cache, broker, replika, shard, konszenzus vagy saga csak mért korlát vagy konkrét workflow-igény alapján kerül be.
 
 - 2026-10-07: a scoped/transient probe futásai után a felhasználó a singleton helyes következtetését kérte elfogadni a kísérlet teljesítéséhez. Ez elfogadott lezárási bizonyíték; külön singleton probe-futást nem állítunk. A DI/configuration alapozó szelet lezárult, a következő irány a tantervi async/cancellation szelet.
+- 2026-10-12: a felhasználó a következő fő iránynak az adatbázist és EF Core-t választotta, új, kis laborral. A MovieExplorer szüneteltetett marad; a korábbi tudás megkopását az új labor lépéseinek méretezésénél figyelembe vesszük.
 
 ## Nyitott döntések
 
-Az AsyncHttpLab helyét és M1–M4 tervét a felhasználó 2026-10-09-én elfogadta. Az M1 indítását nem blokkolja nyitott döntés.
+Az adatos irány és az új labor elfogadott; a generált `Cascade` törlési szabályt a felhasználó 2026-10-14-én elfogadta. Az M5 lépésmérete a tanuló kódja és futási eredménye alapján adaptálható; a kötelező mérföldkövek vagy az exit gate érdemi változtatását egyeztetjük.
 
 ## Megőrzött korábbi bizonyíték
 
 - A MovieExplorer ASP.NET Core, PostgreSQL, SQL, EF Core és LINQ területeken szolgáltatott gyakorlati bizonyítékokat.
+- A lezárt AsyncHttpLab M1–M4 és exit gate bizonyítékai a saját [projektállapotában](projects/async-http-lab/MENTORING_STATE.md) és a ledgerben maradnak.
+- A DI/configuration lezárt szeletének bizonyítékai és L1 / Practiced értékelése a [ConfigurationDiLab állapotában](projects/configuration-di-lab/MENTORING_STATE.md) és a teljes haladási ledgerben maradnak.
 - A részletes előzmény és a félbehagyott következő lépés a MovieExplorer saját `MENTORING_STATE.md` fájljában marad.
 - Az API Contract Testing öt ellenőrzött HTTP-contracttesztje `5/5` zöld; részletes bizonyíték és a halasztott `M5` a projekt saját `MENTORING_STATE.md` fájljában marad.
 
@@ -73,4 +73,4 @@ Az AsyncHttpLab helyét és M1–M4 tervét a felhasználó 2026-10-09-én elfog
 
 ## Egyetlen következő konkrét lépés
 
-A tanuló implementálja és lefuttatja az AsyncHttpLab `LabApi/Program.cs` `/fetch` endpointját a [README M1 feladata](projects/async-http-lab/README.md) szerint, majd bemutatja a HTTP-választ és a két naplósort.
+A tanuló a DataAccessLab Rider SQL-konzoljában érvényes `ProjectId=1` mellett próbáljon új `WorkItem`-et beszúrni a már létező `WorkItemId=1` azonosítóval, külön `BEGIN` nélkül; jegyezze fel az SQLSTATE-et és a constraint nevét, majd saját szavaival mondja el, miben különbözik ez a korábbi `23503` hibától.

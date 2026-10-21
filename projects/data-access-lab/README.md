@@ -1,22 +1,21 @@
 # DataAccessLab
 
-Kis .NET 10, PostgreSQL és EF Core labor a relációs, SQL- és ORM-alapok újragyakorlására. A domain két entitása: `Project` és `WorkItem`. Egy projekthez több munkatétel tartozhat; egy munkatétel pontosan egy projekthez tartozik. Az API egyelőre csak az ASP.NET Core sablonja, az adatfunkciókat a tanuló írja meg.
+Kis .NET 10, PostgreSQL és EF Core labor a relációs, SQL- és ORM-alapok újragyakorlására. A domain két entitása: `Project` és `WorkItem`. Egy projekthez több munkatétel tartozhat; egy munkatétel pontosan egy projekthez tartozik. A tartós séma migrációval elkészült; a GET a projektet és munkatételeit adja vissza, a POST és PATCH munkatételt hoz létre, illetve módosít.
 
-A véges mérföldkőterv, a teljesítési bizonyítékok és az exit gate a [MENTORING_STATE.md](MENTORING_STATE.md) fájlban vannak. A labor aktuális feladata M1: relációs modell és SQL-frissítés. Az EF Core a következő mérföldkőben jelenik meg, így nem kell előbb a teljes adatbázis-internals témát feldolgozni.
+A véges mérföldkőterv, a teljesítési bizonyítékok és az exit gate a [MENTORING_STATE.md](MENTORING_STATE.md) fájlban vannak. M1–M4 elkészült; az aktív mérföldkő M5 — tranzakció és hibadiagnózis.
 
 Az M1-hez tartozó ajánlott olvasási sorrend: [Relációs modell, kulcsok és első SQL](../../learning-materials/data-databases/relational-model-and-first-sql.md).
 
-## Előkészített környezet
+## Helyi környezet
 
-- `DataAccessLab.Api`: üres, futtatható ASP.NET Core projekt `net10.0` targettel. Egyelőre nincs EF Core package, `DbContext` vagy üzleti endpoint.
+- `DataAccessLab.Api`: `net10.0` ASP.NET Core projekt Npgsql EF Core providerrel, `DbContext`-tel, entitykkel, `InitialSchema` migrációval, projektet lekérdező GET-tel és munkatétel POST/PATCH végpontokkal.
+- `check-get-project.ps1`: a futó API `GET /projects/1` és `GET /projects/99` válaszának ismételhető ellenőrzése; az M3 tesztadat szükséges hozzá.
 - `compose.yaml`: helyi PostgreSQL 16 a `localhost:5433` porton; külön named volume-ot használ.
-- `.env.example`: csak helyettesítő értéket tartalmaz. A valódi helyi jelszó a Git által figyelmen kívül hagyott `.env` fájlba kerüljön.
+- A Compose a Git által figyelmen kívül hagyott helyi `.env` fájl `DATA_ACCESS_LAB_DB_PASSWORD` értékét használja; az API ugyanezt a jelszót a `Database:Password` User Secrets kulcsból olvassa. A fejlesztői connection string nem tartalmaz jelszót.
 
-A repository gyökeréből, ha eljött az első SQL-próba ideje:
+A repository gyökeréből a helyi adatbázis indítása és megnyitása:
 
 ```powershell
-Copy-Item projects/data-access-lab/.env.example projects/data-access-lab/.env
-# Szerkeszd át a projects/data-access-lab/.env fájlban a helyi jelszót.
 docker compose --env-file projects/data-access-lab/.env -f projects/data-access-lab/compose.yaml up -d
 docker compose --env-file projects/data-access-lab/.env -f projects/data-access-lab/compose.yaml exec postgres psql -U data_access_lab -d data_access_lab
 ```
@@ -29,6 +28,4 @@ dotnet build projects/data-access-lab/DataAccessLab.slnx
 
 ## Egyetlen aktuális lépés
 
-Írd le kód nélkül a `Project`–`WorkItem` kapcsolatot: melyik két táblát használnád, hol van az elsődleges és az idegen kulcs, mely mezők kötelezők, és milyen adatbázis-szabály akadályozza meg, hogy egy munkatétel nem létező projektre mutasson. Ezt először közösen ellenőrizzük, utána írod és futtatod az első SQL-t.
-
-Az M1 későbbi gyakorlati részében ideiglenes PostgreSQL-táblákon dolgozunk. Így a kézi SQL-kísérlet nem fog ütközni az EF Core későbbi migrációjával, amely majd a tartós táblákat hozza létre.
+A Rider SQL-konzoljában érvényes `ProjectId=1` mellett próbálj új `WorkItem`-et beszúrni a már létező `WorkItemId=1` azonosítóval, külön `BEGIN` nélkül. Jegyezd fel az SQLSTATE-et és a constraint nevét, majd mondd el saját szavaiddal, miben különbözik ez a korábbi `23503` hibától.

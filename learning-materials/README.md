@@ -18,10 +18,15 @@ Az itt található fájlok nem helyettesítik:
 
 ## Témák
 
+### Adatok és adatbázisok
+
+- [Relációs modell, kulcsok és első SQL](data-databases/relational-model-and-first-sql.md)
+
 ### Web- és backendfejlesztés
 
 - [HTTP request lifecycle és ASP.NET Core pipeline](web-backend/http-request-lifecycle.md)
 - [Dependency injection és konfiguráció — backend alapok](web-backend/dependency-injection-and-configuration.md)
+- [HttpClient — az első kimenő HTTP-hívás](web-backend/httpclient-basics.md)
 
 ### Tesztelés
 

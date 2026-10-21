@@ -1,21 +1,31 @@
 # Gyakorlóprojektek indexe
 
-Utolsó frissítés: 2026-10-09
+Utolsó frissítés: 2026-10-21
 
 Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekkel. A projektek részletes előzményeit és döntéseit nem másolja ide.
 
 ## Aktív projekt
 
+### DataAccessLab
+
+- **Repository:** [`projects/data-access-lab/`](data-access-lab/).
+- **Projektspecifikus állapot és terv:** [MENTORING_STATE.md](data-access-lab/MENTORING_STATE.md).
+- **Indítás és aktuális feladat:** [README.md](data-access-lab/README.md).
+- **Szerep:** a relációs modell, SQL, PostgreSQL és EF Core alapjainak újbóli gyakorlása kis, új kontextusban.
+- **Elsődleges témák:** `DATA-EF-MAPPING-TRACKING`, `DATA-INTEGRITY-CONSTRAINTS`, `DATA-TRANSACTIONS`; a relációs, SQL- és lekérdezési előzmény a projektállapotban szerepel.
+- **Állapot:** aktív; M1–M4 `Complete`, M5 — Tranzakció és hibadiagnózis `Active`. A POST/PATCH és a tracking-kísérlet után a sikeres és hibás tranzakciós ág elkészült; az új constraint-hiba önálló diagnózisa következik. A MovieExplorer szüneteltetett marad.
+
+## Lezárt projektek
+
 ### AsyncHttpLab
 
 - **Repository:** [`projects/async-http-lab/`](async-http-lab/).
 - **Projektspecifikus állapot és elfogadott terv:** [MENTORING_STATE.md](async-http-lab/MENTORING_STATE.md).
-- **Indítás és aktuális feladat:** [README.md](async-http-lab/README.md).
+- **Indítás és feladatleírás:** [README.md](async-http-lab/README.md).
 - **Szerep:** aszinkron HTTP I/O, szálhasználat, több művelet, cancellation és timeout egy helyi lassú függőséggel.
 - **Elsődleges témák:** `WEB-ASYNC-CANCELLATION`, `DOTNET-ASYNC-TASKS`.
-- **Állapot:** aktív; M1 — Aszinkron várakozás. A környezet előkészítve és ellenőrizve, a `/fetch` implementációja tanulói munka.
-
-## Lezárt projektek
+- **Lezárás:** 2026-10-12, M1–M4 `Complete`, exit gate teljesült. A tanulói kód, a futási próbák és a saját záró magyarázat elfogadva; a vezetett javítások miatt a mélység L1 / Practiced marad. A bizonyítékkorlátok a projektállapotban.
+- **Állapot:** lezárt alapozó labor; a következő aktív projekt a DataAccessLab.
 
 ### ConfigurationDiLab
 
@@ -25,7 +35,7 @@ Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekk
 - **Elsődleges témák:** `WEB-DI-CONFIGURATION`, `DOTNET-DI-COMPOSITION`.
 - **Lezárás:** 2026-10-07, M1–M4 `Complete`, alapozó szelet elfogadva. Scoped/transient probe HTTP-próbával igazolt; singleton helyes következtetése felhasználói kérésre elfogadva a feladat teljesítéséhez. Üres konfigurációs hiba és captive dependency reprodukció/javítás, végső regresszió `9/9`.
 - **Bizonyítékkorlát:** env override és snapshot reload tanulói sikerjelzés; a végső magyarázat vezetett pontosítást igényelt. L1 / Practiced marad, részletek a projektállapotban.
-- **Állapot:** lezárt alapozó labor; a következő fő projekt az AsyncHttpLab.
+- **Állapot:** lezárt alapozó labor; az utána következő AsyncHttpLab is lezárult 2026-10-12-én.
 
 ### API Contract Testing
 
