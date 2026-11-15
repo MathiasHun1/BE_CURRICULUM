@@ -2,7 +2,7 @@
 
 Kis .NET 10, PostgreSQL és EF Core labor a relációs, SQL- és ORM-alapok újragyakorlására. A domain két entitása: `Project` és `WorkItem`. Egy projekthez több munkatétel tartozhat; egy munkatétel pontosan egy projekthez tartozik. A tartós séma migrációval elkészült; a GET a projektet és munkatételeit adja vissza, a POST és PATCH munkatételt hoz létre, illetve módosít.
 
-A véges mérföldkőterv, a teljesítési bizonyítékok és az exit gate a [MENTORING_STATE.md](MENTORING_STATE.md) fájlban vannak. M1–M4 elkészült; az aktív mérföldkő M5 — tranzakció és hibadiagnózis.
+A véges mérföldkőterv, a teljesítési bizonyítékok és az exit gate a [MENTORING_STATE.md](MENTORING_STATE.md) fájlban vannak. M1–M5 és az alapozó exit gate teljesült; a projekt lezárt.
 
 Az M1-hez tartozó ajánlott olvasási sorrend: [Relációs modell, kulcsok és első SQL](../../learning-materials/data-databases/relational-model-and-first-sql.md).
 
@@ -26,6 +26,6 @@ Az API-váz önállóan buildelhető:
 dotnet build projects/data-access-lab/DataAccessLab.slnx
 ```
 
-## Egyetlen aktuális lépés
+## Lezárás
 
-A Rider SQL-konzoljában érvényes `ProjectId=1` mellett próbálj új `WorkItem`-et beszúrni a már létező `WorkItemId=1` azonosítóval, külön `BEGIN` nélkül. Jegyezd fel az SQLSTATE-et és a constraint nevét, majd mondd el saját szavaiddal, miben különbözik ez a korábbi `23503` hibától.
+A további index-, query planner-, MVCC- és production-migrációs gyakorlat külön, szükségvezérelt tanulási szelet. A rövid, visszafordítható EF Core modell–snapshot kísérlet 2026-10-31-én teljesült; a következő SQL–EF lekérdezésgyakorlás iránya a repository gyökerében lévő [LEARNING_STATE.md](../../LEARNING_STATE.md) fájlban szerepel.

@@ -1,10 +1,14 @@
 # Gyakorlóprojektek indexe
 
-Utolsó frissítés: 2026-10-21
+Utolsó frissítés: 2026-10-31
 
 Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekkel. A projektek részletes előzményeit és döntéseit nem másolja ide.
 
 ## Aktív projekt
+
+Nincs kijelölve; a DataAccessLab lezárult, a rövid támogató EF Core modell–migráció kísérlet is teljesült. Következő irány: SQL–EF Core lekérdezésgyakorlás.
+
+## Lezárt projektek
 
 ### DataAccessLab
 
@@ -13,9 +17,9 @@ Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekk
 - **Indítás és aktuális feladat:** [README.md](data-access-lab/README.md).
 - **Szerep:** a relációs modell, SQL, PostgreSQL és EF Core alapjainak újbóli gyakorlása kis, új kontextusban.
 - **Elsődleges témák:** `DATA-EF-MAPPING-TRACKING`, `DATA-INTEGRITY-CONSTRAINTS`, `DATA-TRANSACTIONS`; a relációs, SQL- és lekérdezési előzmény a projektállapotban szerepel.
-- **Állapot:** aktív; M1–M4 `Complete`, M5 — Tranzakció és hibadiagnózis `Active`. A POST/PATCH és a tracking-kísérlet után a sikeres és hibás tranzakciós ág elkészült; az új constraint-hiba önálló diagnózisa következik. A MovieExplorer szüneteltetett marad.
-
-## Lezárt projektek
+- **Lezárás:** 2026-10-31, M1–M5 `Complete`, exit gate teljesült. A sikeres és visszagördülő tranzakció, a `23505` / `PK_WorkItems` hibadiagnózis és a vezetett, saját szavas request–EF–SQL–DB–válasz összefoglaló adta a bizonyítékot.
+- **Bizonyítékkorlát:** a sikertelen `INSERT` teljes szövege és külön utóellenőrzése nem érkezett meg; a korábbi `23503`, a `NOT NULL` és a migráció kapcsolatához mentor-pontosítás kellett. A mélység L1 / Practiced, az index-/query planner-mélyítés későbbre halasztva.
+- **Állapot:** lezárt alapozó labor; a 2026-10-31-i rövid támogató EF Core kísérlet teljesült. A MovieExplorer szüneteltetett marad.
 
 ### AsyncHttpLab
 
@@ -25,7 +29,7 @@ Ez a fájl csak összeköti a globális tanulási állapotot a valós projektekk
 - **Szerep:** aszinkron HTTP I/O, szálhasználat, több művelet, cancellation és timeout egy helyi lassú függőséggel.
 - **Elsődleges témák:** `WEB-ASYNC-CANCELLATION`, `DOTNET-ASYNC-TASKS`.
 - **Lezárás:** 2026-10-12, M1–M4 `Complete`, exit gate teljesült. A tanulói kód, a futási próbák és a saját záró magyarázat elfogadva; a vezetett javítások miatt a mélység L1 / Practiced marad. A bizonyítékkorlátok a projektállapotban.
-- **Állapot:** lezárt alapozó labor; a következő aktív projekt a DataAccessLab.
+- **Állapot:** lezárt alapozó labor; az utána következő DataAccessLab is lezárult 2026-10-31-én.
 
 ### ConfigurationDiLab
 

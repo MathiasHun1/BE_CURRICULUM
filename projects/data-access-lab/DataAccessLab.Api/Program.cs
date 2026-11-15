@@ -103,4 +103,53 @@ app.MapPatch("/projects/{projectId:int}/work-items/{workItemId:int}",
         return Results.Json(workItem, statusCode: StatusCodes.Status200OK);
     });
 
+app.MapGet("/projects/summary", async (DataAccessDbContext context, string? search, int offset = 0, int limit = 10) =>
+{
+    if (offset < 0 || (limit < 1 || limit > 50))
+    {
+        return Results.BadRequest();
+    }
+
+    var searchTerm = search?.Trim();
+    var projectsQuery = context.Projects.AsQueryable();
+    
+    var query = projectsQuery
+        .Where(p => searchTerm == null || EF.Functions.ILike(p.Name, $"%{searchTerm}%"))
+        .Select(p => new
+        {
+            p.ProjectId,
+            p.Name,
+            WorkItemCount = p.WorkItems.Count()
+        })
+        .OrderByDescending(x => x.WorkItemCount)
+        .ThenBy(x => x.ProjectId);
+    
+    var totalCount = await query.CountAsync();
+    var items = await query
+        .Skip(offset)
+        .Take(limit)
+        .ToListAsync();
+
+    var response = new
+    {
+        TotalCount = totalCount,
+        Offset = offset,
+        Limit = limit,
+        Items = items
+    };
+        
+    return Results.Ok(response);
+});
+
+app.MapGet("/work-items", (DataAccessDbContext context) =>
+{   
+    // TODO
+    // {
+    //     "workItemId": 1,
+    //     "title": "proba_1",
+    //     "projectId": 1,
+    //     "projectName": "Project 1"
+    // }
+});
+
 app.Run();

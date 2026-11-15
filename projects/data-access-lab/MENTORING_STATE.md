@@ -2,11 +2,11 @@
 
 Létrehozás: 2026-10-12
 
-Utolsó frissítés: 2026-10-21 — M4 lezárása, M5 tranzakciós próbái és a következő hibadiagnózis kijelölése.
+Utolsó frissítés: 2026-10-31 — M5 és az exit gate lezárása, majd a rövid EF Core kísérlet ellenőrzése.
 
 ## Szerep és hatókör
 
-- Aktív, véges gyakorlóprojekt a lezárt AsyncHttpLab után; fő témája a 3. pillér — Adatok és adatbázisok.
+- Lezárt, véges gyakorlóprojekt az AsyncHttpLab után; fő témája a 3. pillér — Adatok és adatbázisok.
 - Cél: a MovieExplorerben már érintett, de megkopott relációs, SQL- és EF Core-tudás újbóli felépítése egy kicsi, új kontextusban. A korábbi eredmények bizonyítékok maradnak; nem tekintjük őket jelenlegi önálló tudásnak új ellenőrzés nélkül.
 - Domain: `Project` és `WorkItem`, `1:N` kapcsolat. PostgreSQL az elsődleges adatbázis, EF Core a fő ORM.
 - Mentor által előkészítve: üres `net10.0` API-váz, külön helyi PostgreSQL Compose-környezet és feladatleírás. A tanuló elvégezte az első SQL-kísérletet, felépítette az EF Core-modellt és alkalmazta az első migrációt. Az endpointokat és a további próbákat alapértelmezetten a tanuló írja és futtatja.
@@ -21,7 +21,7 @@ Utolsó frissítés: 2026-10-21 — M4 lezárása, M5 tranzakciós próbái és 
 | M2 — EF Core modell és séma | A tanuló ugyanennek a modellnek a tartós tábláit EF Core-ral és migrációval hozza létre. | Entityk, `DbContext`, konfiguráció és migráció forrása; sikeres build és migráció; az adatbázis-séma/kulcsok közvetlen ellenőrzése. | Complete |
 | M3 — Lekérdezés és végrehajtás | API-lekérdezés szűréssel és kapcsolódó adattal, tudatos materializálási ponttal. | Működő GET, sikeres és üres ág, legalább egy automatizált ellenőrzés; `IQueryable`-kompozíció és a tényleges generált SQL megvizsgálása, saját magyarázat az adatbázis-lekérdezések számáról. | Complete |
 | M4 — Írás és change tracking | Egy létrehozási és egy módosítási út helyesen kezeli az entity állapotát és az adatbázis-szabályokat. | Valós írási próbák, érvénytelen input/constraint ág, tracking/no-tracking különbség megfigyelése és a `SaveChangesAsync` szerepének magyarázata. | Complete |
-| M5 — Tranzakció és hibadiagnózis | Egy több lépésből álló adatváltozás hibás ága sem hagy félkész eredményt. | Sikeres és visszagördülő futási próba, ellenőrzött adatbázis-állapot, valamint egy új, célzottan bevezetett adat-hozzáférési hiba önálló leszűkítése. | Active |
+| M5 — Tranzakció és hibadiagnózis | Egy több lépésből álló adatváltozás hibás ága sem hagy félkész eredményt. | Sikeres és visszagördülő futási próba, ellenőrzött adatbázis-állapot, valamint egy új, célzottan bevezetett adat-hozzáférési hiba önálló leszűkítése. | Complete |
 
 ## Exit gate
 
@@ -47,8 +47,22 @@ Index-/query planner-, MVCC-, provider-internals- és production-migrációs mé
 - **M4 tracking, 2026-10-21:** ideiglenes `AsNoTracking()` mellett a PATCH válaszában módosult az objektum, de a mentor GET-je a régi adatbázis-értéket mutatta. A tanuló helyesen magyarázta, hogy a nem követett objektum módosítását a `SaveChangesAsync` nem menti; a kísérleti `AsNoTracking()` eltávolítása forrásban ellenőrzött. A konkrét entity state-ek debuggeres megfigyelése elmaradt, de a viselkedéskülönbség és az ok bizonyított. Ez teljesíti az M4-et, L2-es önállóságot nem igazol.
 - **M5 hibás tranzakció, 2026-10-21:** a tanuló `BEGIN` után `UPDATE`-et és hiányzó projektre hivatkozó `INSERT`-et próbált. A PostgreSQL `23503` hibája után `25P02` jelezte az abortált tranzakciót; a tanuló külön `ROLLBACK`-et futtatott. A mentor read-only GET-je az eredeti címet látta, tehát a módosítás nem maradt tartós.
 - **M5 sikeres tranzakció, 2026-10-21:** az első sikeres `COMMIT`-próba tévesen ugyanazt a munkatételt frissítette kétszer; a mentor GET-je ezt kimutatta. A tanuló javította a célazonosítókat és sikeres futást jelzett; a mentor következő GET-je az 1-es munkatételnél `proba_1`, a 2-esnél `proba_2` címet talált. A tanuló helyesen magyarázta a tranzakció nélküli részleges eredményt és azt, hogy más kapcsolat a végső értékeket a `COMMIT` után látja.
-- **M5 nyitott:** az új, célzottan bevezetett, ismétlődő `WorkItemId` hibájának önálló diagnózisa és az exit gate saját összefoglaló magyarázata még hiányzik. A `projects/data-access-lab/.env.example` Gitben staged törlésként látszik; a szándéka nincs tisztázva, az agent nem állította vissza.
+- **M5 célzott hiba, 2026-10-31:** a tanuló Rider SQL-futtatásból `[23505] ERROR: duplicate key value violates unique constraint "PK_WorkItems"` kimenetet küldött. Saját szavaival a duplikált primary key-t azonosította és helyesen mondta, hogy a sikertelen beszúrás nem hoz létre új sort. A korábbi `23503` FK-hibát nem idézte fel önállóan; a mentor emlékeztette. A futtatott `INSERT` teljes szövege és a sikertelen beszúrás utáni külön `SELECT` nem érkezett meg, ezért a bizonyíték a közölt PostgreSQL-hibára és a magyarázatra korlátozódik. Az új hiba önálló leszűkítése az M5-höz elegendő, L2-szintet nem igazol.
+- **Exit gate, 2026-10-31:** a tanuló saját szavaival elindította a POST kérés útját Kestreltől a routingon és bindingon át a handlerig. A tényleges forrás ellenőrzése után helyesen azonosította a `FindAsync` első DB-olvasását, a `context.Add` memóriabeli követésbe vételét, a `SaveChangesAsync` írását és a `201` választ. A GET `Where` és `Select` hívásait a lekérdezés felépítéseként, a `FirstOrDefaultAsync` hívást végrehajtásként azonosította. A `Title` handlerellenőrzését és az FK adatbázis-szabályát elkülönítette; a `NOT NULL` és az EF migráció útjához mentor-pontosítás kellett. A meglévő kód, korábbi HTTP/SQL-próbák és ez a vezetett záró magyarázat együtt teljesítik az alapozó exit gate-et. A tudás L1 / Practiced marad; önálló, új kontextusú L2 alkalmazás nincs igazolva.
+- **Későbbi mélyítés:** az index/B-tree és `EXPLAIN` röviden előkerült; a tanuló `Index Scan` és 6 tényleges eredménysor megfigyelését jelezte, de a teljes SQL és terv nem érkezett meg. A tanuló ezt a mélyítést most elhalasztotta, így ebből query planner tudásszintet nem állapítunk meg.
 
-## Egyetlen következő lépés
+## Lezárás
 
-A tanuló a Rider SQL-konzoljában érvényes `ProjectId=1` mellett próbáljon új `WorkItem`-et beszúrni a már létező `WorkItemId=1` azonosítóval, külön `BEGIN` nélkül; jegyezze fel az SQLSTATE-et és a constraint nevét, majd saját szavaival mondja el, miben különbözik ez a korábbi `23503` hibától.
+M1–M5 `Complete`, az exit gate teljesült. A projekt lezárt; a következő fő tanulási irányt a globális [LEARNING_STATE.md](../../LEARNING_STATE.md) rögzíti. Az index-/query planner-, MVCC-, provider-internals- és production-migrációs mélyítés későbbi, szükségvezérelt tantervi feladat marad.
+
+## Kiegészítő rövid EF Core gyakorlat
+
+2026-10-31: a tanuló a lezárt projektet egy visszafordítható, önálló modell–migráció kísérlethez választotta. Ez a kiegészítés nem nyitja újra az M1–M5 mérföldköveket.
+
+- **Cél:** megfigyelni, hogy a nullable C# property-változás és az utolsó migrációs model snapshot között az EF Core eltérést jelez-e.
+- **Első lépés:** a `WorkItem.Title` típusát átmenetileg `string?`-re állítani, a `DataAccessLab.Api` projektből futtatni a `dotnet ef migrations has-pending-model-changes` parancsot, megőrizni a kimenetet, majd visszaállítani az eredeti típust.
+- **Elfogadási bizonyíték:** a parancs tényleges kimenete és a tanuló magyarázata arról, hogy a parancs a jelenlegi EF modellt az utolsó migrációs snapshottal hasonlítja össze. Nem készül új migráció, és az adatbázisséma nem változik ebben a lépésben.
+- **Tényleges eredmény:** a tanuló `string? Title` mellett `Changes have been made to the model since the last migration. Add a new migration.` kimenetet küldött. Saját szavaival helyesen a jelenlegi EF modell és a `DataAccessDbContextModelSnapshot` összehasonlítását nevezte meg, és jelezte, hogy migráció alkalmazása nélkül az adatbázis nem változott. A `Title` visszaállítása után `No changes have been made to the model since the last migration.` kimenetet küldött; a mentor a `string Title` forrást és az üres `WorkItem.cs` Git-diffet ellenőrizte. Új migrációs fájl és adatbázis-módosítás nem történt.
+- **Állapot:** Complete; a kísérlet a modell–snapshot eltérést igazolta, önálló éles sémaváltozást vagy L2-es mélységet nem.
+
+A következő SQL–EF Core lekérdezésgyakorlás általános tantervi irány; ajánlott forrásai a [témalapon](../../learning-materials/data-databases/sql-and-ef-query-practice.md) vannak.

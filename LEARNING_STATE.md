@@ -1,35 +1,39 @@
 # Globális tanulási állapot
 
-Utolsó frissítés: 2026-10-21 — M4 írási és tracking-próbák, valamint M5 tranzakciós kísérletek alapján.
+Utolsó frissítés: 2026-10-31 — a DataAccessLab lezárása és az SQL–EF Core páros lekérdezésgyakorlás kijelölése alapján.
 
 ## Aktuális fókusz
 
-- **Tanulási szelet:** relációs modell, PostgreSQL, SQL és EF Core újbóli, fokozatos gyakorlása.
-- **Projektállapot:** a [DataAccessLab](projects/data-access-lab/) aktív; M1–M4 `Complete`, M5 — Tranzakció és hibadiagnózis `Active`. A véges terv és exit gate a saját [MENTORING_STATE.md](projects/data-access-lab/MENTORING_STATE.md) fájljában van.
-- **Elsődleges pillér:** P1 — Adatok és adatbázisok (most `DATA-TRANSACTIONS` és `DATA-INTEGRITY-CONSTRAINTS`; az M4-ben `DATA-EF-MAPPING-TRACKING`).
-- **Kapcsolódó pillérek:** Web- és backendfejlesztés (API-válasz és validáció), szoftvermérnökség (hibadiagnózis).
-- **Aktuális fázis:** a POST és PATCH írási út forrása ellenőrzött, a POST mentését közvetlen GET igazolta; a PATCH sikerét a tanuló jelezte. A tracking/no-tracking különbség és a PostgreSQL `23503` FK-hiba megfigyelt. Az M5 sikeres és hibás tranzakciós ága után egy új constraint-hiba önálló diagnózisa következik.
-- **Korábbi bizonyíték:** a MovieExplorerben relációs modell, SQL JOIN-ok, PostgreSQL, EF Core mapping/query és migráció készült. Ezek a ledgerben maradnak, de az aktuális önálló felidézést és alkalmazást az új laborban ellenőrizzük.
+- **Tanulási szelet:** SQL-lekérdezések megoldása, majd ugyanazon adatkérdések EF Core LINQ-megfelelőinek elkészítése.
+- **Projektállapot:** nincs aktív fő gyakorlóprojekt. A [DataAccessLab](projects/data-access-lab/) M1–M5 mérföldköve és exit gate-je `Complete`; a lezárt projekt később közös SQL–EF eredmény-összehasonlításhoz használható. A részletes bizonyíték a saját [MENTORING_STATE.md](projects/data-access-lab/MENTORING_STATE.md) fájljában van.
+- **Elsődleges pillér:** P1 — Adatok és adatbázisok (`DATA-SQL-QUERYING`, `DATA-EF-QUERY-EXECUTION`).
+- **Kapcsolódó pillér:** Programozás és .NET (`DOTNET-LINQ-EXECUTION`).
+- **Aktuális fázis:** a rövid modell–migráció kísérlet után a tanuló az SQL és EF Core lekérdezések páros gyakorlását választotta. Az első online SQL-feladat egy egyszerű szűrés; az EF oldali megfelelőjét utána dolgozzuk ki. Az index-/query planner-mélyítés halasztott.
 - **Curriculum-helyzet:** a tudástérkép a [curriculum/](curriculum/README.md), a teljes haladási ledger a [CURRICULUM_PROGRESS.md](CURRICULUM_PROGRESS.md).
+- **Ajánlott anyag:** [SQL-lekérdezések és EF Core megfelelőik](learning-materials/data-databases/sql-and-ef-query-practice.md).
 
-## Aktív témák
+## Legutóbbi bizonyíték
 
-A korábbi MovieExplorer-bizonyíték nem jelent automatikusan mostani önálló alkalmazást vagy L2-szintet.
+- A hibás tranzakció `23503` és `25P02` hibái után `ROLLBACK` történt, a korábbi cím megmaradt. A javított, sikeres két `UPDATE` után mindkét cím perzisztált; a tanuló a tranzakció nélküli részleges eredményt és a `COMMIT` előtti láthatóságot helyesen magyarázta.
+- Az új, ismétlődő kulcsos próba közölt PostgreSQL-hibája `23505` / `PK_WorkItems`; a tanuló önállóan a duplikált primary key-t nevezte meg. A korábbi `23503` jelentését nem idézte fel önállóan.
+- A POST kérés útját Kestreltől a handlerig saját szavaival kezdte leírni, majd helyesen azonosította a `FindAsync`, `context.Add`, `SaveChangesAsync` és `201` szerepét. A GET `Where`/`Select` építését és `FirstOrDefaultAsync` végrehajtását helyesen elkülönítette. A handler és a DB constraintjeinek különbségéhez néhol mentor-pontosítás kellett.
+- A DataAccessLab alapozó bizonyítéka L1 / Practiced mélységet támaszt alá; L2/Confident értékelést nem. A teljes altémánkénti bizonyíték a [ledgerben](CURRICULUM_PROGRESS.md) és a [projektállapotban](projects/data-access-lab/MENTORING_STATE.md) marad.
+- A rövid EF Core kísérletben a tanuló átmenetileg `string?`-re módosította a `WorkItem.Title` típust; a `has-pending-model-changes` eltérést jelzett az utolsó migrációs snapshottól. Visszaállítás után a parancs nem talált eltérést, a forrás és a Git-diff ezt igazolta. A tanuló helyesen azonosította a modell–snapshot összehasonlítást és azt, hogy nem történt DB-módosítás.
 
-| Témaazonosító | Pillér | Célmélység | Jelenlegi mélység | Állapot | Eddigi bizonyíték |
-|---|---|---:|---:|---|---|
-| `DATA-TRANSACTIONS` | Adatok és adatbázisok | L3 | L1 | Practiced | Sikertelen `BEGIN`–`UPDATE`–FK-sértő `INSERT` után `ROLLBACK` és változatlan adatbázis-állapot; javított két frissítés után mindkét cím perzisztált. A tanuló a `COMMIT` előtti láthatóságot és a tranzakció nélküli részleges eredményt helyesen magyarázta. |
-| `DATA-INTEGRITY-CONSTRAINTS` | Adatok és adatbázisok | L3 | L1 | Practiced | A nem létező projektet az API `404`-gyel utasította el a tanuló beszámolója szerint; közvetlen SQL-beszúrás `23503` FK-hibát adott. Új constraint-hiba önálló diagnózisa nyitott. |
-| `DATA-EF-MAPPING-TRACKING` | Adatok és adatbázisok | L2 | L1 | Practiced | POST mentését GET igazolta; a PATCH forrása a projekt- és munkatételazonosítóra szűr. Ideiglenes `AsNoTracking()` mellett a válasz módosult, az adatbázis nem; a tanuló helyesen magyarázta a `SaveChangesAsync` és a követés kapcsolatát. |
+## Aktuális téma
+
+- `DATA-SQL-QUERYING` (L1 / Practiced): önálló SQL `SELECT`-ek szűréssel, vetítéssel, majd kapcsolással és aggregálással.
+- `DATA-EF-QUERY-EXECUTION` (L1 / Practiced): ugyanazon adatkérdések LINQ-megfogalmazása, a végrehajtási pont és a generált SQL ellenőrzése.
 
 ## Az aktuális tanulási szelet iránya
 
-- A relációs/SQL-alapok, az EF Core modell/séma, a lekérdezés és az írás gyakorlata elkészült; most a tranzakció és a célzott hibadiagnózis lezárása következik.
-- A security- és observability-alapok a konkrét adatfunkció részeként, a teljes védett endpoint és production-mélyítés később következik.
+- A DataAccessLab alapozó szelete lezárult, a rövid modell–migráció kísérlet teljesült. Most kis SQL–EF feladatpárok következnek; új fő gyakorlóprojekt esetén később véges mérföldkőterv készül.
+- Az index-/query planner-, MVCC-, provider-internals- és production-migrációs mélyítés külön, szükségvezérelt tantervi feladat marad.
 
 ## Nyitott hiányok
 
-- Az M4 inputellenőrzése kódban látszik, de külön `400` HTTP-próba nincs rögzítve; a PATCH sikeres futása tanulói beszámoló. A change tracker konkrét entity state-jének debuggeres megfigyelése elmaradt. Az M5 új, célzott hibájának önálló leszűkítése és az exit gate összefoglaló magyarázata nyitott; önálló L2-es alkalmazás nincs igazolva.
+- A DataAccessLab M4 inputellenőrzése kódban látszik, de külön `400` HTTP-próba nincs rögzítve; a PATCH sikeres futása tanulói beszámoló. A konkrét entity state debuggeres megfigyelése, a sikertelen `23505` próba teljes SQL-je és külön utóellenőrzése elmaradt. Az exit gate magyarázata vezetett pontosítást igényelt; önálló L2-es alkalmazás nincs igazolva.
+- A rövid index-/`EXPLAIN` próbából csak `Index Scan` és 6 tényleges eredménysor tanulói közlése ismert, teljes SQL és terv nélkül; ebből L1-es query planner tudásszint nem következik.
 - A lezárt async labor mélyebb hiányai a [projektállapotban](projects/async-http-lab/MENTORING_STATE.md) és a ledgerben maradnak; nem előfeltételei az adatos labornak.
 
 ## Döntések
@@ -54,10 +58,12 @@ A korábbi MovieExplorer-bizonyíték nem jelent automatikusan mostani önálló
 
 - 2026-10-07: a scoped/transient probe futásai után a felhasználó a singleton helyes következtetését kérte elfogadni a kísérlet teljesítéséhez. Ez elfogadott lezárási bizonyíték; külön singleton probe-futást nem állítunk. A DI/configuration alapozó szelet lezárult, a következő irány a tantervi async/cancellation szelet.
 - 2026-10-12: a felhasználó a következő fő iránynak az adatbázist és EF Core-t választotta, új, kis laborral. A MovieExplorer szüneteltetett marad; a korábbi tudás megkopását az új labor lépéseinek méretezésénél figyelembe vesszük.
+- 2026-10-31: a DataAccessLab M1–M5 és alapozó exit gate-je teljesült, a projekt lezárult. A tanuló az index-/query planner-mélyítést most túl mélynek találta; ezt nem tesszük a lezárás feltételévé, és későbbi, szükségvezérelt témaként tartjuk nyilván. Következőnek rövid, visszafordítható EF Core modell–migráció gyakorlatot választott, új fő projekt nélkül.
+- 2026-10-31: a modell–snapshot kísérlet visszaállítással együtt teljesült. A tanuló a következő iránynak SQL-lekérdezések és EF Core megfelelőik páros gyakorlását választotta; az első feladat online PostgreSQL Exercises környezetben indul. A webes EF Playground a generált SQL szemléltetésére használható, azonos adatokon történő eredmény-összehasonlítás a DataAccessLab helyi adatbázisával lehetséges.
 
 ## Nyitott döntések
 
-Az adatos irány és az új labor elfogadott; a generált `Cascade` törlési szabályt a felhasználó 2026-10-14-én elfogadta. Az M5 lépésmérete a tanuló kódja és futási eredménye alapján adaptálható; a kötelező mérföldkövek vagy az exit gate érdemi változtatását egyeztetjük.
+Az SQL-feladatok online oldalon, a pontos SQL–EF eredmény-összehasonlítás helyi közös adatbázison történhet; az első online feladat után a páros gyakorlás következő futtatási helyét kijelöljük. Új fő projekt nincs kijelölve, az index-/query planner-mélyítés halasztott.
 
 ## Megőrzött korábbi bizonyíték
 
@@ -73,4 +79,4 @@ Az adatos irány és az új labor elfogadott; a generált `Cascade` törlési sz
 
 ## Egyetlen következő konkrét lépés
 
-A tanuló a DataAccessLab Rider SQL-konzoljában érvényes `ProjectId=1` mellett próbáljon új `WorkItem`-et beszúrni a már létező `WorkItemId=1` azonosítóval, külön `BEGIN` nélkül; jegyezze fel az SQLSTATE-et és a constraint nevét, majd saját szavaival mondja el, miben különbözik ez a korábbi `23503` hibától.
+A tanuló olvassa el a PostgreSQL Exercises [Getting Started](https://www.pgexercises.com/gettingstarted.html) adatsémáját, majd önállóan oldja meg a [Control which rows are retrieved](https://www.pgexercises.com/questions/basic/where.html) feladatot a böngészőben. Küldje el a saját SQL-t és a futási eredményt; ezután ugyanazt az adatkérdést EF Core LINQ-ként fogalmazzuk meg.

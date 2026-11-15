@@ -21,6 +21,7 @@ Az itt található fájlok nem helyettesítik:
 ### Adatok és adatbázisok
 
 - [Relációs modell, kulcsok és első SQL](data-databases/relational-model-and-first-sql.md)
+- [SQL-lekérdezések és EF Core megfelelőik](data-databases/sql-and-ef-query-practice.md)
 
 ### Web- és backendfejlesztés
 
